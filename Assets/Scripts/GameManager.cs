@@ -5,30 +5,26 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Assets")] 
-    [SerializeField] private Camera _camera;
+    [Header("Assets")] [SerializeField] private Camera _camera;
     [SerializeField] private GameObject _block;
     [SerializeField] private GameObject _ghostBlock;
 
     [SerializeField] private List<Material> _blockMaterials = new List<Material>();
     private Material _currentMaterial;
-    
+
     [SerializeField] private GameObject _basePlateSource;
     [SerializeField] private ParticleSystem _clearEffectSource;
     private ParticleSystem _clearEffect;
 
-    [Header("UI")] 
-    [SerializeField] private GameObject _mainMenu;
+    [Header("UI")] [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _inGameUi;
     [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private GameObject _gameOverMenu;
     private GameObject _currentMenu;
 
-    [Header("Grid Size")] 
-    [SerializeField] private Vector3Int _grid = new Vector3Int(5, 8, 5);
-    
-    [Header("Controls")] 
-    [SerializeField] private KeyCode _forwardBtn = KeyCode.W;
+    [Header("Grid Size")] [SerializeField] private Vector3Int _grid = new Vector3Int(5, 8, 5);
+
+    [Header("Controls")] [SerializeField] private KeyCode _forwardBtn = KeyCode.W;
     [SerializeField] private KeyCode _backwardBtn = KeyCode.S;
     [SerializeField] private KeyCode _leftBtn = KeyCode.A;
     [SerializeField] private KeyCode _rightBtn = KeyCode.D;
@@ -46,6 +42,7 @@ public class GameManager : MonoBehaviour
     /// Array containing all the GameObjects associated with the game board.
     /// </summary>
     private GameObject[,,] _tileLiterals;
+
     private GameObject[,,] _ghostLiterals;
 
     private GameObject _basePlate;
@@ -58,7 +55,7 @@ public class GameManager : MonoBehaviour
     private bool _XZClockwise;
     private bool _XYClockwise;
     private bool _YZClockwise;
-    
+
     //Variables related to camera control
     private float _rotationSpeed = 1f;
     private float _rotationSpeedMin = 0.5f;
@@ -75,13 +72,13 @@ public class GameManager : MonoBehaviour
     private float _lastCameraAngleXZ;
     private Vector3 _cameraTarget;
     private Vector3 _lastCameraTarget;
-    
+
     //DROPPING
     private float _dropClock;
     private float _dropTime = 1f;
     private float _dropTimeDefault = 1f;
-    private float _dropTimeMin =  0.4f;
-    private float _dropTimeMax =  1f;
+    private float _dropTimeMin = 0.4f;
+    private float _dropTimeMax = 1f;
 
     //DIFFICULTY
     private float _difficultyClock;
@@ -110,13 +107,13 @@ public class GameManager : MonoBehaviour
         _isCellFilled = new bool[_grid.x, _grid.y, _grid.z];
         _tileLiterals = new GameObject[_grid.x, _grid.y, _grid.z];
         _ghostLiterals = new GameObject[_grid.x, _grid.y, _grid.z];
-        
+
         //Sets the pointer position to the top middle of the game board
         _pointer.x = _grid.x / 2;
         _pointer.y = _grid.y - 1;
         _pointer.z = _grid.z / 2;
-        
-        CameraInitialize();
+
+        SetCameraProperties();
     }
 
     private void Start()
@@ -129,7 +126,7 @@ public class GameManager : MonoBehaviour
         _score = 0;
         _dropTime = _dropTimeMax;
         _dropTimeDefault = _dropTimeMax;
-        
+
         //Sets all clearing levels to false, readying the ClearingLevels array
         _clearingLevels = new bool[_grid.y];
         for (int i = 0; i < _grid.y; i++)
@@ -138,32 +135,36 @@ public class GameManager : MonoBehaviour
         }
 
         //Positions the camera looking down over the game board.
-        _camera.transform.position = new Vector3(_grid.x / 2f, _grid.y / 2f + _cameraDistance, _grid.z / 2f);
-        _camera.transform.rotation = Quaternion.Euler(45, 0, 0);
-        
+        _camera.transform.position = Vector3.zero;
+        _camera.transform.rotation = Quaternion.Euler(35, 0, 0);
+
         GenerateTiles();
     }
 
     public void NewGame()
     {
+        _camera.transform.position = new Vector3(_grid.x / 2f, _grid.y / 2f + _cameraDistance, _grid.z / 2f);
+        _camera.transform.rotation = Quaternion.Euler(45, 0, 0);
+        
         for (int x = 0; x < _grid.x; x++)
         {
             for (int y = 0; y < _grid.y; y++)
             {
                 for (int z = 0; z < _grid.z; z++)
                 {
-                    _isCellFilled[x,y,z] = false;
+                    _isCellFilled[x, y, z] = false;
                 }
             }
         }
+
         ClearAllGhostLevel();
 
         _piecesRoot.SetActive(true);
         _basePlate.SetActive(true);
-        
+
         _currentPieceController = new PieceController();
         _currentPieceController.SetPosition(_pointer.x, _pointer.y, _pointer.z);
-       
+
         _currentMaterial = _blockMaterials[Random.Range(0, _blockMaterials.Count)];
         _score = 0;
         _dropTimeDefault = _dropTimeMax;
@@ -174,8 +175,8 @@ public class GameManager : MonoBehaviour
         _freeSpin = false;
         UpdateBoard();
     }
-    
-    private void CameraInitialize()
+
+    private void SetCameraProperties()
     {
         _cameraTarget = new Vector3(_grid.x / 2f, _grid.y / 2f, _grid.z / 2f);
         _cameraDistanceMin = _grid.y;
@@ -187,7 +188,13 @@ public class GameManager : MonoBehaviour
         _lastCameraAngleXZ = _cameraAngleXZ;
         _lastCameraTarget = _cameraTarget;
     }
-    
+
+    private void ResetCameraProperties()
+    {
+        _camera.transform.position = Vector3.zero;
+        _camera.transform.rotation = Quaternion.Euler(35, 0, 0);
+    }
+
     private void GenerateTiles()
     {
         if (_piecesRoot == null)
@@ -198,11 +205,13 @@ public class GameManager : MonoBehaviour
 
         if (_basePlate == null)
         {
-            _basePlate = Instantiate(_basePlateSource, new Vector3(_grid.x / 2f - 0.5f, -0.8f, _grid.z / 2f - 0.5f), Quaternion.identity);
-            _basePlate.transform.localScale = new Vector3(_grid.x - 0.01f, _basePlate.transform.localScale.y, _grid.z - 0.01f);
+            _basePlate = Instantiate(_basePlateSource, new Vector3(_grid.x / 2f - 0.5f, -0.8f, _grid.z / 2f - 0.5f),
+                Quaternion.identity);
+            _basePlate.transform.localScale =
+                new Vector3(_grid.x - 0.01f, _basePlate.transform.localScale.y, _grid.z - 0.01f);
             _basePlate.SetActive(false);
         }
-        
+
         for (int x = 0; x < _grid.x; x++)
         {
             for (int y = 0; y < _grid.y; y++)
@@ -213,14 +222,14 @@ public class GameManager : MonoBehaviour
 
                     _tileLiterals[x, y, z] = Instantiate(_block, new Vector3(x, y, z), Quaternion.identity);
                     _tileLiterals[x, y, z].transform.parent = _piecesRoot.transform;
-                    
+
                     _ghostLiterals[x, y, z] = Instantiate(_ghostBlock, new Vector3(x, y, z), Quaternion.identity);
                     _ghostLiterals[x, y, z].transform.parent = _piecesRoot.transform;
                 }
             }
         }
     }
-    
+
     private void Update()
     {
         HandleInput();
@@ -320,22 +329,25 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void HandleInput()
     {
-        if (Input.GetKeyDown(_pauseBtn))
+        if (_currentMenu != _mainMenu)
         {
-            if (_currentMenu == _inGameUi)
+            if (Input.GetKeyDown(_pauseBtn))
             {
-                Pause();
-            }
-            else if (_currentMenu == _pauseMenu)
-            {
-                Resume();
-            }
-            else if (_currentMenu == _gameOverMenu)
-            {
-            }
-            else
-            {
-                PreviousCanvas();
+                if (_currentMenu == _inGameUi)
+                {
+                    Pause();
+                }
+                else if (_currentMenu == _pauseMenu)
+                {
+                    Resume();
+                }
+                else if (_currentMenu == _gameOverMenu)
+                {
+                }
+                else
+                {
+                    PreviousCanvas();
+                }
             }
         }
 
@@ -542,7 +554,7 @@ public class GameManager : MonoBehaviour
     private void UpdateBoard()
     {
         HidePiece();
-        
+
         for (var x = 0; x < _grid.x; x++)
         {
             for (var y = 0; y < _grid.y; y++)
@@ -554,11 +566,11 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        
+
         DrawPiece();
         _needsUpdate = false;
     }
-    
+
     private void PositionCamera()
     {
         _camera.transform.position = new Vector3(
@@ -583,11 +595,11 @@ public class GameManager : MonoBehaviour
             {
                 var tile = _tileLiterals[finalX, finalY, finalZ].GetComponent<Block>();
                 var y = Round(pieces[i].GetY());
-                
+
                 var ghostTile = _ghostLiterals[finalX, 0, finalZ].GetComponent<GhostBlock>();
-        
+
                 ghostTile.Renderer.enabled = true;
-                tile.SetMaterial(_currentMaterial); 
+                tile.SetMaterial(_currentMaterial);
                 tile.Renderer.enabled = true;
             }
             else
@@ -609,7 +621,7 @@ public class GameManager : MonoBehaviour
             {
                 var tile = _tileLiterals[finalX, finalY, finalZ].GetComponent<Block>();
                 var y = Round(pieces[i].GetY());
-                
+
                 var ghostTile = _ghostLiterals[finalX, 0, finalZ].GetComponent<GhostBlock>();
 
                 if (ghostTile)
@@ -635,7 +647,8 @@ public class GameManager : MonoBehaviour
             int finalX = Round(pieces[i].GetX()) + input.GetPositionX();
             int finalY = Round(pieces[i].GetY()) + input.GetPositionY();
             int finalZ = Round(pieces[i].GetZ()) + input.GetPositionZ();
-            if (!(_grid.x > finalX && finalX >= 0 && _grid.y > finalY && finalY >= 0 && _grid.z > finalZ && finalZ >= 0))
+            if (!(_grid.x > finalX && finalX >= 0 && _grid.y > finalY && finalY >= 0 && _grid.z > finalZ &&
+                  finalZ >= 0))
             {
                 valid = false;
                 return valid;
@@ -654,7 +667,7 @@ public class GameManager : MonoBehaviour
     private void PlacePiece()
     {
         ClearAllGhostLevel();
-        
+
         Piece[] pieces = _currentPieceController.GetPieces();
         for (int i = 0; i < pieces.Length; i++)
         {
@@ -662,7 +675,7 @@ public class GameManager : MonoBehaviour
             int finalY = Round(pieces[i].GetY()) + _currentPieceController.GetPositionY();
             int finalZ = Round(pieces[i].GetZ()) + _currentPieceController.GetPositionZ();
             _isCellFilled[finalX, finalY, finalZ] = true;
-            
+
             if (CheckForClear(finalY))
             {
                 ClearLevel(finalY);
@@ -714,7 +727,7 @@ public class GameManager : MonoBehaviour
 
         _clearingLevels[level] = true;
     }
-    
+
     private void ClearAllGhostLevel()
     {
         _clearing = true;
@@ -732,7 +745,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    
+
     private void PushDown()
     {
         int levelsCleared = 0;
@@ -857,6 +870,7 @@ public class GameManager : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        ResetCameraProperties();
         _basePlate.SetActive(false);
         _piecesRoot.SetActive(false);
         SetMenu(_mainMenu);
