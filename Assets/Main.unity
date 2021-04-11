@@ -150,33 +150,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b7a05d5ea9931b4e95378917013ebb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 534669904}
-  _block: {fileID: 8157892322207833761, guid: 21eb1b38ddb854d4f862c7039cf1d6f2, type: 3}
-  _ghostBlock: {fileID: 8157892322207833761, guid: 9890a0bc91c9ff648b450801709b8a99,
-    type: 3}
-  _blockMaterials:
-  - {fileID: 2100000, guid: 1b6d250a9d0f2b94fadcb799d6f4bc1a, type: 2}
-  - {fileID: 2100000, guid: 7653d49b66a19ed42a27f4f35944cba8, type: 2}
-  - {fileID: 2100000, guid: 88b244bec98ff634a92e5cb1c43e2460, type: 2}
-  - {fileID: 2100000, guid: 5dd0bde4d5a1eb6499cf2edd9ed630bd, type: 2}
-  _basePlateSource: {fileID: 116144, guid: 4b13d2ce1ca2e05428c177b19533addc, type: 3}
-  _clearEffectSource: {fileID: 4871921947613616531, guid: 69707d8abdaeb13469ac19a5963b61e4,
-    type: 3}
+  _settings: {fileID: 11400000, guid: 31ad3e6de8f8f174498f9075b347e2ec, type: 2}
   _mainMenu: {fileID: 1470485432}
-  _inGameUi: {fileID: 261038052}
+  _inGameUI: {fileID: 261038052}
   _pauseMenu: {fileID: 2133052889}
   _gameOverMenu: {fileID: 2065303267}
-  _grid: {x: 5, y: 8, z: 5}
-  _forwardBtn: 119
-  _backwardBtn: 115
-  _leftBtn: 97
-  _rightBtn: 100
-  _rotateXZBtn: 49
-  _rotateXYBtn: 50
-  _rotateYZBtn: 51
-  _dropBtn: 32
-  _pauseBtn: 27
-  _rotateCamera: 323
 --- !u!4 &160912867
 Transform:
   m_ObjectHideFlags: 0
@@ -1126,7 +1104,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 160912865}
         m_MethodName: 
         m_Mode: 1
         m_Arguments:
@@ -1591,7 +1569,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 160912865}
         m_MethodName: 
         m_Mode: 1
         m_Arguments:
@@ -1854,8 +1832,8 @@ RectTransform:
   m_Children:
   - {fileID: 1470485433}
   - {fileID: 261038053}
-  - {fileID: 2065303268}
   - {fileID: 2133052890}
+  - {fileID: 2065303268}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2106,7 +2084,7 @@ RectTransform:
   - {fileID: 1001574927}
   - {fileID: 366056045}
   m_Father: {fileID: 1561287978}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2267,7 +2245,7 @@ RectTransform:
   - {fileID: 864946487}
   - {fileID: 385103669}
   m_Father: {fileID: 1561287978}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
