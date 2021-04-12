@@ -24,6 +24,7 @@ MonoBehaviour:
   BasePlateSource: {fileID: 116144, guid: 4b13d2ce1ca2e05428c177b19533addc, type: 3}
   ClearEffectSource: {fileID: 4871921947613616531, guid: 69707d8abdaeb13469ac19a5963b61e4,
     type: 3}
+  GodRays: {fileID: 4888258958276318274, guid: 44be15280eadf0045be6ed61cdac1ae5, type: 3}
   GridSize: {x: 5, y: 8, z: 5}
   SpawnPointer: {x: 2, y: 7, z: 2}
   RotationSpeed: 1

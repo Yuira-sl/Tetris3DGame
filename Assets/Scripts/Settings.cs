@@ -11,6 +11,7 @@ public class Settings : ScriptableObject
     public List<Material> BlockMaterials = new List<Material>();
     public GameObject BasePlateSource;
     public ParticleSystem ClearEffectSource;
+    public GameObject GodRays;
     
     [Header("Grid")]
     public Vector3Int GridSize = new Vector3Int(5, 8, 5);

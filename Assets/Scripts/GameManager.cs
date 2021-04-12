@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     private int _menuDepth;
     private GameObject _basePlate;
     private GameObject _piecesRoot;
+    private GameObject _godRays;
     private Material _currentMaterial;
     private ParticleSystem _currentClearEffect;
     private GameObject _currentMenu;
@@ -20,7 +21,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _inGameUI;
     [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private GameObject _gameOverMenu;
-
+    [SerializeField] private GameObject _hints;
+    
     public GameObject CurrentMenu => _currentMenu;
     public GameObject MainMenu => _mainMenu;
     public GameObject InGameUI => _inGameUI;
@@ -50,7 +52,7 @@ public class GameManager : MonoBehaviour
 
         _piecesRoot.SetActive(true);
         _basePlate.SetActive(true);
-
+        _godRays.SetActive(true);
         _settings.CurrentPieceController = new PieceController();
         _settings.CurrentPieceController.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, _settings.SpawnPointer.z);
 
@@ -68,6 +70,10 @@ public class GameManager : MonoBehaviour
     {
         SetMenu(_pauseMenu);
         _settings.Paused = true;
+    }
+    public void Hints()
+    {
+        _hints.SetActive(!_hints.activeSelf);
     }
     public void PreviousCanvas()
     {
@@ -93,6 +99,7 @@ public class GameManager : MonoBehaviour
     {
         ResetCameraProperties();
         _basePlate.SetActive(false);
+        _godRays.SetActive(false);
         _piecesRoot.SetActive(false);
         SetMenu(_mainMenu);
         _settings.FreeSpin = true;
@@ -172,12 +179,23 @@ public class GameManager : MonoBehaviour
         if (_basePlate == null)
         {
             _basePlate = Instantiate(_settings.BasePlateSource,
-                new Vector3(_settings.GridSize.x / 2f - 0.5f, -0.8f, _settings.GridSize.z / 2f - 0.5f), Quaternion.identity);
+                new Vector3(
+                    _settings.GridSize.x / 2f - 0.5f, 
+                    -0.8f, 
+                    _settings.GridSize.z / 2f - 0.5f), Quaternion.identity);
             _basePlate.transform.localScale = new Vector3(_settings.GridSize.x - 0.01f, _basePlate.transform.localScale.y,
                 _settings.GridSize.z - 0.01f);
             _basePlate.SetActive(false);
         }
 
+        if (_godRays == null)
+        {
+            _godRays = Instantiate(_settings.GodRays, new Vector3(
+                _settings.GridSize.x / 2f - 0.5f,
+                0,
+                _settings.GridSize.z / 2f - 0.5f), Quaternion.Euler(25,45,0));
+        }
+        
         for (int x = 0; x < _settings.GridSize.x; x++)
         {
             for (int y = 0; y < _settings.GridSize.y; y++)
@@ -518,18 +536,6 @@ public class GameManager : MonoBehaviour
 
         UpdateBoard();
     }
-    private int Round(float input)
-    {
-        float output = input;
-        int outputModifier = 0;
-        output -= (int) input;
-        if (output >= 0.5f)
-        {
-            outputModifier = 1;
-        }
-
-        return (int) input + outputModifier;
-    }
     private void EndGame()
     {
         SetMenu(_gameOverMenu);
@@ -551,5 +557,17 @@ public class GameManager : MonoBehaviour
             _menuList.RemoveAt(0);
             _menuList.Add(_currentMenu);
         }
+    }
+    private int Round(float input)
+    {
+        float output = input;
+        int outputModifier = 0;
+        output -= (int) input;
+        if (output >= 0.5f)
+        {
+            outputModifier = 1;
+        }
+
+        return (int) input + outputModifier;
     }
 }
