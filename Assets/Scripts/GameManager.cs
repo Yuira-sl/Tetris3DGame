@@ -282,12 +282,10 @@ public class GameManager : MonoBehaviour
                 _settings.Clearing = false;
             }
         }
-        else
+        // TODO: need to organize pool / cache effects
+        if (_currentClearEffect != null && !_currentClearEffect.isPlaying)
         {
-            if (_currentClearEffect != null && !_currentClearEffect.isPlaying)
-            {
-                Destroy(_currentClearEffect);
-            }
+            Destroy(_currentClearEffect.gameObject);
         }
 
         if (_settings.FreeSpin)
