@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+// TODO: Need to rework and create score table at main menu
 public class ScoreManager : MonoBehaviour
 {
     private int _scoreValue;
