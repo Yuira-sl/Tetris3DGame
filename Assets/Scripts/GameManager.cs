@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -15,14 +14,16 @@ public class GameManager : MonoBehaviour
     private ParticleSystem _currentClearEffect;
     private GameObject _currentMenu;
     private int _score;
+    private AudioSource _audioSource;
     
     [SerializeField] private Settings _settings;
+    [SerializeField] private AudioManager _audioManager;
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _inGameUI;
     [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private GameObject _pauseMenuBtn;
     [SerializeField] private GameObject _gameOverMenu;
-
+    
     [SerializeField] private RectTransform _DropDownBtn;
     [SerializeField] private RectTransform _RotateBtn;
     [SerializeField] private RectTransform _FlipBtn;
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
     
     public void NewGame()
     {
+        _audioSource.volume = 1f;
         _currentMenu.SetActive(false);
         _pauseMenuBtn.SetActive(true);
         _pauseMenuBtn.gameObject.GetComponent<PlayAnimation>().ResetAnimation();
@@ -115,6 +117,7 @@ public class GameManager : MonoBehaviour
     }
     public void GoToMainMenu()
     {        
+        _audioSource.volume = 1f;
         _pauseMenuBtn.SetActive(false);
         _basePlate.SetActive(false);
         _godRays.SetActive(false);
@@ -130,7 +133,8 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         _inputController = new InputController(this, _settings);
-
+        _audioSource = GetComponent<AudioSource>();
+        
         //All instantiation goes here
         _settings.IsCellFilled = new bool[_settings.GridSize.x, _settings.GridSize.y];
         _settings.TileLiterals = new GameObject[_settings.GridSize.x, _settings.GridSize.y];
@@ -234,6 +238,7 @@ public class GameManager : MonoBehaviour
                     {
                         _currentClearEffect = Instantiate(_settings.ClearEffectSource,
                             new Vector3(_settings.GridSize.x / 2, i, 0.5f), Quaternion.identity);
+                        _audioManager.Play(_audioManager.ClearLevel);
                     }
                 }
 
@@ -437,6 +442,11 @@ public class GameManager : MonoBehaviour
     }
     private void EndGame()
     {
+        if (_audioSource.isPlaying)
+        {
+            _audioSource.volume = 0.1f;
+        }
+        _audioManager.Play(_audioManager.GameOver);
         SetMenu(_gameOverMenu);
         _settings.Paused = true;
     }
