@@ -289,10 +289,6 @@ public class GameManager : MonoBehaviour
                 tile.SetMaterial(_currentMaterial);
                 tile.Renderer.enabled = true;
             }
-            else
-            {
-                Debug.Log("Failed to place at position: " + finalX + "," + finalY);
-            }
         }
     }
     public void HidePiece()
@@ -314,10 +310,6 @@ public class GameManager : MonoBehaviour
                 }
 
                 tile.Renderer.enabled = false;
-            }
-            else
-            {
-                Debug.Log("Failed to place at position: " + finalX + "," + finalY);
             }
         }
     }

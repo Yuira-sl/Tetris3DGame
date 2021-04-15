@@ -2,12 +2,12 @@
 
 public class PieceController
 {
-    private readonly Piece[] _randomPieces;
+    private readonly Piece[] _pieces;
     private Vector3Int _position;
     
     public PieceController()
     {
-        _randomPieces = PieceCreator.PickRandomPiece();
+        _pieces = PieceCreator.PickRandomPiece();
     }
 
     private PieceController(PieceController input)
@@ -16,7 +16,7 @@ public class PieceController
         _position.y = input.GetPositionY();
         _position.z = input.GetPositionZ();
 
-        _randomPieces = input.GetPieces();
+        _pieces = input.GetPieces();
     }
     
     public PieceController Clone()
@@ -41,17 +41,17 @@ public class PieceController
         return _position.y;
     }
 
-    public int GetPositionZ()
+    private int GetPositionZ()
     {
         return _position.z;
     }
 
     public Piece[] GetPieces()
     {
-        Piece[] piecesBuffer = new Piece[_randomPieces.Length];
-        for (var i = 0; i < _randomPieces.Length; i++)
+        Piece[] piecesBuffer = new Piece[_pieces.Length];
+        for (var i = 0; i < _pieces.Length; i++)
         {
-            piecesBuffer[i] = new Piece(new Vector3(_randomPieces[i].GetX(), _randomPieces[i].GetY(), _randomPieces[i].GetZ()));
+            piecesBuffer[i] = new Piece(new Vector2(_pieces[i].GetX(), _pieces[i].GetY()));
         }
         return piecesBuffer;
     }
@@ -59,21 +59,21 @@ public class PieceController
 
     public void RotateXY()
     {
-        for (var i = 0; i < _randomPieces.Length; i++)
+        for (var i = 0; i < _pieces.Length; i++)
         {
-            var tempX = _randomPieces[i].GetX();
-            var tempY = _randomPieces[i].GetY();
-            _randomPieces[i].SetX(tempY);
-            _randomPieces[i].SetY(tempX * -1);
+            var tempX = _pieces[i].GetX();
+            var tempY = _pieces[i].GetY();
+            _pieces[i].SetX(tempY);
+            _pieces[i].SetY(tempX * -1);
         }
     }
     
     public void FlipVertically()
     {
-        for (var i = 0; i < _randomPieces.Length; i++)
+        for (var i = 0; i < _pieces.Length; i++)
         {
-            var tempX = _randomPieces[i].GetX();
-            _randomPieces[i].SetX(tempX * -1);
+            var tempX = _pieces[i].GetX();
+            _pieces[i].SetX(tempX * -1);
         }
     }
     
@@ -85,14 +85,5 @@ public class PieceController
     public void MoveY(int input)
     {
         _position.y += input;
-    }
-
-    public void MoveYToValue(int input)
-    {
-        for (var i = 0; i < _randomPieces.Length; i++)
-        {
-            var tempX = _randomPieces[i].GetY();
-            _randomPieces[i].SetY(tempX * -1);
-        }
     }
 }

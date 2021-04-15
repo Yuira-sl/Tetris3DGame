@@ -2,9 +2,9 @@
 
 public class Piece
 {
-    private Vector3 _position;
-  
-    public Piece(Vector3 position)
+    private Vector2 _position;
+
+    public Piece(Vector2 position)
     {
         _position = position;
     }
@@ -16,10 +16,6 @@ public class Piece
     {
         return _position.y;
     }
-    public float GetZ()
-    {
-        return _position.z;
-    }
     public void SetX(float x)
     {
         _position.x = x;
@@ -28,13 +24,14 @@ public class Piece
     {
         _position.y = y;
     }
-    public void SetZ(float z)
-    {
-        _position.z = z;
-    }
     
-    public void SetPosition(Vector3 position)
+    public void SetPosition(Vector2 position)
     {
         _position = position;
+    }
+    
+    public Vector2 GetPosition()
+    {
+        return _position;
     }
 }
