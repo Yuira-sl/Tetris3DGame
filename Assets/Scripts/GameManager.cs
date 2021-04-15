@@ -49,11 +49,7 @@ public class GameManager : MonoBehaviour
     {
         _inputController.DropDown();
     }
-    public void DropUp()
-    {
-        _inputController.DropUp();
-    }
-
+  
     public void OnPauseMenu()
     {
         _inputController.PauseMenu();
@@ -149,6 +145,7 @@ public class GameManager : MonoBehaviour
         _settings.SpawnPointer.z = _settings.GridSize.z / 2;
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
@@ -163,7 +160,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
+#endif
     private void Start()
     {
         //Starts game on pause with the main menu active

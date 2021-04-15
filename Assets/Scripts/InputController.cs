@@ -4,9 +4,8 @@ public class InputController
 {
     private readonly GameManager _manager;
     private readonly Settings _settings;
-
-    private Rect _leftArea;
-    private Rect _rightArea;
+    private readonly Rect _leftArea;
+    private readonly Rect _rightArea;
     
     public InputController(GameManager manager, Settings settings)
     {
@@ -125,12 +124,7 @@ public class InputController
             }
         } while (_manager.CheckPosition(piece));
     }
-
-    public void DropUp()
-    {
-        //_settings.CurrentDropTime = _settings.DropTimeDefault;
-    }
-
+    
     public void PauseMenu()
     {
         if (_manager.CurrentMenu != _manager.MainMenu)
