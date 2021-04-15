@@ -13,8 +13,8 @@ public class Settings : ScriptableObject
     public GameObject GodRays;
     
     [Header("Grid")]
-    public Vector3Int GridSize = new Vector3Int(5, 8, 1);
-    public Vector3Int SpawnPointer = new Vector3Int(2, 7, 1);
+    public Vector2Int GridSize = new Vector2Int(5, 8);
+    public Vector2Int SpawnPointer = new Vector2Int(2, 7);
   
     [Header("Dropping Settings & Time")]
     public float CurrentDropTime = 1f;
@@ -23,9 +23,9 @@ public class Settings : ScriptableObject
     public float DifficultyTime = 10f;
     public float ClearTime = 0.1f;
     
-    public GameObject[,,] TileLiterals;
-    public GameObject[,,] GhostLiterals;
-    public bool[,,] IsCellFilled;
+    public GameObject[,] TileLiterals;
+    public GameObject[,] GhostLiterals;
+    public bool[,] IsCellFilled;
     public PieceController CurrentPieceController;
     [HideInInspector] public float DifficultyClock;
     [HideInInspector] public float ClearClock;

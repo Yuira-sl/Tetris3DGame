@@ -67,10 +67,7 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < _settings.GridSize.y; y++)
             {
-                for (int z = 0; z < _settings.GridSize.z; z++)
-                {
-                    _settings.IsCellFilled[x, y, z] = false;
-                }
+                _settings.IsCellFilled[x, y] = false;
             }
         }
 
@@ -80,7 +77,7 @@ public class GameManager : MonoBehaviour
         _basePlate.SetActive(true);
         _godRays.SetActive(true);
         _settings.CurrentPieceController = new PieceController();
-        _settings.CurrentPieceController.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, _settings.SpawnPointer.z);
+        _settings.CurrentPieceController.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, 1);
 
         _currentMaterial = _settings.BlockMaterials[Random.Range(0, _settings.BlockMaterials.Count)];
         _score = 0;
@@ -135,14 +132,13 @@ public class GameManager : MonoBehaviour
         _inputController = new InputController(this, _settings);
 
         //All instantiation goes here
-        _settings.IsCellFilled = new bool[_settings.GridSize.x, _settings.GridSize.y, _settings.GridSize.z];
-        _settings.TileLiterals = new GameObject[_settings.GridSize.x, _settings.GridSize.y, _settings.GridSize.z];
-        _settings.GhostLiterals = new GameObject[_settings.GridSize.x, _settings.GridSize.y, _settings.GridSize.z];
+        _settings.IsCellFilled = new bool[_settings.GridSize.x, _settings.GridSize.y];
+        _settings.TileLiterals = new GameObject[_settings.GridSize.x, _settings.GridSize.y];
+        _settings.GhostLiterals = new GameObject[_settings.GridSize.x, _settings.GridSize.y];
 
         //Sets the pointer position to the top middle of the game board
         _settings.SpawnPointer.x = _settings.GridSize.x / 2;
         _settings.SpawnPointer.y = _settings.GridSize.y - 1;
-        _settings.SpawnPointer.z = _settings.GridSize.z / 2;
     }
 
 #if UNITY_EDITOR
@@ -153,10 +149,7 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < _settings.GridSize.y; y++)
             {
-                for (int z = 0; z < _settings.GridSize.z; z++)
-                {
-                    Gizmos.DrawWireCube(new Vector3(x,y,z), Vector3.one);
-                }
+                Gizmos.DrawWireCube(new Vector3(x,y,1), Vector3.one);
             }
         }
     }
@@ -193,9 +186,10 @@ public class GameManager : MonoBehaviour
         if (_basePlate == null)
         {
             _basePlate = Instantiate(_settings.BasePlateSource, 
-                new Vector3(_settings.GridSize.x / 2f - 0.5f,
-                -0.9f,
-                _settings.GridSize.z / 2f -0.5f), Quaternion.identity);
+                new Vector3(
+                    _settings.GridSize.x / 2f - 0.5f, 
+                    -0.9f, 
+                    1), Quaternion.identity);
             _basePlate.SetActive(false);
         }
 
@@ -204,25 +198,22 @@ public class GameManager : MonoBehaviour
             _godRays = Instantiate(_settings.GodRays, new Vector3(
                 _settings.GridSize.x / 2f - 0.5f,
                 0,
-                _settings.GridSize.z / 2f -2f), Quaternion.Euler(10, 110, 20));
+                -1.5f), Quaternion.Euler(10, 110, 20));
         }
         
         for (int x = 0; x < _settings.GridSize.x; x++)
         {
             for (int y = 0; y < _settings.GridSize.y; y++)
             {
-                for (int z = 0; z < _settings.GridSize.z; z++)
-                {
-                    _settings.IsCellFilled[x, y, z] = false;
+                _settings.IsCellFilled[x, y] = false;
 
-                    _settings.TileLiterals[x, y, z] =
-                        Instantiate(_settings.Block, new Vector3(x, y, z), Quaternion.identity);
-                    _settings.TileLiterals[x, y, z].transform.parent = _piecesRoot.transform;
+                _settings.TileLiterals[x, y] =
+                    Instantiate(_settings.Block, new Vector3(x, y, 1), Quaternion.identity);
+                _settings.TileLiterals[x, y].transform.parent = _piecesRoot.transform;
 
-                    _settings.GhostLiterals[x, y, z] =
-                        Instantiate(_settings.GhostBlock, new Vector3(x, y, z), Quaternion.identity);
-                    _settings.GhostLiterals[x, y, z].transform.parent = _piecesRoot.transform;
-                }
+                _settings.GhostLiterals[x, y] =
+                    Instantiate(_settings.GhostBlock, new Vector3(x, y, 1), Quaternion.identity);
+                _settings.GhostLiterals[x, y].transform.parent = _piecesRoot.transform;
             }
         }
     }
@@ -242,7 +233,7 @@ public class GameManager : MonoBehaviour
                     if (_settings.ClearingLevels[i])
                     {
                         _currentClearEffect = Instantiate(_settings.ClearEffectSource,
-                            new Vector3(_settings.GridSize.x / 2, i, _settings.GridSize.z / 2), Quaternion.identity);
+                            new Vector3(_settings.GridSize.x / 2, i, 0.5f), Quaternion.identity);
                     }
                 }
 
@@ -271,11 +262,8 @@ public class GameManager : MonoBehaviour
         {
             for (var y = 0; y < _settings.GridSize.y; y++)
             {
-                for (var z = 0; z < _settings.GridSize.z; z++)
-                {
-                    var tile = _settings.TileLiterals[x, y, z].GetComponent<Block>();
-                    tile.Renderer.enabled = _settings.IsCellFilled[x, y, z];
-                }
+                var tile = _settings.TileLiterals[x, y].GetComponent<Block>();
+                tile.Renderer.enabled = _settings.IsCellFilled[x, y];
             }
         }
 
@@ -291,12 +279,11 @@ public class GameManager : MonoBehaviour
         {
             var finalX = Utilities.Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
             var finalY = Utilities.Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
-            var finalZ = Utilities.Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
-            if (_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0 &&
-                _settings.GridSize.z > finalZ && finalZ >= 0)
+
+            if (_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0)
             {
-                var tile = _settings.TileLiterals[finalX, finalY, finalZ].GetComponent<Block>();
-                var ghostTile = _settings.GhostLiterals[finalX, 0, finalZ].GetComponent<GhostBlock>();
+                var tile = _settings.TileLiterals[finalX, finalY].GetComponent<Block>();
+                var ghostTile = _settings.GhostLiterals[finalX, 0].GetComponent<GhostBlock>();
 
                 ghostTile.Renderer.enabled = true;
                 tile.SetMaterial(_currentMaterial);
@@ -304,7 +291,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Failed to place at position: (" + finalX + "," + finalY + "," + finalZ + ")");
+                Debug.Log("Failed to place at position: " + finalX + "," + finalY);
             }
         }
     }
@@ -315,14 +302,11 @@ public class GameManager : MonoBehaviour
         {
             var finalX = Utilities.Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
             var finalY = Utilities.Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
-            var finalZ = Utilities.Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
-            if (_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0 &&
-                _settings.GridSize.z > finalZ && finalZ >= 0)
-            {
-                var tile = _settings.TileLiterals[finalX, finalY, finalZ].GetComponent<Block>();
-                var y = Utilities.Round(pieces[i].GetY());
 
-                var ghostTile = _settings.GhostLiterals[finalX, 0, finalZ].GetComponent<GhostBlock>();
+            if (_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0)
+            {
+                var tile = _settings.TileLiterals[finalX, finalY].GetComponent<Block>();
+                var ghostTile = _settings.GhostLiterals[finalX, 0].GetComponent<GhostBlock>();
 
                 if (ghostTile)
                 {
@@ -333,7 +317,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Failed to place at position: (" + finalX + "," + finalY + "," + finalZ + ")");
+                Debug.Log("Failed to place at position: " + finalX + "," + finalY);
             }
         }
     }
@@ -344,14 +328,13 @@ public class GameManager : MonoBehaviour
         {
             int finalX = Utilities.Round(pieces[i].GetX()) + input.GetPositionX();
             int finalY = Utilities.Round(pieces[i].GetY()) + input.GetPositionY();
-            int finalZ = Utilities.Round(pieces[i].GetZ()) + input.GetPositionZ();
-            if (!(_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0 &&
-                  _settings.GridSize.z > finalZ && finalZ >= 0))
+
+            if (!(_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0))
             {
                 return false;
             }
 
-            if (_settings.IsCellFilled[finalX, finalY, finalZ])
+            if (_settings.IsCellFilled[finalX, finalY])
             {
                 return false;
             }
@@ -368,8 +351,8 @@ public class GameManager : MonoBehaviour
         {
             int finalX = Utilities.Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
             int finalY = Utilities.Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
-            int finalZ = Utilities.Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
-            _settings.IsCellFilled[finalX, finalY, finalZ] = true;
+
+            _settings.IsCellFilled[finalX, finalY] = true;
 
             if (CheckForClear(finalY))
             {
@@ -378,7 +361,7 @@ public class GameManager : MonoBehaviour
         }
 
         var controller = new PieceController();
-        controller.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, _settings.SpawnPointer.z);
+        controller.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, 1);
         if (CheckPosition(controller))
         {
             _settings.CurrentPieceController = controller.Clone();
@@ -395,12 +378,9 @@ public class GameManager : MonoBehaviour
     {
         for (int x = 0; x < _settings.GridSize.x; x++)
         {
-            for (int z = 0; z < _settings.GridSize.z; z++)
+            if (!_settings.IsCellFilled[x, level])
             {
-                if (!_settings.IsCellFilled[x, level, z])
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -411,11 +391,8 @@ public class GameManager : MonoBehaviour
         _settings.Clearing = true;
         for (int x = 0; x < _settings.GridSize.x; x++)
         {
-            for (int z = 0; z < _settings.GridSize.z; z++)
-            {
-                var tile = _settings.TileLiterals[x, level, z].GetComponent<Block>();
-                tile.Clear(_settings.ClearTime);
-            }
+            var tile = _settings.TileLiterals[x, level].GetComponent<Block>();
+            tile.Clear(_settings.ClearTime);
         }
 
         _settings.ClearingLevels[level] = true;
@@ -427,13 +404,9 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < _settings.GridSize.y; y++)
             {
-                for (int z = 0; z < _settings.GridSize.z; z++)
-                {
-                    var tileGhost = _settings.GhostLiterals[x, y, z].GetComponent<GhostBlock>();
-                    tileGhost.Clear(_settings.ClearTime);
-
-                    tileGhost.Renderer.enabled = false;
-                }
+                var tileGhost = _settings.GhostLiterals[x, y].GetComponent<GhostBlock>();
+                tileGhost.Clear(_settings.ClearTime);
+                tileGhost.Renderer.enabled = false;
             }
         }
     }
@@ -448,19 +421,16 @@ public class GameManager : MonoBehaviour
                 {
                     for (int x = 0; x < _settings.GridSize.x; x++)
                     {
-                        for (int z = 0; z < _settings.GridSize.z; z++)
+                        if (y < _settings.GridSize.y - 1)
                         {
-                            if (y < _settings.GridSize.y - 1)
-                            {
-                                _settings.IsCellFilled[x, y, z] = _settings.IsCellFilled[x, y + 1, z];
-                                var currentTile = _settings.TileLiterals[x, y, z].GetComponent<Block>();
-                                var previousTile = _settings.TileLiterals[x, y + 1, z].GetComponent<Block>();
-                                currentTile.SetMaterial(previousTile.GetMaterial());
-                            }
-                            else
-                            {
-                                _settings.IsCellFilled[x, y, z] = false;
-                            }
+                            _settings.IsCellFilled[x, y] = _settings.IsCellFilled[x, y + 1];
+                            var currentTile = _settings.TileLiterals[x, y].GetComponent<Block>();
+                            var previousTile = _settings.TileLiterals[x, y + 1].GetComponent<Block>();
+                            currentTile.SetMaterial(previousTile.GetMaterial());
+                        }
+                        else
+                        {
+                            _settings.IsCellFilled[x, y] = false;
                         }
                     }
                 }
