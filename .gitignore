@@ -9,6 +9,8 @@ Library/
 obj/
 bin/
 
+*.apk
+
 *.psd
 *.psd.meta
 
@@ -37,7 +39,6 @@ ProjectSettings/FbxExportSettings.asset
 .vs/
 JetBrains/
 JetBrains.meta
-
 
 Assets/FbxExporters.meta
 /Assembly-CSharp.csproj

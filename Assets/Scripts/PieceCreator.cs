@@ -29,27 +29,11 @@ public static class PieceCreator
             Pieces = currentEntry 
         });
         
-        //Cube Block
-        currentEntry = new Piece[8];
+        //3 Long Straight Block
+        currentEntry = new Piece[3];
         currentEntry[0] = new Piece(new Vector3(0, 0, 0));
-        currentEntry[1] = new Piece(new Vector3(1, 0, 0));
-        currentEntry[2] = new Piece(new Vector3(1, -1, 0));
-        currentEntry[3] = new Piece(new Vector3(0, -1, 0));
-        currentEntry[4] = new Piece(new Vector3(0, 0, 1));
-        currentEntry[5] = new Piece(new Vector3(0, -1, 1));
-        currentEntry[6] = new Piece(new Vector3(1, 0, 1));
-        currentEntry[7] = new Piece(new Vector3(1, -1, 1));
-        Entries.Add(new PiecesSet
-        {
-            Pieces = currentEntry 
-        });
-        
-        //4 Long Straight Block
-        currentEntry = new Piece[4];
-        currentEntry[0] = new Piece(new Vector3(0.5f, 0, 0));
-        currentEntry[1] = new Piece(new Vector3(1.5f, 0, 0));
-        currentEntry[2] = new Piece(new Vector3(-0.5f, 0, 0));
-        currentEntry[3] = new Piece(new Vector3(-1.5f, 0, 0));
+        currentEntry[1] = new Piece(new Vector3(0, -1, 0));
+        currentEntry[2] = new Piece(new Vector3(0, -2, 0));
         
         Entries.Add(new PiecesSet
         {
@@ -58,49 +42,49 @@ public static class PieceCreator
         
         //T Block
         currentEntry = new Piece[4];
-        currentEntry[0] = new Piece(Vector3.zero);
-        currentEntry[1] = new Piece(Vector3.right);
-        currentEntry[2] = new Piece(Vector3.forward);
-        currentEntry[3] = new Piece(Vector3.left);
+        currentEntry[0] = new Piece(new Vector3(-1, 0, 0));
+        currentEntry[1] = new Piece(new Vector3(1, 0, 0));
+        currentEntry[2] = new Piece(new Vector3(0, 0, 0));
+        currentEntry[3] = new Piece(new Vector3(0, -1, 0));
         
         Entries.Add(new PiecesSet
         {
             Pieces = currentEntry 
         });
         
-        //Z Block
-        currentEntry = new Piece[4];
-        currentEntry[0] = new Piece(new Vector3(0, 0, 0.5f));
-        currentEntry[1] = new Piece(new Vector3(0, 0, -0.5f));
-        currentEntry[2] = new Piece(new Vector3(1, 0, 0.5f));
-        currentEntry[3] = new Piece(new Vector3(-1, 0, -0.5f));
-        Entries.Add(new PiecesSet
-        {
-            Pieces = currentEntry
-        });
+         //Z Block
+         currentEntry = new Piece[4];
+         currentEntry[0] = new Piece(new Vector3(-1, 0, 0));
+         currentEntry[1] = new Piece(new Vector3(0, 0, 0));
+         currentEntry[2] = new Piece(new Vector3(0, -1, 0));
+         currentEntry[3] = new Piece(new Vector3(1, -1, 0));
+         Entries.Add(new PiecesSet
+         {
+             Pieces = currentEntry
+         });
         
-        //Little L Block
-        currentEntry = new Piece[3];
-        currentEntry[0] = new Piece(Vector3.zero);
-        currentEntry[1] = new Piece(Vector3.right);
-        currentEntry[2] = new Piece(Vector3.forward);
-        Entries.Add(new PiecesSet
-        {
-            Pieces = currentEntry 
-        });
+         //Little L Block
+         currentEntry = new Piece[3];
+         currentEntry[0] = new Piece(new Vector3(-1, 0, 0));
+         currentEntry[1] = new Piece(new Vector3(-1, -1, 0));
+         currentEntry[2] = new Piece(new Vector3(0, -1, 0));
+         Entries.Add(new PiecesSet
+         {
+             Pieces = currentEntry 
+         });
         
-        //Big L Block
-        currentEntry = new Piece[4];
-        currentEntry[0] = new Piece(Vector3.zero);
-        currentEntry[1] = new Piece(Vector3.left);
-        currentEntry[2] = new Piece(Vector3.right);
-        currentEntry[3] = new Piece(new Vector3(1, 0, 1));
-        Entries.Add(new PiecesSet
-        {
-            Pieces = currentEntry
-        });
+         //Big L Block
+         currentEntry = new Piece[4];
+         currentEntry[0] = new Piece(new Vector3(-1, 0, 0));
+         currentEntry[1] = new Piece(new Vector3(-1, -1, 0));
+         currentEntry[2] = new Piece(new Vector3(-1, -2, 0));
+         currentEntry[3] = new Piece(new Vector3(0, -2, 0));
+         Entries.Add(new PiecesSet
+         {
+             Pieces = currentEntry
+         });
     }
-    public static Piece[] PickPiece()
+    public static Piece[] PickRandomPiece()
     {
         int i = Random.Range(0, Entries.Count);
         return Entries[i].GetPieces();

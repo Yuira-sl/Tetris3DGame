@@ -2,12 +2,12 @@
 
 public class PieceController
 {
-    private readonly Piece[] _pieces;
+    private readonly Piece[] _randomPieces;
     private Vector3Int _position;
-
+    
     public PieceController()
     {
-        _pieces = PieceCreator.PickPiece();
+        _randomPieces = PieceCreator.PickRandomPiece();
     }
 
     private PieceController(PieceController input)
@@ -16,9 +16,9 @@ public class PieceController
         _position.y = input.GetPositionY();
         _position.z = input.GetPositionZ();
 
-        _pieces = input.GetPieces();
+        _randomPieces = input.GetPieces();
     }
-
+    
     public PieceController Clone()
     {
         return new PieceController(this);
@@ -48,95 +48,35 @@ public class PieceController
 
     public Piece[] GetPieces()
     {
-        Piece[] piecesBuffer = new Piece[_pieces.Length];
-        for (var i = 0; i < _pieces.Length; i++)
+        Piece[] piecesBuffer = new Piece[_randomPieces.Length];
+        for (var i = 0; i < _randomPieces.Length; i++)
         {
-            piecesBuffer[i] = new Piece(new Vector3(_pieces[i].GetX(), _pieces[i].GetY(), _pieces[i].GetZ()));
+            piecesBuffer[i] = new Piece(new Vector3(_randomPieces[i].GetX(), _randomPieces[i].GetY(), _randomPieces[i].GetZ()));
         }
         return piecesBuffer;
     }
+    
 
-    /// <summary>
-    /// Rotates piece 90 degrees counter clockwise on the XZ plane if input is true, otherwise rotates clockwise.
-    /// </summary>
-    public void RotateXZ(bool сounterClockwise)
+    public void RotateXY()
     {
-        if (сounterClockwise)
+        for (var i = 0; i < _randomPieces.Length; i++)
         {
-            for (int i = 0; i < _pieces.Length; i++)
-            {
-                var tempX = _pieces[i].GetX();
-                var tempZ = _pieces[i].GetZ();
-                _pieces[i].SetX(tempZ);
-                _pieces[i].SetZ(tempX * -1);
-            }
-        }
-        else
-        {
-            for (var i = 0; i < _pieces.Length; i++)
-            {
-                var tempX = _pieces[i].GetX();
-                var tempZ = _pieces[i].GetZ();
-                _pieces[i].SetX(tempZ * -1);
-                _pieces[i].SetZ(tempX);
-            }
+            var tempX = _randomPieces[i].GetX();
+            var tempY = _randomPieces[i].GetY();
+            _randomPieces[i].SetX(tempY);
+            _randomPieces[i].SetY(tempX * -1);
         }
     }
-
-    /// <summary>
-    /// Rotates piece 90 degrees counter clockwise on the XY plane if input is true, otherwise rotates clockwise.
-    /// </summary>
-    public void RotateXY(bool сounterClockwise)
+    
+    public void FlipVertically()
     {
-        if (сounterClockwise)
+        for (var i = 0; i < _randomPieces.Length; i++)
         {
-            for (var i = 0; i < _pieces.Length; i++)
-            {
-                var tempX = _pieces[i].GetX();
-                var tempY = _pieces[i].GetY();
-                _pieces[i].SetX(tempY * -1);
-                _pieces[i].SetY(tempX);
-            }
-        }
-        else
-        {
-            for (var i = 0; i < _pieces.Length; i++)
-            {
-                var tempX = _pieces[i].GetX();
-                var tempY = _pieces[i].GetY();
-                _pieces[i].SetX(tempY);
-                _pieces[i].SetY(tempX * -1);
-            }
+            var tempX = _randomPieces[i].GetX();
+            _randomPieces[i].SetX(tempX * -1);
         }
     }
-
-    /// <summary>
-    /// Rotates piece 90 degrees counter clockwise on the YZ plane if input is true, otherwise rotates clockwise.
-    /// </summary>
-    public void RotateYZ(bool сounterClockwise)
-    {
-        if (сounterClockwise)
-        {
-            for (var i = 0; i < _pieces.Length; i++)
-            {
-                var tempY = _pieces[i].GetY();
-                var tempZ = _pieces[i].GetZ();
-                _pieces[i].SetY(tempZ * -1);
-                _pieces[i].SetZ(tempY);
-            }
-        }
-        else
-        {
-            for (var i = 0; i < _pieces.Length; i++)
-            {
-                var tempY = _pieces[i].GetY();
-                var tempZ = _pieces[i].GetZ();
-                _pieces[i].SetY(tempZ);
-                _pieces[i].SetZ(tempY * -1);
-            }
-        }
-    }
-
+    
     public void MoveX(int input)
     {
         _position.x += input;
@@ -147,8 +87,12 @@ public class PieceController
         _position.y += input;
     }
 
-    public void MoveZ(int input)
+    public void MoveYToValue(int input)
     {
-        _position.z += input;
+        for (var i = 0; i < _randomPieces.Length; i++)
+        {
+            var tempX = _randomPieces[i].GetY();
+            _randomPieces[i].SetY(tempX * -1);
+        }
     }
 }

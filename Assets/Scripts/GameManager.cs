@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    private Camera _camera;
-    private HandleInput _input;
+    private InputController _inputController;
     private readonly List<GameObject> _menuList = new List<GameObject>();
     private int _menuDepth;
     private GameObject _basePlate;
@@ -20,23 +20,53 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _inGameUI;
     [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private GameObject _pauseMenuBtn;
     [SerializeField] private GameObject _gameOverMenu;
-    [SerializeField] private GameObject _hints;
-    
+
+    [SerializeField] private RectTransform _DropDownBtn;
+    [SerializeField] private RectTransform _RotateBtn;
+    [SerializeField] private RectTransform _FlipBtn;
+
+    public RectTransform DropDownBtn => _DropDownBtn;
+    public RectTransform RotateBtn => _RotateBtn;
+    public RectTransform FlipBtn => _FlipBtn;
+
     public GameObject CurrentMenu => _currentMenu;
     public GameObject MainMenu => _mainMenu;
     public GameObject InGameUI => _inGameUI;
     public GameObject PauseMenu => _pauseMenu;
     public GameObject GameOverMenu => _gameOverMenu;
+    
+    public void RotateXY()
+    {
+        _inputController.RotateOnXY();
+    }
+    public void FlipVertical()
+    {
+        _inputController.FlipVertical();
+    }
+    public void DropDown()
+    {
+        _inputController.DropDown();
+    }
+    public void DropUp()
+    {
+        _inputController.DropUp();
+    }
 
+    public void OnPauseMenu()
+    {
+        _inputController.PauseMenu();
+    }
+    
     public void NewGame()
     {
         _currentMenu.SetActive(false);
+        _pauseMenuBtn.SetActive(true);
+        _pauseMenuBtn.gameObject.GetComponent<PlayAnimation>().ResetAnimation();
+        
         SetMenu(_inGameUI);
-        _camera.transform.position = new Vector3(_settings.GridSize.x / 2f,
-            _settings.GridSize.y / 2f + _settings.CameraDistance, _settings.GridSize.z / 2f);
-        _camera.transform.rotation = Quaternion.Euler(45, 0, 0);
-
+        
         for (int x = 0; x < _settings.GridSize.x; x++)
         {
             for (int y = 0; y < _settings.GridSize.y; y++)
@@ -63,7 +93,6 @@ public class GameManager : MonoBehaviour
         _settings.ClearTime = _settings.DropTimeMinMax.y;
         SetMenu(_inGameUI);
         _settings.Paused = false;
-        _settings.FreeSpin = false;
         UpdateBoard();
     }
     public void Pause()
@@ -71,10 +100,7 @@ public class GameManager : MonoBehaviour
         SetMenu(_pauseMenu);
         _settings.Paused = true;
     }
-    public void Hints()
-    {
-        _hints.SetActive(!_hints.activeSelf);
-    }
+  
     public void PreviousCanvas()
     {
         if (_menuDepth > 0)
@@ -89,31 +115,28 @@ public class GameManager : MonoBehaviour
     {
         SetMenu(_inGameUI);
         _settings.Paused = false;
-        _settings.FreeSpin = false;
     }
     public void QuitGame()
     {
         Application.Quit();
     }
     public void GoToMainMenu()
-    {
-        ResetCameraProperties();
+    {        
+        _pauseMenuBtn.SetActive(false);
         _basePlate.SetActive(false);
         _godRays.SetActive(false);
         _piecesRoot.SetActive(false);
         SetMenu(_mainMenu);
-        _settings.FreeSpin = true;
         _settings.Paused = true;
     }
     public int GetScore()
     {
         return _score;
     }
-
+    
     private void Awake()
     {
-        _camera = Camera.main;
-        _input = new HandleInput(this, _settings);
+        _inputController = new InputController(this, _settings);
 
         //All instantiation goes here
         _settings.IsCellFilled = new bool[_settings.GridSize.x, _settings.GridSize.y, _settings.GridSize.z];
@@ -124,16 +147,30 @@ public class GameManager : MonoBehaviour
         _settings.SpawnPointer.x = _settings.GridSize.x / 2;
         _settings.SpawnPointer.y = _settings.GridSize.y - 1;
         _settings.SpawnPointer.z = _settings.GridSize.z / 2;
-
-        SetCameraProperties();
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        for (int x = 0; x < _settings.GridSize.x; x++)
+        {
+            for (int y = 0; y < _settings.GridSize.y; y++)
+            {
+                for (int z = 0; z < _settings.GridSize.z; z++)
+                {
+                    Gizmos.DrawWireCube(new Vector3(x,y,z), Vector3.one);
+                }
+            }
+        }
+    }
+
     private void Start()
     {
         //Starts game on pause with the main menu active
         _currentMenu = _mainMenu;
         _menuList.Add(_currentMenu);
         _settings.Paused = true;
-        _settings.FreeSpin = true;
+        _pauseMenuBtn.SetActive(false);
         _score = 0;
         _settings.CurrentDropTime = _settings.DropTimeMinMax.y;
         _settings.DropTimeDefault = _settings.DropTimeMinMax.y;
@@ -144,30 +181,10 @@ public class GameManager : MonoBehaviour
         {
             _settings.ClearingLevels[i] = false;
         }
-
-        //Positions the camera looking down over the game board.
-        _camera.transform.position = Vector3.zero;
-        _camera.transform.rotation = Quaternion.Euler(35, 0, 0);
-
+        
         GenerateTiles();
     }
-    private void SetCameraProperties()
-    {
-        _settings.CameraTarget = new Vector3(_settings.GridSize.x / 2f, _settings.GridSize.y / 2f, _settings.GridSize.z / 2f);
-        _settings.CameraDistanceMinMax.x = _settings.GridSize.y;
-        _settings.CameraDistanceMinMax.y = _settings.GridSize.y * 3;
-        _settings.CameraDistance = _settings.GridSize.y * 1.5f;
-        _settings.CameraAngleXY = 135f;
-        _settings.CameraAngleXZ = 0f;
-        _settings.LastCameraAngleXY = _settings.CameraAngleXY;
-        _settings.LastCameraAngleXZ = _settings.CameraAngleXZ;
-        _settings.LastCameraTarget = _settings.CameraTarget;
-    }
-    private void ResetCameraProperties()
-    {
-        _camera.transform.position = Vector3.zero;
-        _camera.transform.rotation = Quaternion.Euler(35, 0, 0);
-    }
+    
     private void GenerateTiles()
     {
         if (_piecesRoot == null)
@@ -178,13 +195,10 @@ public class GameManager : MonoBehaviour
 
         if (_basePlate == null)
         {
-            _basePlate = Instantiate(_settings.BasePlateSource,
-                new Vector3(
-                    _settings.GridSize.x / 2f - 0.5f, 
-                    -0.8f, 
-                    _settings.GridSize.z / 2f - 0.5f), Quaternion.identity);
-            _basePlate.transform.localScale = new Vector3(_settings.GridSize.x - 0.01f, _basePlate.transform.localScale.y,
-                _settings.GridSize.z - 0.01f);
+            _basePlate = Instantiate(_settings.BasePlateSource, 
+                new Vector3(_settings.GridSize.x / 2f - 0.5f,
+                -0.9f,
+                _settings.GridSize.z / 2f -0.5f), Quaternion.identity);
             _basePlate.SetActive(false);
         }
 
@@ -193,7 +207,7 @@ public class GameManager : MonoBehaviour
             _godRays = Instantiate(_settings.GodRays, new Vector3(
                 _settings.GridSize.x / 2f - 0.5f,
                 0,
-                _settings.GridSize.z / 2f - 0.5f), Quaternion.Euler(25,45,0));
+                _settings.GridSize.z / 2f -2f), Quaternion.Euler(10, 110, 20));
         }
         
         for (int x = 0; x < _settings.GridSize.x; x++)
@@ -217,50 +231,8 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        _input.Update(CheckPosition, HidePiece, DrawPiece);
-
-        //Handles the automatic progression of the game, when not paused or clearing
-        if (!_settings.Paused && !_settings.Clearing)
-        {
-            _settings.DropClock += Time.deltaTime;
-
-            //Drops the block down the vertical axis
-            if (_settings.DropClock > _settings.CurrentDropTime)
-            {
-                _settings.DropClock = 0f;
-                PieceController testPieceController = _settings.CurrentPieceController.Clone();
-                testPieceController.MoveY(-1);
-                if (CheckPosition(testPieceController))
-                {
-                    HidePiece();
-                    _settings.CurrentPieceController.MoveY(-1);
-                    DrawPiece();
-                }
-                else
-                {
-                    PlacePiece();
-                }
-            }
-
-            _settings.DifficultyClock += Time.deltaTime;
-
-            //Speeds up block dropping as the game goes on
-            if (_settings.DifficultyClock > _settings.DifficultyTime)
-            {
-                _settings.DifficultyClock = 0f;
-                if (_settings.DropTimeDefault * 0.95f > _settings.DropTimeMinMax.x)
-                {
-                    _settings.DropTimeDefault *= 0.95f;
-                    _settings.ClearTime = _settings.DropTimeDefault;
-
-                    if (!Input.GetKey(_settings.DropBtn))
-                    {
-                        _settings.CurrentDropTime = _settings.DropTimeDefault;
-                    }
-                }
-            }
-        }
-
+        _inputController.Update();
+        
         //Handles the clearing animation
         if (!_settings.Paused && _settings.Clearing)
         {
@@ -287,26 +259,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(_currentClearEffect.gameObject);
         }
-
-        if (_settings.FreeSpin)
-        {
-            _settings.CameraAngleXZ += 15f * Time.deltaTime;
-            if (_settings.CameraAngleXZ > 360f)
-            {
-                _settings.CameraAngleXZ -= 360f;
-            }
-        }
+        
 
         if (_settings.NeedsUpdate)
         {
             UpdateBoard();
-        }
-
-        if (_settings.LastCameraAngleXY != _settings.CameraAngleXY ||
-            _settings.LastCameraAngleXZ != _settings.CameraAngleXZ ||
-            _settings.LastCameraTarget != _settings.CameraTarget)
-        {
-            PositionCamera();
         }
     }
     private void UpdateBoard()
@@ -328,32 +285,20 @@ public class GameManager : MonoBehaviour
         DrawPiece();
         _settings.NeedsUpdate = false;
     }
-    private void PositionCamera()
-    {
-        _camera.transform.position = new Vector3(
-                -1 * Mathf.Sin(Mathf.Deg2Rad * _settings.CameraAngleXZ) *
-                Mathf.Sqrt(1 - Mathf.Pow(Mathf.Sin(Mathf.Deg2Rad * _settings.CameraAngleXY), 2)),
-                Mathf.Sin(Mathf.Deg2Rad * _settings.CameraAngleXY),
-                -1 * Mathf.Cos(Mathf.Deg2Rad * _settings.CameraAngleXZ) *
-                Mathf.Sqrt(1 - Mathf.Pow(Mathf.Sin(Mathf.Deg2Rad * _settings.CameraAngleXY), 2))) *
-            _settings.CameraDistance + _settings.CameraTarget;
-        _camera.transform.LookAt(_settings.CameraTarget);
-    }
-    private void DrawPiece()
+ 
+    public void DrawPiece()
     {
         var pieces = _settings.CurrentPieceController.GetPieces();
 
         for (var i = 0; i < pieces.Length; i++)
         {
-            var finalX = Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
-            var finalY = Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
-            var finalZ = Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
+            var finalX = Utilities.Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
+            var finalY = Utilities.Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
+            var finalZ = Utilities.Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
             if (_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0 &&
                 _settings.GridSize.z > finalZ && finalZ >= 0)
             {
                 var tile = _settings.TileLiterals[finalX, finalY, finalZ].GetComponent<Block>();
-                var y = Round(pieces[i].GetY());
-
                 var ghostTile = _settings.GhostLiterals[finalX, 0, finalZ].GetComponent<GhostBlock>();
 
                 ghostTile.Renderer.enabled = true;
@@ -366,19 +311,19 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    private void HidePiece()
+    public void HidePiece()
     {
         var pieces = _settings.CurrentPieceController.GetPieces();
         for (var i = 0; i < pieces.Length; i++)
         {
-            var finalX = Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
-            var finalY = Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
-            var finalZ = Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
+            var finalX = Utilities.Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
+            var finalY = Utilities.Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
+            var finalZ = Utilities.Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
             if (_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0 &&
                 _settings.GridSize.z > finalZ && finalZ >= 0)
             {
                 var tile = _settings.TileLiterals[finalX, finalY, finalZ].GetComponent<Block>();
-                var y = Round(pieces[i].GetY());
+                var y = Utilities.Round(pieces[i].GetY());
 
                 var ghostTile = _settings.GhostLiterals[finalX, 0, finalZ].GetComponent<GhostBlock>();
 
@@ -395,41 +340,38 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    private bool CheckPosition(PieceController input)
+    public bool CheckPosition(PieceController input)
     {
-        bool valid = true;
         Piece[] pieces = input.GetPieces();
         for (int i = 0; i < pieces.Length; i++)
         {
-            int finalX = Round(pieces[i].GetX()) + input.GetPositionX();
-            int finalY = Round(pieces[i].GetY()) + input.GetPositionY();
-            int finalZ = Round(pieces[i].GetZ()) + input.GetPositionZ();
+            int finalX = Utilities.Round(pieces[i].GetX()) + input.GetPositionX();
+            int finalY = Utilities.Round(pieces[i].GetY()) + input.GetPositionY();
+            int finalZ = Utilities.Round(pieces[i].GetZ()) + input.GetPositionZ();
             if (!(_settings.GridSize.x > finalX && finalX >= 0 && _settings.GridSize.y > finalY && finalY >= 0 &&
                   _settings.GridSize.z > finalZ && finalZ >= 0))
             {
-                valid = false;
-                return valid;
+                return false;
             }
 
             if (_settings.IsCellFilled[finalX, finalY, finalZ])
             {
-                valid = false;
-                return valid;
+                return false;
             }
         }
 
-        return valid;
+        return true;
     }
-    private void PlacePiece()
+    public void PlacePiece()
     {
         ClearAllGhostLevel();
 
         Piece[] pieces = _settings.CurrentPieceController.GetPieces();
         for (int i = 0; i < pieces.Length; i++)
         {
-            int finalX = Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
-            int finalY = Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
-            int finalZ = Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
+            int finalX = Utilities.Round(pieces[i].GetX()) + _settings.CurrentPieceController.GetPositionX();
+            int finalY = Utilities.Round(pieces[i].GetY()) + _settings.CurrentPieceController.GetPositionY();
+            int finalZ = Utilities.Round(pieces[i].GetZ()) + _settings.CurrentPieceController.GetPositionZ();
             _settings.IsCellFilled[finalX, finalY, finalZ] = true;
 
             if (CheckForClear(finalY))
@@ -438,11 +380,11 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        PieceController testNewPieceController = new PieceController();
-        testNewPieceController.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, _settings.SpawnPointer.z);
-        if (CheckPosition(testNewPieceController))
+        var controller = new PieceController();
+        controller.SetPosition(_settings.SpawnPointer.x, _settings.SpawnPointer.y, _settings.SpawnPointer.z);
+        if (CheckPosition(controller))
         {
-            _settings.CurrentPieceController = testNewPieceController.Clone();
+            _settings.CurrentPieceController = controller.Clone();
             _currentMaterial = _settings.BlockMaterials[Random.Range(0, _settings.BlockMaterials.Count)];
         }
         else
@@ -537,7 +479,6 @@ public class GameManager : MonoBehaviour
     private void EndGame()
     {
         SetMenu(_gameOverMenu);
-        _settings.FreeSpin = true;
         _settings.Paused = true;
     }
     private void SetMenu(GameObject input)
@@ -555,17 +496,5 @@ public class GameManager : MonoBehaviour
             _menuList.RemoveAt(0);
             _menuList.Add(_currentMenu);
         }
-    }
-    private int Round(float input)
-    {
-        float output = input;
-        int outputModifier = 0;
-        output -= (int) input;
-        if (output >= 0.5f)
-        {
-            outputModifier = 1;
-        }
-
-        return (int) input + outputModifier;
     }
 }

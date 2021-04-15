@@ -25,41 +25,19 @@ MonoBehaviour:
   ClearEffectSource: {fileID: 4871921947613616531, guid: 69707d8abdaeb13469ac19a5963b61e4,
     type: 3}
   GodRays: {fileID: 4888258958276318274, guid: 44be15280eadf0045be6ed61cdac1ae5, type: 3}
-  GridSize: {x: 5, y: 8, z: 5}
-  SpawnPointer: {x: 2, y: 7, z: 2}
-  RotationSpeed: 1
-  CameraDistance: 13.199999
-  CameraDistanceMinMax: {x: 8, y: 24}
-  ZoomSpeed: 4
+  GridSize: {x: 5, y: 10, z: 1}
+  SpawnPointer: {x: 2, y: 9, z: 0}
   CurrentDropTime: 1
-  DropTimeDefault: 1
+  DropTimeDefault: 0.95
   DropTimeMinMax: {x: 0.4, y: 1}
   DifficultyTime: 10
-  ClearTime: 1
-  ForwardBtn: 119
-  BackwardBtn: 115
-  LeftBtn: 97
-  RightBtn: 100
-  RotateXZBtn: 49
-  RotateXYBtn: 50
-  RotateYZBtn: 51
+  ClearTime: 0.95
   DropBtn: 32
   PauseBtn: 27
-  RotateCamera: 323
-  DifficultyClock: 9.79487
+  DifficultyClock: 3.591536
   ClearClock: 0
-  DropClock: 0.12144829
-  XZClockwise: 1
-  XYClockwise: 0
-  YZClockwise: 0
-  CameraAngleXY: 138
-  CameraAngleXZ: 13.731449
-  LastCameraAngleXY: 135
-  LastCameraAngleXZ: 0
-  CameraTarget: {x: 2.5, y: 4, z: 2.5}
-  LastCameraTarget: {x: 2.5, y: 4, z: 2.5}
+  DropClock: 0.36886218
   Clearing: 0
-  ClearingLevels: 0000000000000000
-  FreeSpin: 0
+  ClearingLevels: 00000000000000000000
   NeedsUpdate: 0
   Paused: 0
