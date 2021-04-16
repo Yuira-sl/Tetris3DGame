@@ -341,6 +341,8 @@ public class GameManager : MonoBehaviour
     }
     public void PlacePiece()
     {
+        _audioManager.Play(_audioManager.DropDown);
+        
         ClearAllGhostLevel();
 
         Piece[] pieces = _settings.CurrentPieceController.GetPieces();

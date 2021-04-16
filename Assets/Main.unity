@@ -2520,7 +2520,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameOver: {fileID: 8300000, guid: f2d97bf88d12dbb429bad4e8acf6705a, type: 3}
-  _clearLevel: {fileID: 8300000, guid: db624c70dfbf22a45bde616157d6b518, type: 3}
+  _clearLevel: {fileID: 8300000, guid: d4d22d8369df7a6448225a83bb24f8a5, type: 3}
+  _dropDown: {fileID: 8300000, guid: 979fd93eff8cb564fa2329d174ea92dc, type: 3}
 --- !u!82 &1270351258
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2533,7 +2534,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0

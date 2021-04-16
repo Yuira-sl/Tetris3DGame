@@ -6,9 +6,11 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioClip _gameOver;
     [SerializeField] private AudioClip _clearLevel;
-
+    [SerializeField] private AudioClip _dropDown;
     public AudioClip GameOver => _gameOver;
     public AudioClip ClearLevel => _clearLevel;
+    public AudioClip DropDown => _dropDown;
+    
 
     private void Awake()
     {

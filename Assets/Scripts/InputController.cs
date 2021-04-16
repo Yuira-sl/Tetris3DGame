@@ -19,19 +19,28 @@ public class InputController
     {
         if (!_settings.Paused && !_settings.Clearing)
         {
+            // if (Input.GetKeyDown(KeyCode.A))
+            // {
+            //     MoveLeft();
+            // }
+            // if (Input.GetKeyDown(KeyCode.D))
+            // {
+            //     MoveRight();
+            // }
+            
             if (Input.touchCount > 0)
             {
                 var touch = Input.GetTouch(0);
                 if (touch.phase == TouchPhase.Began)
                 {
                     var point = touch.position;
-
+            
                     if (_leftArea.IsTouchIntersectsButtons(point, _manager.DropDownBtn, _manager.RotateBtn,
                         _manager.FlipBtn))
                     {
                         MoveLeft();
                     }
-
+            
                     if (_rightArea.IsTouchIntersectsButtons(point, _manager.DropDownBtn, _manager.RotateBtn,
                         _manager.FlipBtn))
                     {
