@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e60af2f7c0d948fd93b3b4fe9e70e9c, type: 3}
+  m_Name: Block Controller Data
+  m_EditorClassIdentifier: 
+  BlockPool:
+  - {fileID: 8525582442085411830, guid: c29a767c9dacf4a129d25314a10cdb06, type: 3}
+  - {fileID: 2949930128040662437, guid: 7c0443816ecec4fef8fd7ec4e4e59c40, type: 3}
+  - {fileID: 2306214893417191182, guid: 519f81efafd7642c6b329c4ca065047f, type: 3}
+  - {fileID: 4335774460140985599, guid: e60a86e28766642159d0d8eae04b13bf, type: 3}
+  - {fileID: 6605160914004103896, guid: f14529be2919948c48b9c7173d182238, type: 3}
+  - {fileID: 8151968225532460732, guid: 56ceedbebf7f740d087823e8cfb69a84, type: 3}
+  - {fileID: 8789558875228573066, guid: ebe1dd2fb8f1f46ebb1f02e76cf8a08d, type: 3}
+  Materials:
+  - {fileID: 2100000, guid: 1b6d250a9d0f2b94fadcb799d6f4bc1a, type: 2}
+  - {fileID: 2100000, guid: 5dd0bde4d5a1eb6499cf2edd9ed630bd, type: 2}
+  - {fileID: 2100000, guid: 7653d49b66a19ed42a27f4f35944cba8, type: 2}
+  - {fileID: 2100000, guid: 88b244bec98ff634a92e5cb1c43e2460, type: 2}
+  GhostMaterial: {fileID: 2100000, guid: 365ab05aa975fb747bf74bc34f3eb297, type: 2}
+  BlockTurningSpeed: 0.1
+  BlockStartingPosition: {x: 5, y: 20}
+  NextBlockScale: {x: 0.35, y: 0.35, z: 0.35}
