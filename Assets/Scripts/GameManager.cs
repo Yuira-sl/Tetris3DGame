@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -44,14 +45,18 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
-    
-    private void Start()
+
+    private void Awake()
     {
+        Time.timeScale = 1;
         if (_blockController.IsPaused)
         {
             _blockController.IsPaused = false;
         }
-        
+    }
+
+    private void Start()
+    {
         _playerInput = PlayerInput.Instance;
 
         _playerInput.OnSpeedDown += OnSpeedDown;
@@ -121,6 +126,10 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        if (!_blockController.IsPaused)
+        {
+            _blockController.IsPaused = true;
+        }
         //Stop time
         Time.timeScale = 0;
 
@@ -128,8 +137,11 @@ public class GameManager : MonoBehaviour
 
         //Canvas
         GameObject canvasGO = FindObjectOfType<Canvas>().gameObject;
+        
         if (canvasGO != null)
+        {
             Destroy(canvasGO);
+        }
 
         //SceneManager.LoadSceneAsync("Game Over", LoadSceneMode.Additive);
     }
