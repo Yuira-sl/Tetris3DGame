@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,13 +16,42 @@ public class GameManager : MonoBehaviour
 
     public float CurrentPeriod => _currentPeriod;
 
-    private void Awake()
+    public void OpenPauseMenu(GameObject go)
     {
-        Time.timeScale = 1;
+        if (!go.activeSelf)
+        {
+            _blockController.IsPaused = true;
+            go.SetActive(true);
+        }
+        else
+        {
+            _blockController.IsPaused = false;
+            go.SetActive(false);
+        }
+    }
+
+    public void NewGame()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Main");
+    }
+
+    public void ToMainMenu()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Menu");
+    }
+    
+    public void Quit()
+    {
+        Application.Quit();
     }
     
     private void Start()
     {
+        if (_blockController.IsPaused)
+        {
+            _blockController.IsPaused = false;
+        }
+        
         _playerInput = PlayerInput.Instance;
 
         _playerInput.OnSpeedDown += OnSpeedDown;
@@ -104,10 +132,5 @@ public class GameManager : MonoBehaviour
             Destroy(canvasGO);
 
         //SceneManager.LoadSceneAsync("Game Over", LoadSceneMode.Additive);
-    }
-
-    public void ReturnToMenu()
-    {
-        //SceneManager.LoadSceneAsync("Main Menu", LoadSceneMode.Single);
     }
 }

@@ -18,6 +18,7 @@ public class BlockController : MonoBehaviour
     private bool _isRotating;
     private bool _allowRotation = true;
     private bool _hasSpeed;
+    private bool _isPaused;
 
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private BlockControllerData _blockControllerData;
@@ -25,6 +26,12 @@ public class BlockController : MonoBehaviour
     [SerializeField] private NextBlock _nextBlock;
     
     public BlockControllerData BlockControllerData => _blockControllerData;
+
+    public bool IsPaused
+    {
+        get => _isPaused;
+        set => _isPaused = value;
+    }
 
     public event BlockTilesCallback OnBlockSettle;
     public event BlockMovementCallback OnMovement;
@@ -74,7 +81,7 @@ public class BlockController : MonoBehaviour
         _verticalTimer += Time.deltaTime;
 
         //Check for timer value
-        if (!_isRotating && _verticalTimer > _gameManager.CurrentPeriod)
+        if (!_isRotating && _verticalTimer > _gameManager.CurrentPeriod && !_isPaused)
         {
             //Block rotation to avoid bugs
             _allowRotation = false;

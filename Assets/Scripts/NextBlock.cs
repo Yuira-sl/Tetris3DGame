@@ -14,7 +14,11 @@ public class NextBlock : MonoBehaviour
     private void Start()
     {
         _blockContainer = new GameObject();
-        _blockContainer.transform.position = _panel.transform.position;
+        var position = _blockContainer.transform.position;
+        position.x = _panel.transform.position.x;
+        position.y = _panel.transform.position.y;
+        position.z = -15.8f;
+        _blockContainer.transform.position = position;
         _blockContainer.name = "Next Block Container";
         _blockContainer.transform.SetParent(transform);
 

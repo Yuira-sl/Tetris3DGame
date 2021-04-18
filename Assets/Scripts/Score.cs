@@ -87,7 +87,7 @@ public class Score : MonoBehaviour
     //Updates current score and high score text
     private void UpdateScoreText()
     {
-        _currentScoreText.text = _currentScore.ToString("000000");
-        _highScoreText.text = _highScore.ToString("000000");
+        _currentScoreText.text = _currentScore.ToString();
+        _highScoreText.text = _highScore.ToString();
     }
 }
