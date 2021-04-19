@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private PlayerInput _playerInput;
     //Period to trigger block descent
     private float _currentPeriod;
     
@@ -12,9 +10,12 @@ public class GameManager : MonoBehaviour
     private float _normalPeriod;
     private int level = 1;
     
+    [SerializeField] private InputController _inputController;
     [SerializeField] private GameData _gameData;
     [SerializeField] private BlockController _blockController;
 
+    [SerializeField] private GameObject _gameOverUI;
+    
     public float CurrentPeriod => _currentPeriod;
 
     public void OpenPauseMenu(GameObject go)
@@ -36,6 +37,15 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Main");
     }
 
+    public void Resume(GameObject go)
+    {
+        if (go.activeSelf)
+        { 
+            _blockController.IsPaused = false;
+            go.SetActive(false);
+        }
+    }
+    
     public void ToMainMenu()
     {
         UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Menu");
@@ -46,6 +56,11 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    public bool IsPaused()
+    {
+        return _blockController.IsPaused;
+    }
+    
     private void Awake()
     {
         Time.timeScale = 1;
@@ -53,14 +68,17 @@ public class GameManager : MonoBehaviour
         {
             _blockController.IsPaused = false;
         }
+
+        if (_gameOverUI.activeSelf)
+        {
+            _gameOverUI.SetActive(false);
+        }
     }
 
     private void Start()
     {
-        _playerInput = PlayerInput.Instance;
-
-        _playerInput.OnSpeedDown += OnSpeedDown;
-        _playerInput.OnSpeedUp += OnSpeedUp;
+        _inputController.OnSpeedDown += OnSpeedDown;
+        _inputController.OnSpeedUp += OnSpeedUp;
         _blockController.OnBlockSettle += OnBlockSettle;
 
         _normalPeriod = _gameData.StartingPeriod;
@@ -69,8 +87,8 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _playerInput.OnSpeedDown -= OnSpeedDown;
-        _playerInput.OnSpeedUp -= OnSpeedUp;
+        _inputController.OnSpeedDown -= OnSpeedDown;
+        _inputController.OnSpeedUp -= OnSpeedUp;
         _blockController.OnBlockSettle -= OnBlockSettle;
     }
 
@@ -94,7 +112,6 @@ public class GameManager : MonoBehaviour
             gameOver = IsGameOver(position);
             if (gameOver)
             {
-                //OnGameOver.Invoke();
                 GameOver();
                 return;
             }
@@ -133,16 +150,7 @@ public class GameManager : MonoBehaviour
         //Stop time
         Time.timeScale = 0;
 
+        _gameOverUI.SetActive(true);
         //Destroy required objects
-
-        //Canvas
-        GameObject canvasGO = FindObjectOfType<Canvas>().gameObject;
-        
-        if (canvasGO != null)
-        {
-            Destroy(canvasGO);
-        }
-
-        //SceneManager.LoadSceneAsync("Game Over", LoadSceneMode.Additive);
     }
 }

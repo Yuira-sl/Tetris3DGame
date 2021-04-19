@@ -11,7 +11,6 @@ public class BlockController : MonoBehaviour
 {
     private List<BlockTile> _tiles = new List<BlockTile>();
     private GameObject _currentBlock;
-    private PlayerInput _playerInput;
 
     //Timer to trigger block descent
     private float _verticalTimer;
@@ -21,6 +20,7 @@ public class BlockController : MonoBehaviour
     private bool _isPaused;
 
     [SerializeField] private GameManager _gameManager;
+    [SerializeField] private InputController _inputController;
     [SerializeField] private BlockControllerData _blockControllerData;
     [SerializeField] private Board _board;
     [SerializeField] private NextBlock _nextBlock;
@@ -39,8 +39,6 @@ public class BlockController : MonoBehaviour
     
     private void Start()
     {
-        _playerInput = PlayerInput.Instance;
-        
         var prefab = GetRandomBlock();
 
         _currentBlock = Instantiate(prefab, transform.position, Quaternion.identity);
@@ -53,22 +51,22 @@ public class BlockController : MonoBehaviour
 
         OnNewBlock?.Invoke(prefab, Vector2Int.RoundToInt(transform.position));
         
-        _playerInput.OnSpeedDown += OnSpeedDown;
-        _playerInput.OnSwitchDown += OnSwitchDown;
-        _playerInput.OnRotateLeftDown += OnRotateLeftDown;
-        _playerInput.OnRotateRightDown += OnRotateRightDown;
-        _playerInput.OnHorizontalInputDown += OnHorizontalInputDown;
-        _playerInput.OnForcedDropDown += ForcedDropDown;
+        _inputController.OnSpeedDown += OnSpeedDown;
+        _inputController.OnSwitchDown += OnSwitchDown;
+        _inputController.OnRotateLeftDown += OnRotateLeftDown;
+        _inputController.OnRotateRightDown += OnRotateRightDown;
+        _inputController.OnHorizontalInputDown += OnHorizontalInputControllerDown;
+        _inputController.OnForcedDropDown += ForcedDropDown;
     }
 
     private void OnDestroy()
     {
-        _playerInput.OnSpeedDown -= OnSpeedDown;
-        _playerInput.OnSwitchDown -= OnSwitchDown;
-        _playerInput.OnRotateLeftDown -= OnRotateLeftDown;
-        _playerInput.OnRotateRightDown -= OnRotateRightDown;
-        _playerInput.OnHorizontalInputDown -= OnHorizontalInputDown;
-        _playerInput.OnForcedDropDown -= ForcedDropDown;
+        _inputController.OnSpeedDown -= OnSpeedDown;
+        _inputController.OnSwitchDown -= OnSwitchDown;
+        _inputController.OnRotateLeftDown -= OnRotateLeftDown;
+        _inputController.OnRotateRightDown -= OnRotateRightDown;
+        _inputController.OnHorizontalInputDown -= OnHorizontalInputControllerDown;
+        _inputController.OnForcedDropDown -= ForcedDropDown;
     }
 
     private void Update()
@@ -130,7 +128,7 @@ public class BlockController : MonoBehaviour
         return successAll;
     }
 
-    private void OnHorizontalInputDown(int direction)
+    private void OnHorizontalInputControllerDown(int direction)
     {
         if (!_isRotating && CanBlockMove(new Vector2Int(direction, 0)))
         {

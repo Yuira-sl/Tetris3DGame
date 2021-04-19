@@ -5,33 +5,20 @@ using UnityEngine;
 public delegate void HorizontalInputCallback(int direction);
 public delegate void InputCallback();
 
-public class PlayerInput : MonoBehaviour
+public class InputController : MonoBehaviour
 {
-    private readonly Rect _leftArea;
-    private readonly Rect _rightArea;
+    private Rect _leftArea;
+    private Rect _rightArea;
 
-    [SerializeField] private RectTransform _dropDownButton;
-    [SerializeField] private RectTransform _rotateLeftButton;
-    [SerializeField] private RectTransform _rotateRightButton;
-    
-    public static PlayerInput Instance;
-    
+    [SerializeField] private GameManager _manager;
     public event HorizontalInputCallback OnHorizontalInputDown;
     public event InputCallback OnSpeedDown, OnSpeedUp, OnRotateLeftDown, OnRotateRightDown, OnSwitchDown;
     public event Action OnForcedDropDown; 
     
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-
-        DontDestroyOnLoad(this);
+        _leftArea = new Rect(0, Screen.height * 0.2f, Screen.width / 2, Screen.height * 0.8f);
+        _rightArea = new Rect(Screen.width / 2, Screen.height * 0.2f, Screen.width / 2, Screen.height  * 0.8f);
     }
 
     public void RotateLeft()
@@ -87,25 +74,23 @@ public class PlayerInput : MonoBehaviour
             OnSwitchDown?.Invoke();
         }
 #endif
-        
         if (Input.touchCount > 0)
         {
             var touch = Input.GetTouch(0);
             if (touch.phase == TouchPhase.Began)
             {
                 var point = touch.position;
-            
-                if (_leftArea.IsTouchIntersectsButtons(point, _dropDownButton, _rotateLeftButton, _rotateRightButton))
+
+                if (_leftArea.Contains(point))
                 {
                     OnHorizontalInputDown?.Invoke(-1);
                 }
             
-                if (_rightArea.IsTouchIntersectsButtons(point, _dropDownButton, _rotateLeftButton, _rotateRightButton))
+                if (_rightArea.Contains(point))
                 {
                     OnHorizontalInputDown?.Invoke(1);
                 }
             }
         }
     }
-
 }
