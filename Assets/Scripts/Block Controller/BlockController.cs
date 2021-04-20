@@ -274,8 +274,8 @@ public class BlockController : MonoBehaviour
     //Get random block from block pool
     private GameObject GetRandomBlock()
     {
-        int randBlock = Random.Range(0, _blockControllerData.BlockPool.Count - 1);
-        int randMaterial = Random.Range(0, _blockControllerData.Materials.Count - 1);
+        int randBlock = Random.Range(0, _blockControllerData.BlockPool.Count);
+        int randMaterial = Random.Range(0, _blockControllerData.Materials.Count);
         var mat = _blockControllerData.Materials[randMaterial];
         var block = _blockControllerData.BlockPool[randBlock];
         var rends = block.GetComponentsInChildren<Renderer>();
