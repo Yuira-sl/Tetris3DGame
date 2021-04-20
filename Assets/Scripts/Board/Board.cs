@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -88,6 +87,8 @@ public class Board : MonoBehaviour
 
             if (IsRowFull(effectiveRow))
             {
+                AudioManager.Instance.Play(AudioManager.Instance.ClearLevel);
+                // need add music and effect
                 RemoveRowFromMatrix(effectiveRow);
                 RemoveRowFromBoard(effectiveRow);
                 _score.AddRowScore();
@@ -134,12 +135,21 @@ public class Board : MonoBehaviour
     //Remove actual tile game objects from scene
     private void RemoveRowFromBoard(int row)
     {
-        List<Transform> tiles = _blocksContainer.GetComponentsInChildren<Transform>().ToList();
+        var tiles = new List<Transform>();
+        tiles.AddRange(_blocksContainer.GetComponentsInChildren<Transform>());
         //As GetComponentsInChildren looks in the parent as well, ignore first element, which is the container itself
         tiles.RemoveAt(0);
 
         //Get tiles from row to be removed
-        List<Transform> rowTiles = tiles.Where(t => Mathf.RoundToInt(t.position.y) == row).ToList();
+        var rowTiles = new List<Transform>();
+       
+        foreach (var tile in tiles)
+        {
+            if (Mathf.RoundToInt(tile.position.y) == row)
+            {
+                rowTiles.Add(tile);
+            }
+        }
 
         //Destroy all tiles from row
         foreach (var tile in rowTiles)
@@ -148,8 +158,16 @@ public class Board : MonoBehaviour
         }
 
         //Get all tiles from rows bigger than the removed row
-        List<Transform> biggerRowTiles = tiles.Where(t => Mathf.RoundToInt(t.position.y) > row).ToList();
-
+        var biggerRowTiles = new List<Transform>();
+        
+        foreach (var tile in tiles)
+        {
+            if (Mathf.RoundToInt(tile.position.y) > row)
+            {
+                biggerRowTiles.Add(tile);
+            }
+        }
+        
         //Lower a row in each bigger row tile
         foreach (var tile in biggerRowTiles)
         {

@@ -39,56 +39,62 @@ public class InputController : MonoBehaviour
     private void Update()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.A))
+        if (!_manager.IsPaused())
         {
-            OnHorizontalInputDown?.Invoke(-1);
-        }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                OnHorizontalInputDown?.Invoke(-1);
+            }
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            OnHorizontalInputDown?.Invoke(1);
-        }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                OnHorizontalInputDown?.Invoke(1);
+            }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            OnSpeedDown?.Invoke();
-        }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                OnSpeedDown?.Invoke();
+            }
 
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            OnSpeedUp?.Invoke();
-        }
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                OnSpeedUp?.Invoke();
+            }
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            OnRotateLeftDown?.Invoke();
-        }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                OnRotateLeftDown?.Invoke();
+            }
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            OnRotateRightDown?.Invoke();
-        }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                OnRotateRightDown?.Invoke();
+            }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            OnSwitchDown?.Invoke();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                OnSwitchDown?.Invoke();
+            }
         }
 #endif
-        if (Input.touchCount > 0)
+        if (!_manager.IsPaused())
         {
-            var touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
+            if (Input.touchCount > 0)
             {
-                var point = touch.position;
+                var touch = Input.GetTouch(0);
+                if (touch.phase == TouchPhase.Began)
+                {
+                    var point = touch.position;
 
-                if (_leftArea.Contains(point))
-                {
-                    OnHorizontalInputDown?.Invoke(-1);
-                }
-            
-                if (_rightArea.Contains(point))
-                {
-                    OnHorizontalInputDown?.Invoke(1);
+                    if (_leftArea.Contains(point))
+                    {
+                        OnHorizontalInputDown?.Invoke(-1);
+                    }
+
+                    if (_rightArea.Contains(point))
+                    {
+                        OnHorizontalInputDown?.Invoke(1);
+                    }
                 }
             }
         }

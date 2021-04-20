@@ -4025,6 +4025,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8382033007365353672, guid: 2d68a0c3a6bff4ee7a12dbc7d21be2f2,
         type: 3}
+      propertyPath: _manager
+      value: 
+      objectReference: {fileID: 38980609}
+    - target: {fileID: 8382033007365353672, guid: 2d68a0c3a6bff4ee7a12dbc7d21be2f2,
+        type: 3}
       propertyPath: _dropDownButton
       value: 
       objectReference: {fileID: 0}

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager Instance;
+    
     private AudioSource _audio;
 
     [SerializeField] private AudioClip _gameOver;
@@ -14,6 +16,11 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        
         _audio = GetComponent<AudioSource>();
     }
 
