@@ -40,8 +40,21 @@ public class BlockController : MonoBehaviour
     private void Start()
     {
         var prefab = GetRandomBlock();
+        var randTile = GetRandomTile();
 
         _currentBlock = Instantiate(prefab, transform.position, Quaternion.identity);
+
+        var tiles = new List<Transform>();
+        tiles.AddRange(_currentBlock.GetComponentsInChildren<Transform>());
+        tiles.RemoveAt(0);
+        
+        foreach (var tile in tiles)
+        { 
+            var go = Instantiate(randTile, tile, true);
+            go.transform.localPosition = Vector3.zero;
+        }
+        tiles.Clear();
+        
         _currentBlock.transform.SetParent(transform);
 
         var blockTiles = _currentBlock.GetComponentsInChildren<BlockTile>();
@@ -49,7 +62,7 @@ public class BlockController : MonoBehaviour
 
         transform.position = _blockControllerData.BlockStartingPosition;
 
-        OnNewBlock?.Invoke(prefab, Vector2Int.RoundToInt(transform.position));
+        OnNewBlock?.Invoke(_currentBlock, Vector2Int.RoundToInt(transform.position));
         
         _inputController.OnSpeedDown += OnSpeedDown;
         _inputController.OnSwitchDown += OnSwitchDown;
@@ -58,7 +71,7 @@ public class BlockController : MonoBehaviour
         _inputController.OnHorizontalInputDown += OnHorizontalInputControllerDown;
         _inputController.OnForcedDropDown += ForcedDropDown;
     }
-
+    
     private void OnDestroy()
     {
         _inputController.OnSpeedDown -= OnSpeedDown;
@@ -274,18 +287,18 @@ public class BlockController : MonoBehaviour
     //Get random block from block pool
     private GameObject GetRandomBlock()
     {
-        int randBlock = Random.Range(0, _blockControllerData.BlockPool.Count);
-        int randMaterial = Random.Range(0, _blockControllerData.Materials.Count);
-        var mat = _blockControllerData.Materials[randMaterial];
-        var block = _blockControllerData.BlockPool[randBlock];
-        var rends = block.GetComponentsInChildren<Renderer>();
-        foreach (var rend in rends)
-        {
-            rend.material = mat;
-        }
+        int randBlock = Random.Range(0, _blockControllerData.BlockTypePool.Count);
+        var block = _blockControllerData.BlockTypePool[randBlock];
         return block;
     }
-
+    
+    private GameObject GetRandomTile()
+    {
+        int randTile = Random.Range(0, _blockControllerData.TilePool.Count);
+        var tile = _blockControllerData.TilePool[randTile];
+        return tile;
+    }
+    
     //Get next block and place it into current block
     private void GetNextBlock()
     {

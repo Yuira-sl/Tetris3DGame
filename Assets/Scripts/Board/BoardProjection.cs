@@ -28,10 +28,12 @@ public class BoardProjection : MonoBehaviour
             Destroy(_projectionBlock);
         }
 
+        var container = block;
+        
         //Create projection based on new block
-        _projectionBlock = Instantiate(block, Vector3.zero, Quaternion.identity);
+        _projectionBlock = Instantiate(container, Vector3.zero, Quaternion.identity);
         _projectionBlock.name = "Projection";
-
+        
         //Call first movement update
         OnMovement(_board.BlockController.gameObject);
 

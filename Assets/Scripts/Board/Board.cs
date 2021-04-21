@@ -157,8 +157,9 @@ public class Board : MonoBehaviour
             foreach (var tile in tilesForEffect)
             {
                 //temp effect
-                var col = tile.gameObject.GetComponent<Renderer>().material.color;
-                tile.gameObject.GetComponent<Renderer>().material.color 
+                // TODO: Need to rework
+                var col = tile.gameObject.GetComponentInChildren<Renderer>().material.color;
+                tile.gameObject.GetComponentInChildren<Renderer>().material.color 
                     = Color.Lerp(col, Color.black, elapsedTime / _boardData.RowCleanEffectTime);
             }
             yield return null;

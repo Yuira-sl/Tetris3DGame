@@ -6,10 +6,10 @@ public class NextBlock : MonoBehaviour
     [SerializeField] private BlockControllerData _blockControllerData;
     [SerializeField] private GameObject _panel;
 
-    private GameObject block;
+    private GameObject _block;
     private GameObject _blockContainer;
 
-    public GameObject Block => block;
+    public GameObject Block => _block;
     
     private void Start()
     {
@@ -27,7 +27,7 @@ public class NextBlock : MonoBehaviour
 
     public void SwitchBlock(GameObject go)
     {
-        block = go;
+        _block = go;
 
         //Reset position and rotation
         go.transform.position = Vector3.zero;
@@ -35,39 +35,55 @@ public class NextBlock : MonoBehaviour
 
         go.transform.SetParent(_blockContainer.transform);
         //Center object pivot in panel
-        block.transform.localPosition = Vector3.zero;
+        _block.transform.localPosition = Vector3.zero;
 
         //Lowering block scale to fit panel
         //Scale is proportional to a constant, and also to the screen aspect ratio
         Vector3 newScale = _blockControllerData.NextBlockScale * (Mathf.Sqrt(Camera.main.aspect));
-        block.transform.localScale = newScale;
+        _block.transform.localScale = newScale;
 
         //Ajust container according to block center, accounting for the scale change
-        var offset = FindBlockCenter(block);
+        var offset = FindBlockCenter(_block);
         if (offset != null)
         {
-            block.transform.localPosition -= new Vector3(offset.Value.x * newScale.x, offset.Value.y * newScale.y);
+            _block.transform.localPosition -= new Vector3(offset.Value.x * newScale.x, offset.Value.y * newScale.y);
         }
     }
 
     //Generates a new block drafted from the block pool
     public void GenerateNewBlock()
     {
-        block = Instantiate(GetRandomBlock(), Vector3.zero, Quaternion.identity);
-        block.transform.SetParent(_blockContainer.transform);
+        var prefab = GetRandomBlock();
+        var randTile = GetRandomTile();
+
+        _block = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        
+        var tiles = new List<Transform>();
+        tiles.AddRange(_block.GetComponentsInChildren<Transform>());
+        tiles.RemoveAt(0);
+        
+        foreach (var tile in tiles)
+        { 
+            var go = Instantiate(randTile, tile, true);
+            go.transform.localPosition = Vector3.zero;
+        }
+        tiles.Clear();
+        
+        
+        _block.transform.SetParent(_blockContainer.transform);
         //Center object pivot in panel
-        block.transform.localPosition = Vector3.zero;
+        _block.transform.localPosition = Vector3.zero;
 
         //Lowering block scale to fit panel
         //Scale is proportional to a constant, and also to the screen aspect ratio
         Vector3 newScale = _blockControllerData.NextBlockScale * (Mathf.Sqrt(Camera.main.aspect));
-        block.transform.localScale = newScale;
+        _block.transform.localScale = newScale;
 
         //Ajust container according to block center, accounting for the scale change
-        var offset = FindBlockCenter(block);
+        var offset = FindBlockCenter(_block);
         if (offset != null)
         {
-            block.transform.localPosition -= new Vector3(offset.Value.x * newScale.x, offset.Value.y * newScale.y);
+            _block.transform.localPosition -= new Vector3(offset.Value.x * newScale.x, offset.Value.y * newScale.y);
         }
     }
 
@@ -75,7 +91,7 @@ public class NextBlock : MonoBehaviour
     public List<Vector2Int> GetPossibleNextBlockCoordinates(Vector2Int currentPosition)
     {
         var tiles = new List<BlockTile>();
-        tiles.AddRange(block.GetComponentsInChildren<BlockTile>());
+        tiles.AddRange(_block.GetComponentsInChildren<BlockTile>());
 
         List<Vector2Int> positions = new List<Vector2Int>();
 
@@ -96,18 +112,18 @@ public class NextBlock : MonoBehaviour
     //Get random block from block pool
     private GameObject GetRandomBlock()
     {
-        int randBlock = Random.Range(0, _blockControllerData.BlockPool.Count);
-        int randMaterial = Random.Range(0, _blockControllerData.Materials.Count);
-        var mat = _blockControllerData.Materials[randMaterial];
-        var block = _blockControllerData.BlockPool[randBlock];
-        var rends = block.GetComponentsInChildren<Renderer>();
-        foreach (var rend in rends)
-        {
-            rend.material = mat;
-        }
+        int randBlock = Random.Range(0, _blockControllerData.BlockTypePool.Count);
+        var block = _blockControllerData.BlockTypePool[randBlock];
         return block;
     }
 
+    private GameObject GetRandomTile()
+    {
+        int randTile = Random.Range(0, _blockControllerData.TilePool.Count);
+        var tile = _blockControllerData.TilePool[randTile];
+        return tile;
+    }
+    
     //Finds block true center to help piece exhibition
     private Vector2? FindBlockCenter(GameObject block)
     {
