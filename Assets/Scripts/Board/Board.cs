@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -11,7 +12,6 @@ public class Board : MonoBehaviour
     [SerializeField] private BoardData _boardData;
 
     public BlockController BlockController => _blockController;
-    public BoardData BoardData => _boardData;
     public GameObject BlocksContainer => _blocksContainer;
 
     private void Awake()
@@ -88,15 +88,16 @@ public class Board : MonoBehaviour
             if (IsRowFull(effectiveRow))
             {
                 AudioManager.Instance.Play(AudioManager.Instance.ClearLevel);
-                // need add music and effect
-                RemoveRowFromMatrix(effectiveRow);
-                RemoveRowFromBoard(effectiveRow);
+
+                StartCoroutine(ProcessToRemove(row));
+                StartCoroutine(RemoveRowFromBoard(effectiveRow));
+                
                 _score.AddRowScore();
                 clearedRows++;
             }
         }
     }
-
+    
     //Returns true if row is full
     private bool IsRowFull(int row)
     {
@@ -113,6 +114,38 @@ public class Board : MonoBehaviour
         return successAll;
     }
 
+    private IEnumerator ProcessToRemove(int row)
+    {
+        var tiles = new List<Transform>();
+        tiles.AddRange(_blocksContainer.GetComponentsInChildren<Transform>());
+        //As GetComponentsInChildren looks in the parent as well, ignore first element, which is the container itself
+        tiles.RemoveAt(0);
+        
+        var tilesForEffect = new List<Transform>();
+
+        foreach (var tile in tiles)
+        {
+            if (Mathf.RoundToInt(tile.position.y) == row)
+            {
+                tilesForEffect.Add(tile);
+            }
+        }
+        
+        var elapsedTime = 0.0f;
+        
+        while (elapsedTime < _boardData.RowCleanEffectTime) 
+        {
+            elapsedTime += Time.deltaTime;
+            
+            foreach (var tile in tilesForEffect)
+            {
+                var col = tile.gameObject.GetComponent<Renderer>().material.color;
+                tile.gameObject.GetComponent<Renderer>().material.color 
+                    = Color.Lerp(col, Color.red, elapsedTime / _boardData.RowCleanEffectTime);
+            }
+            yield return null;
+        }
+    }
     //Removes row from board matrix
     private void RemoveRowFromMatrix(int row)
     {
@@ -133,16 +166,20 @@ public class Board : MonoBehaviour
     }
 
     //Remove actual tile game objects from scene
-    private void RemoveRowFromBoard(int row)
+    private IEnumerator RemoveRowFromBoard(int row)
     {
+        RemoveRowFromMatrix(row);
+
+        yield return new WaitForSeconds(_boardData.RowCleanEffectTime);
+        
         var tiles = new List<Transform>();
         tiles.AddRange(_blocksContainer.GetComponentsInChildren<Transform>());
         //As GetComponentsInChildren looks in the parent as well, ignore first element, which is the container itself
         tiles.RemoveAt(0);
-
+        
         //Get tiles from row to be removed
         var rowTiles = new List<Transform>();
-       
+
         foreach (var tile in tiles)
         {
             if (Mathf.RoundToInt(tile.position.y) == row)
@@ -150,13 +187,13 @@ public class Board : MonoBehaviour
                 rowTiles.Add(tile);
             }
         }
-
+        
         //Destroy all tiles from row
         foreach (var tile in rowTiles)
         {
             Destroy(tile.gameObject);
         }
-
+            
         //Get all tiles from rows bigger than the removed row
         var biggerRowTiles = new List<Transform>();
         
@@ -173,6 +210,5 @@ public class Board : MonoBehaviour
         {
             tile.position += Vector3.down;
         }
-
     }
 }
