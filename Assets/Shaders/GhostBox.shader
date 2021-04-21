@@ -28,7 +28,6 @@
 		#pragma vertex vert
 		#pragma fragment frag
 
-		#define UNITY_PASS_FORWARDBASE
         #pragma multi_compile_fwdbase
 
 		float4 _MainColor;
