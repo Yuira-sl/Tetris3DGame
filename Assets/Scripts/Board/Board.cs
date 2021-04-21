@@ -6,6 +6,9 @@ public class Board : MonoBehaviour
 {
     private GameObject _blocksContainer;
     private int[,] _boardMatrix;
+
+    private ParticleSystem _currentEffect;
+    private bool _isEffectInited;
     
     [SerializeField] private BlockController _blockController;
     [SerializeField] private Score _score;
@@ -27,6 +30,20 @@ public class Board : MonoBehaviour
         _blocksContainer = new GameObject();
         _blocksContainer.name = "Settled Blocks Container";
         _blocksContainer.transform.SetParent(transform);
+    }
+
+    //for temp effect
+    private void Update()
+    {
+        if (_isEffectInited)
+        {
+            if (!_currentEffect.isPlaying)
+            {
+                Destroy(_currentEffect.gameObject);
+                _isEffectInited = false;
+                _currentEffect = null;
+            }
+        }
     }
 
     private void OnDestroy()
@@ -139,9 +156,10 @@ public class Board : MonoBehaviour
             
             foreach (var tile in tilesForEffect)
             {
+                //temp effect
                 var col = tile.gameObject.GetComponent<Renderer>().material.color;
                 tile.gameObject.GetComponent<Renderer>().material.color 
-                    = Color.Lerp(col, Color.red, elapsedTime / _boardData.RowCleanEffectTime);
+                    = Color.Lerp(col, Color.black, elapsedTime / _boardData.RowCleanEffectTime);
             }
             yield return null;
         }
@@ -186,6 +204,14 @@ public class Board : MonoBehaviour
             {
                 rowTiles.Add(tile);
             }
+        }
+        
+        // temp effect
+        // TODO: исправить багу если успел закрыть новый слой, когда текущий эффект не закончился. новый не инитися понятно почему 
+        if (_currentEffect == null)
+        {
+            _currentEffect = Instantiate(_boardData.TempCleaningEffect, new Vector3(4, row, 0), Quaternion.identity);
+            _isEffectInited = true;
         }
         
         //Destroy all tiles from row

@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Board Data
   m_EditorClassIdentifier: 
   BoardSize: {x: 10, y: 22}
-  ProjectionAlpha: 0.3
+  RowCleanEffectTime: 0.3
+  TempCleaningEffect: {fileID: 4871921947613616531, guid: 69707d8abdaeb13469ac19a5963b61e4,
+    type: 3}
