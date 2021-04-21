@@ -58,17 +58,14 @@ public class NextBlock : MonoBehaviour
 
         _block = Instantiate(prefab, Vector3.zero, Quaternion.identity);
         
-        var tiles = new List<Transform>();
-        tiles.AddRange(_block.GetComponentsInChildren<Transform>());
-        tiles.RemoveAt(0);
+        var positions = _block.GetComponent<TileContainer>().Positions;
         
-        foreach (var tile in tiles)
+        foreach (var position in positions)
         { 
-            var go = Instantiate(randTile, tile, true);
-            go.transform.localPosition = Vector3.zero;
+            var go = Instantiate(randTile, _block.transform, true);
+            go.AddComponent<BlockTile>();
+            go.transform.localPosition = position;
         }
-        tiles.Clear();
-        
         
         _block.transform.SetParent(_blockContainer.transform);
         //Center object pivot in panel

@@ -44,16 +44,14 @@ public class BlockController : MonoBehaviour
 
         _currentBlock = Instantiate(prefab, transform.position, Quaternion.identity);
 
-        var tiles = new List<Transform>();
-        tiles.AddRange(_currentBlock.GetComponentsInChildren<Transform>());
-        tiles.RemoveAt(0);
+        var positions = _currentBlock.GetComponent<TileContainer>().Positions;
         
-        foreach (var tile in tiles)
+        foreach (var position in positions)
         { 
-            var go = Instantiate(randTile, tile, true);
-            go.transform.localPosition = Vector3.zero;
+            var go = Instantiate(randTile, _currentBlock.transform, true);
+            go.AddComponent<BlockTile>();
+            go.transform.localPosition = position;
         }
-        tiles.Clear();
         
         _currentBlock.transform.SetParent(transform);
 
