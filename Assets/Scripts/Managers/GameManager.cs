@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     public void NewGame()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Main");
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Game");
     }
 
     public void Resume(GameObject go)
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
     
     public void ToMainMenu()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Menu");
+        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenu");
     }
     
     public void Quit()
@@ -76,9 +76,10 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start()
-    {
+    { 
         _inputController.OnSpeedDown += OnSpeedDown;
         _inputController.OnSpeedUp += OnSpeedUp;
+        
         _blockController.OnBlockSettle += OnBlockSettle;
 
         _normalPeriod = _gameData.StartingPeriod;
@@ -89,6 +90,7 @@ public class GameManager : MonoBehaviour
     {
         _inputController.OnSpeedDown -= OnSpeedDown;
         _inputController.OnSpeedUp -= OnSpeedUp;
+     
         _blockController.OnBlockSettle -= OnBlockSettle;
     }
 

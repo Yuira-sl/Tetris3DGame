@@ -111,7 +111,7 @@ Shader "Skybox/Cubemap Extended"
 			{
 				return DecodeHDR(Data, _Tex_HDR);
 			}
-						
+			
 			v2f vert ( appdata v )
 			{
 				v2f o;
@@ -169,7 +169,7 @@ Shader "Skybox/Cubemap Extended"
 					float3 WorldPosition = i.worldPos;
 				#endif
 				float3 vertexToFrag774 = i.ase_texcoord1.xyz;
-		
+				
 				half4 Data1189 = texCUBE( _Tex, vertexToFrag774 );
 				half3 localDecodeHDR1189 = DecodeHDR1189( Data1189 );
 				half4 CUBEMAP222 = ( float4( localDecodeHDR1189 , 0.0 ) * unity_ColorSpaceDouble * _TintColor * _Exposure );
@@ -190,6 +190,5 @@ Shader "Skybox/Cubemap Extended"
 			ENDCG
 		}
 	}
-	CustomEditor "SkyboxExtendedShaderGUI"
 	Fallback "Skybox/Cubemap"
 }

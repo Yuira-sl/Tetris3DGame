@@ -15,4 +15,4 @@ MonoBehaviour:
   GameOverLimitRow: 20
   StartingPeriod: 1
   DecrementPerLevel: 0.2
-  SpeedPeriod: 0.05
+  SpeedPeriod: 0.02

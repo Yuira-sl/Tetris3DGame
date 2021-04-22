@@ -63,6 +63,7 @@ public class BlockController : MonoBehaviour
         OnNewBlock?.Invoke(_currentBlock, Vector2Int.RoundToInt(transform.position));
         
         _inputController.OnSpeedDown += OnSpeedDown;
+        
         _inputController.OnSwitchDown += OnSwitchDown;
         _inputController.OnRotateLeftDown += OnRotateLeftDown;
         _inputController.OnRotateRightDown += OnRotateRightDown;
@@ -72,7 +73,8 @@ public class BlockController : MonoBehaviour
     
     private void OnDestroy()
     {
-        _inputController.OnSpeedDown -= OnSpeedDown;
+         _inputController.OnSpeedDown -= OnSpeedDown;
+   
         _inputController.OnSwitchDown -= OnSwitchDown;
         _inputController.OnRotateLeftDown -= OnRotateLeftDown;
         _inputController.OnRotateRightDown -= OnRotateRightDown;
@@ -270,7 +272,7 @@ public class BlockController : MonoBehaviour
     {
         _hasSpeed = true;
     }
-
+    
     //Triggers OnMovement event from behaviour classes
     public void TriggerOnMovement()
     {

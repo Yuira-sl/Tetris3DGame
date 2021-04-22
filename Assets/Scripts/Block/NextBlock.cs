@@ -4,7 +4,7 @@ using UnityEngine;
 public class NextBlock : MonoBehaviour
 {
     [SerializeField] private BlockControllerData _blockControllerData;
-    [SerializeField] private GameObject _panel;
+    [SerializeField] private Vector3 _position = new Vector3(6.7f, 12.15f, -13.8f);
 
     private GameObject _block;
     private GameObject _blockContainer;
@@ -14,14 +14,11 @@ public class NextBlock : MonoBehaviour
     private void Start()
     {
         _blockContainer = new GameObject();
-        var position = _blockContainer.transform.position;
-        position.x = _panel.transform.position.x;
-        position.y = _panel.transform.position.y;
-        position.z = -15.8f;
-        _blockContainer.transform.position = position;
+        
         _blockContainer.name = "Next Block Container";
         _blockContainer.transform.SetParent(transform);
-
+        
+        _blockContainer.transform.localPosition = _position;
         GenerateNewBlock();
     }
 

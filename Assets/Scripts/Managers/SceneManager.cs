@@ -7,7 +7,6 @@ public class SceneManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(name);
     }
     
-    
     public void Quit()
     {
         Application.Quit();

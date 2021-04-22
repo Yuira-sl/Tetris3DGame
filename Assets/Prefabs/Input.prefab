@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8382033007365353672}
   m_Layer: 0
   m_Name: Input
-  m_TagString: Untagged
+  m_TagString: Input
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,3 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec0bedbb1f11f4eca96dd2fb2e9cdc05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _manager: {fileID: 0}
+  _swipeThreshold: 20
