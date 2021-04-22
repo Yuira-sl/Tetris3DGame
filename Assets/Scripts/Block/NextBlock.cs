@@ -52,7 +52,10 @@ public class NextBlock : MonoBehaviour
     {
         var prefab = GetRandomBlock();
         var randTile = GetRandomTile();
-
+        
+        var rend = randTile.GetComponent<Renderer>();
+        rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        
         _block = Instantiate(prefab, Vector3.zero, Quaternion.identity);
         
         var positions = _block.GetComponent<TileContainer>().Positions;
