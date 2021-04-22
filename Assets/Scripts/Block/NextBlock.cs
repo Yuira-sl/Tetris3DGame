@@ -53,9 +53,6 @@ public class NextBlock : MonoBehaviour
         var prefab = GetRandomBlock();
         var randTile = GetRandomTile();
         
-        var rend = randTile.GetComponent<Renderer>();
-        rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        
         _block = Instantiate(prefab, Vector3.zero, Quaternion.identity);
         
         var positions = _block.GetComponent<TileContainer>().Positions;
@@ -65,6 +62,9 @@ public class NextBlock : MonoBehaviour
             var go = Instantiate(randTile, _block.transform, true);
             go.AddComponent<BlockTile>();
             go.transform.localPosition = position;
+            
+            var rend = go.GetComponent<Renderer>();
+            rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
         
         _block.transform.SetParent(_blockContainer.transform);
