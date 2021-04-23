@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,46 +6,34 @@ public delegate void LevelCallback();
 
 public class LevelController: MonoBehaviour
 {
-    private ScoreManager _scoreManager;
-    private LevelScores _levelScores;
-    private List<int> _scores = new List<int>();
-    private int _currentScoreLevel;
+    private int _currentScoreToAchieveLevel;
     private int _level = 1;
-    
+
+    [SerializeField] private ScoreData _scoreData;
     [SerializeField] private Text _currentLevel;
 
     public event LevelCallback OnLevelUp;
-
-    private void Awake()
-    {
-        _scoreManager = GetComponent<ScoreManager>();
-    }
 
     private void Start()
     {
         _level = 1;
         _currentLevel.text = _level.ToString();
-        
-        var values = (int[]) Enum.GetValues(typeof(LevelScores));
-        for (int i = 0; i < values.Length; i++)
-        {
-            _scores.Add(values[i]);
-        }
-        _currentScoreLevel = _scores[0];
+        _currentScoreToAchieveLevel = _scoreData.TargetScores[0];
+        GameManager.Instance.BlockController.OnBlockSettle += OnBlockSettle;
     }
-
-    private void Update()
+    
+    private void OnBlockSettle(List<Vector2Int> positions, bool speed)
     {
-        // TODO: Need to fix
-        if (_currentScoreLevel <= _scores[_scores.Count - 1])
+        // TODO: Need to fix balance
+        if (_currentScoreToAchieveLevel <= _scoreData.TargetScores[_scoreData.TargetScores.Count - 1])
         {
-            var index = _scores.IndexOf(_currentScoreLevel);
-            if (CurrentScore() >= _currentScoreLevel)
+            var index = _scoreData.TargetScores.IndexOf(_currentScoreToAchieveLevel);
+            if (CurrentScore() >= _currentScoreToAchieveLevel)
             {
                 var i = index + 1;
-                if (i <= _scores.Count - 1)
+                if (i <= _scoreData.TargetScores.Count - 1)
                 {
-                    _currentScoreLevel = _scores[i];
+                    _currentScoreToAchieveLevel = _scoreData.TargetScores[i];
                     _level++;
                     OnLevelUp?.Invoke();
                     _currentLevel.text = _level.ToString();
@@ -54,9 +41,14 @@ public class LevelController: MonoBehaviour
             }
         }
     }
-    
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.BlockController.OnBlockSettle -= OnBlockSettle;
+    }
+
     private int CurrentScore()
     {
-        return _scoreManager.GetCurrentScore();
+        return ScoreManager.Instance.GetCurrentScore();
     }
 }

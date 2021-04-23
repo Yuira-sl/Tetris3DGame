@@ -11,7 +11,6 @@ public class Board : MonoBehaviour
     private bool _isEffectInited;
     
     [SerializeField] private BlockController _blockController;
-    [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private BoardData _boardData;
 
     public BlockController BlockController => _blockController;
@@ -70,7 +69,6 @@ public class Board : MonoBehaviour
         }
 
         CheckForClearedRows(possibleRows);
-
     }
 
     //Checks if coordinate has a tile in board matrix
@@ -109,7 +107,7 @@ public class Board : MonoBehaviour
                 StartCoroutine(ProcessToRemove(row));
                 StartCoroutine(RemoveRowFromBoard(effectiveRow));
                 
-                _scoreManager.AddRowScore();
+                ScoreManager.Instance.AddRowScore();
                 clearedRows++;
             }
         }

@@ -3,12 +3,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private ScoreManager _scoreManager;
-    //Period to trigger block descent
-    private float _currentPeriod;
+    public static GameManager Instance;
     
-    //Period when not in speed mode
-    private float _normalPeriod;
+    private float _currentBlockSpeed;
+    private float _defaultBlockSpeed;
     private int _level = 1;
     
     [SerializeField] private GameData _gameData;
@@ -16,8 +14,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private BlockController _blockController;
     [SerializeField] private LevelController _levelController;
     [SerializeField] private GameObject _gameOverUI;
-
-    public float CurrentPeriod => _currentPeriod;
+    [SerializeField] private bool _isNeedToCheck;
+    public float CurrentBlockSpeed => _currentBlockSpeed;
+    public InputController InputController => _inputController;
+    public BlockController BlockController => _blockController;
+    public LevelController LevelController => _levelController;
 
     public void OpenPauseMenu(GameObject go)
     {
@@ -32,12 +33,7 @@ public class GameManager : MonoBehaviour
             go.SetActive(false);
         }
     }
-
-    public void NewGame()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Game");
-    }
-
+    
     public void Resume(GameObject go)
     {
         if (go.activeSelf)
@@ -47,9 +43,9 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    public void ToMainMenu()
+    public void LoadScene(Object scene)
     {
-        UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MainMenu");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene.name);
     }
     
     public void Quit()
@@ -66,17 +62,31 @@ public class GameManager : MonoBehaviour
     {
         return _level;
     }
+
+    public float GetPeriod()
+    {
+        return _currentBlockSpeed;
+    }
     
     private void Awake()
     {
-        _scoreManager = GetComponent<ScoreManager>();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        
+        if (!_isNeedToCheck)
+        {
+            return;
+        }
         
         Time.timeScale = 1;
+
         if (_blockController.IsPaused)
         {
             _blockController.IsPaused = false;
         }
-
+        
         if (_gameOverUI.activeSelf)
         {
             _gameOverUI.SetActive(false);
@@ -84,18 +94,26 @@ public class GameManager : MonoBehaviour
     }
 
     private void Start()
-    { 
+    {
+        if (!_isNeedToCheck)
+        {
+            return;
+        }
         _inputController.OnSpeedDown += OnSpeedDown;
         _inputController.OnSpeedUp += OnSpeedUp;
         _levelController.OnLevelUp += OnLevelUp;
         _blockController.OnBlockSettle += OnBlockSettle;
 
-        _normalPeriod = _gameData.StartingPeriod;
-        _currentPeriod = _normalPeriod;
+        _defaultBlockSpeed = _gameData.StartingPeriod;
+        _currentBlockSpeed = _defaultBlockSpeed;
     }
 
     private void OnDestroy()
     {
+        if (!_isNeedToCheck)
+        {
+            return;
+        }
         _inputController.OnSpeedDown -= OnSpeedDown;
         _inputController.OnSpeedUp -= OnSpeedUp;
         _levelController.OnLevelUp -= OnLevelUp;
@@ -105,20 +123,20 @@ public class GameManager : MonoBehaviour
     private void OnLevelUp()
     {
         _level++;
-        _normalPeriod -= _gameData.DecrementPerLevel;
-        _currentPeriod = _normalPeriod;
+        _defaultBlockSpeed -= _gameData.DecrementPerLevel;
+        _currentBlockSpeed = _defaultBlockSpeed;
     }
     
     //Shrink the current period
     private void OnSpeedDown()
     {
-        _currentPeriod = _gameData.SpeedPeriod;
+        _currentBlockSpeed = _gameData.SpeedPeriod;
     }
 
     //Return to normal period
     private void OnSpeedUp()
     {
-        _currentPeriod = _normalPeriod;
+        _currentBlockSpeed = _defaultBlockSpeed;
     }
 
     private void OnBlockSettle(List<Vector2Int> positions, bool speed)

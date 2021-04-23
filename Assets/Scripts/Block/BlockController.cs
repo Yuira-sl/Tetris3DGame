@@ -19,7 +19,6 @@ public class BlockController : MonoBehaviour
     private bool _hasSpeed;
     private bool _isPaused;
 
-    [SerializeField] private GameManager _gameManager;
     [SerializeField] private InputController _inputController;
     [SerializeField] private BlockControllerData _blockControllerData;
     [SerializeField] private Board _board;
@@ -92,7 +91,7 @@ public class BlockController : MonoBehaviour
         _verticalTimer += Time.deltaTime;
 
         //Check for timer value
-        if (!_isRotating && _verticalTimer > _gameManager.CurrentPeriod && !_isPaused)
+        if (!_isRotating && _verticalTimer > GameManager.Instance.CurrentBlockSpeed && !_isPaused)
         {
             //Block rotation to avoid bugs
             _allowRotation = false;
@@ -164,7 +163,7 @@ public class BlockController : MonoBehaviour
     private void CheckAndStartRotation(int direction)
     {
         //Check if rotation time is bigger than remaining time to go down. If it is, don't rotate
-        float remainingTime = _gameManager.CurrentPeriod - _verticalTimer;
+        float remainingTime = GameManager.Instance.CurrentBlockSpeed - _verticalTimer;
         float rotationTime = (1f / _blockControllerData.BlockTurningSpeed) * Time.fixedDeltaTime;
 
         bool enoughTime = remainingTime > rotationTime;

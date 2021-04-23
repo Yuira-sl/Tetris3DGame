@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class CameraOrbitalMotionController : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
     private Vector2 _rotationXY;
     private Vector2 _initialXYRotation;

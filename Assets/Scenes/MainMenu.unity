@@ -223,52 +223,6 @@ MonoBehaviour:
   _rotationSensitivity: 10
   _dampingSpeed: 1
   _focalDistance: 0
---- !u!1 &324695822
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 324695823}
-  - component: {fileID: 324695824}
-  m_Layer: 0
-  m_Name: Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &324695823
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 324695822}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &324695824
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 324695822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05538f73cd3c4d1f9cb0531e6946de95, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _blockControllerData: {fileID: 11400000, guid: 54e73a095f9e342e3aeae82078bc7c8d,
-    type: 2}
-  _position: {x: 0, y: 0, z: 10}
 --- !u!1 &771488251
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,7 +392,7 @@ GameObject:
   - component: {fileID: 927673025}
   - component: {fileID: 927673024}
   m_Layer: 0
-  m_Name: SceneManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -453,9 +407,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 927673023}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a905ebe6b2345ad48a7be647c97205de, type: 3}
+  m_Script: {fileID: 11500000, guid: 235a72ca67fbd428dae4f3f0baf729ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gameData: {fileID: 0}
+  _inputController: {fileID: 0}
+  _blockController: {fileID: 0}
+  _levelController: {fileID: 0}
+  _gameOverUI: {fileID: 0}
+  _isNeedToCheck: 0
 --- !u!4 &927673025
 Transform:
   m_ObjectHideFlags: 0
@@ -1247,9 +1207,10 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 927673024}
         m_MethodName: LoadScene
-        m_Mode: 5
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgument: {fileID: 102900000, guid: f303f284d5d8741b295580e1c08d9152,
+            type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0

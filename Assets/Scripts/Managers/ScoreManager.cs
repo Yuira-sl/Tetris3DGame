@@ -4,18 +4,19 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
-    private GameManager _gameManager;
+    public static ScoreManager Instance;
+    
     private int _currentScore;
     private int _highScore;
     
     [SerializeField] private ScoreData _scoreData;
-    [SerializeField] private BlockController _blockController;
     [SerializeField] private Text _currentScoreText;
     [SerializeField] private Text _highScoreText;
+    [SerializeField] private Text _currentPeriodText;
     
     public void AddRowScore()
     {
-        _currentScore += _scoreData.PointsPerRow * _gameManager.GetLevel();
+        _currentScore += _scoreData.PointsPerRow * GameManager.Instance.GetLevel();
 
         //Updates high score variable if needed
         if (_currentScore > _highScore)
@@ -34,12 +35,11 @@ public class ScoreManager : MonoBehaviour
     
     private void Awake()
     {
-        _gameManager = GetComponent<GameManager>();
-
-        if (_blockController != null)
+        if (Instance == null)
         {
-            _blockController.OnBlockSettle += OnBlockSettle;
+            Instance = this;
         }
+        GameManager.Instance.BlockController.OnBlockSettle += OnBlockSettle;
     }
 
     private void Start()
@@ -50,7 +50,7 @@ public class ScoreManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _blockController.OnBlockSettle -= OnBlockSettle;
+        GameManager.Instance.BlockController.OnBlockSettle -= OnBlockSettle;
     }
 
     private void OnBlockSettle(List<Vector2Int> positions, bool speed)
@@ -71,8 +71,8 @@ public class ScoreManager : MonoBehaviour
     private void AddBlockScore(bool withSpeed)
     {
         _currentScore += !withSpeed
-            ? _scoreData.PointsWithoutSpeed * _gameManager.GetLevel()
-            : _scoreData.PointsWithSpeed * _gameManager.GetLevel();
+            ? _scoreData.PointsWithoutSpeed * GameManager.Instance.GetLevel()
+            : _scoreData.PointsWithSpeed * GameManager.Instance.GetLevel();
 
         //Updates high score variable if needed
         if (_currentScore > _highScore)
@@ -89,5 +89,6 @@ public class ScoreManager : MonoBehaviour
     {
         _currentScoreText.text = _currentScore.ToString();
         _highScoreText.text = _highScore.ToString();
+        _currentPeriodText.text = GameManager.Instance.GetPeriod().ToString();
     }
 }

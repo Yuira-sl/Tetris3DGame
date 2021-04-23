@@ -16,7 +16,6 @@ public class InputController : MonoBehaviour
     private Vector2 _fingerDownPos;
     private Vector2 _fingerUpPos;
     
-    [SerializeField] private GameManager _manager;
     [SerializeField] private float _swipeThreshold = 20f;
     public event HorizontalInputCallback OnHorizontalInputDown;
     public event InputCallback OnSpeedDown, OnSpeedUp, OnRotateLeftDown, OnRotateRightDown, OnSwitchDown;
@@ -49,7 +48,7 @@ public class InputController : MonoBehaviour
         EditorInput();
 #endif
      
-        if (!_manager.IsPaused())
+        if (!GameManager.Instance.IsPaused())
         {
             if (Input.touchCount > 0)
             {
@@ -101,7 +100,7 @@ public class InputController : MonoBehaviour
 
     private void EditorInput()
     {
-        if (!_manager.IsPaused())
+        if (!GameManager.Instance.IsPaused())
         {
             if (Input.GetKeyDown(KeyCode.A))
             {

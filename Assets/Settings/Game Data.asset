@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameOverLimitRow: 20
   StartingPeriod: 1
-  DecrementPerLevel: 0.2
+  DecrementPerLevel: 0.1
   SpeedPeriod: 0.02

@@ -15,3 +15,4 @@ MonoBehaviour:
   PointsWithoutSpeed: 2
   PointsWithSpeed: 4
   PointsPerRow: 40
+  TargetScores: 5e01000020030000780500002e090000d80e0000ec13000000190000141e00001c250000f82a0000
