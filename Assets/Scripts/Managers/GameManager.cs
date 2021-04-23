@@ -3,19 +3,20 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private ScoreManager _scoreManager;
     //Period to trigger block descent
     private float _currentPeriod;
     
     //Period when not in speed mode
     private float _normalPeriod;
-    private int level = 1;
+    private int _level = 1;
     
-    [SerializeField] private InputController _inputController;
     [SerializeField] private GameData _gameData;
+    [SerializeField] private InputController _inputController;
     [SerializeField] private BlockController _blockController;
-
+    [SerializeField] private LevelController _levelController;
     [SerializeField] private GameObject _gameOverUI;
-    
+
     public float CurrentPeriod => _currentPeriod;
 
     public void OpenPauseMenu(GameObject go)
@@ -61,8 +62,15 @@ public class GameManager : MonoBehaviour
         return _blockController.IsPaused;
     }
     
+    public int GetLevel()
+    {
+        return _level;
+    }
+    
     private void Awake()
     {
+        _scoreManager = GetComponent<ScoreManager>();
+        
         Time.timeScale = 1;
         if (_blockController.IsPaused)
         {
@@ -79,7 +87,7 @@ public class GameManager : MonoBehaviour
     { 
         _inputController.OnSpeedDown += OnSpeedDown;
         _inputController.OnSpeedUp += OnSpeedUp;
-        
+        _levelController.OnLevelUp += OnLevelUp;
         _blockController.OnBlockSettle += OnBlockSettle;
 
         _normalPeriod = _gameData.StartingPeriod;
@@ -90,10 +98,17 @@ public class GameManager : MonoBehaviour
     {
         _inputController.OnSpeedDown -= OnSpeedDown;
         _inputController.OnSpeedUp -= OnSpeedUp;
-     
+        _levelController.OnLevelUp -= OnLevelUp;
         _blockController.OnBlockSettle -= OnBlockSettle;
     }
 
+    private void OnLevelUp()
+    {
+        _level++;
+        _normalPeriod -= _gameData.DecrementPerLevel;
+        _currentPeriod = _normalPeriod;
+    }
+    
     //Shrink the current period
     private void OnSpeedDown()
     {
@@ -119,25 +134,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
-    private void OnLevelUp()
-    {
-        _normalPeriod -= _gameData.DecrementPerLevel;
-        _currentPeriod = _normalPeriod;
-    }
-
-    public int GetLevel()
-    {
-        return level;
-    }
-
-    public void LevelUp()
-    {
-        level++;
-        OnLevelUp();
-    }
-
-    //Checks if game is over to the specific coordinate
+    
     private bool IsGameOver(Vector2Int position)
     {
         return position.y > _gameData.GameOverLimitRow - 1;
@@ -149,10 +146,9 @@ public class GameManager : MonoBehaviour
         {
             _blockController.IsPaused = true;
         }
-        //Stop time
+        
         Time.timeScale = 0;
-
+        
         _gameOverUI.SetActive(true);
-        //Destroy required objects
     }
 }

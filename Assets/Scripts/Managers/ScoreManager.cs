@@ -2,9 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Score : MonoBehaviour
+public class ScoreManager : MonoBehaviour
 {
-    private GameManager gameManager;
+    private GameManager _gameManager;
     private int _currentScore;
     private int _highScore;
     
@@ -15,7 +15,7 @@ public class Score : MonoBehaviour
     
     public void AddRowScore()
     {
-        _currentScore += _scoreData.PointsPerRow * gameManager.GetLevel();
+        _currentScore += _scoreData.PointsPerRow * _gameManager.GetLevel();
 
         //Updates high score variable if needed
         if (_currentScore > _highScore)
@@ -34,7 +34,7 @@ public class Score : MonoBehaviour
     
     private void Awake()
     {
-        gameManager = GetComponent<GameManager>();
+        _gameManager = GetComponent<GameManager>();
 
         if (_blockController != null)
         {
@@ -71,8 +71,8 @@ public class Score : MonoBehaviour
     private void AddBlockScore(bool withSpeed)
     {
         _currentScore += !withSpeed
-            ? _scoreData.PointsWithoutSpeed * gameManager.GetLevel()
-            : _scoreData.PointsWithSpeed * gameManager.GetLevel();
+            ? _scoreData.PointsWithoutSpeed * _gameManager.GetLevel()
+            : _scoreData.PointsWithSpeed * _gameManager.GetLevel();
 
         //Updates high score variable if needed
         if (_currentScore > _highScore)

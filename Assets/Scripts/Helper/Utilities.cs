@@ -5,6 +5,30 @@ using UnityEngine;
 
 public static class Utilities
 {
+    public static T Next<T>(this T src) where T : struct
+    {
+        if (!typeof(T).IsEnum)
+        {
+            throw new ArgumentException($"Argument {typeof(T).FullName} is not an Enum");
+        }
+
+        var array = (T[])Enum.GetValues(src.GetType());
+        var j = Array.IndexOf(array, src) + 1;
+        return array.Length==j ? array[0] : array[j];            
+    }
+    
+    public static T Previous<T>(this T src) where T : struct
+    {
+        if (!typeof(T).IsEnum)
+        {
+            throw new ArgumentException($"Argument {typeof(T).FullName} is not an Enum");
+        }
+
+        var array = (T[])Enum.GetValues(src.GetType());
+        var j = Array.IndexOf(array, src) - 1;
+        return array.Length==j ? array[0] : array[j];            
+    }
+    
     public static Rect RectTransformToScreenSpace(RectTransform transform)
     {
         Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);

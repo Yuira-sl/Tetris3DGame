@@ -11,7 +11,7 @@ public class Board : MonoBehaviour
     private bool _isEffectInited;
     
     [SerializeField] private BlockController _blockController;
-    [SerializeField] private Score _score;
+    [SerializeField] private ScoreManager _scoreManager;
     [SerializeField] private BoardData _boardData;
 
     public BlockController BlockController => _blockController;
@@ -109,7 +109,7 @@ public class Board : MonoBehaviour
                 StartCoroutine(ProcessToRemove(row));
                 StartCoroutine(RemoveRowFromBoard(effectiveRow));
                 
-                _score.AddRowScore();
+                _scoreManager.AddRowScore();
                 clearedRows++;
             }
         }
