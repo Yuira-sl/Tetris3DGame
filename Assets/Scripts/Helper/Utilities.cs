@@ -1,34 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class Utilities
 {
-    public static T Next<T>(this T src) where T : struct
-    {
-        if (!typeof(T).IsEnum)
-        {
-            throw new ArgumentException($"Argument {typeof(T).FullName} is not an Enum");
-        }
-
-        var array = (T[])Enum.GetValues(src.GetType());
-        var j = Array.IndexOf(array, src) + 1;
-        return array.Length==j ? array[0] : array[j];            
-    }
-    
-    public static T Previous<T>(this T src) where T : struct
-    {
-        if (!typeof(T).IsEnum)
-        {
-            throw new ArgumentException($"Argument {typeof(T).FullName} is not an Enum");
-        }
-
-        var array = (T[])Enum.GetValues(src.GetType());
-        var j = Array.IndexOf(array, src) - 1;
-        return array.Length==j ? array[0] : array[j];            
-    }
-    
     public static Rect RectTransformToScreenSpace(RectTransform transform)
     {
         Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
@@ -50,26 +23,5 @@ public static class Utilities
         }
 
         return intersection;
-    }
-    public static int Round(float input)
-    {
-        float output = input;
-        int outputModifier = 0;
-        output -= (int) input;
-        if (output >= 0.5f)
-        {
-            outputModifier = 1;
-        }
-
-        return (int) input + outputModifier;
-    }
-    public static int GetMaxInt(this List<int> list)
-    {
-        int max = list[0];
-        for(int i = 1; i < list.Count; i++) 
-        {
-            max = Math.Max(max, list[i]);
-        }
-        return max;
     }
 }

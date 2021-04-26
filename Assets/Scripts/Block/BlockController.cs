@@ -10,15 +10,17 @@ public delegate void BlockCallback(GameObject block, Vector2Int position);
 public class BlockController : MonoBehaviour
 {
     private List<BlockTile> _tiles = new List<BlockTile>();
-    private GameObject _currentBlock;
+    private GameObject _block;
 
+    private Transform _pivot;
+    
     //Timer to trigger block descent
     private float _verticalTimer;
     private bool _isRotating;
     private bool _allowRotation = true;
     private bool _hasSpeed;
     private bool _isPaused;
-
+    
     [SerializeField] private InputController _inputController;
     [SerializeField] private BlockControllerData _blockControllerData;
     [SerializeField] private Board _board;
@@ -41,25 +43,25 @@ public class BlockController : MonoBehaviour
         var prefab = GetRandomBlock();
         var randTile = GetRandomTile();
 
-        _currentBlock = Instantiate(prefab, transform.position, Quaternion.identity);
+        _block = Instantiate(prefab, transform.position, Quaternion.identity);
 
-        var positions = _currentBlock.GetComponent<TileContainer>().Positions;
+        var positions = _block.GetComponent<TileContainer>().Positions;
         
         foreach (var position in positions)
         { 
-            var go = Instantiate(randTile, _currentBlock.transform, true);
+            var go = Instantiate(randTile, _block.transform, true);
             go.AddComponent<BlockTile>();
             go.transform.localPosition = position;
         }
         
-        _currentBlock.transform.SetParent(transform);
+        _block.transform.SetParent(transform);
 
-        var blockTiles = _currentBlock.GetComponentsInChildren<BlockTile>();
+        var blockTiles = _block.GetComponentsInChildren<BlockTile>();
         _tiles.AddRange(blockTiles);
 
         transform.position = _blockControllerData.BlockStartingPosition;
 
-        OnNewBlock?.Invoke(_currentBlock, Vector2Int.RoundToInt(transform.position));
+        OnNewBlock?.Invoke(_block, Vector2Int.RoundToInt(transform.position));
         
         _inputController.OnSpeedDown += OnSpeedDown;
         
@@ -162,6 +164,8 @@ public class BlockController : MonoBehaviour
 
     private void CheckAndStartRotation(int direction)
     {
+        _pivot = _block.GetComponent<TileContainer>().Pivot;
+
         //Check if rotation time is bigger than remaining time to go down. If it is, don't rotate
         float remainingTime = GameManager.Instance.CurrentBlockSpeed - _verticalTimer;
         float rotationTime = (1f / _blockControllerData.BlockTurningSpeed) * Time.fixedDeltaTime;
@@ -182,7 +186,7 @@ public class BlockController : MonoBehaviour
             }
         }
     }
-
+   
     //Rotates block in z-axis with specified angle
     private IEnumerator Rotate(float rotationAngle)
     {
@@ -191,32 +195,50 @@ public class BlockController : MonoBehaviour
             _isRotating = true;
             _allowRotation = false;
 
-            Vector3 targetRotation = transform.rotation * new Vector3(0, 0, Mathf.Round(transform.eulerAngles.z + rotationAngle));
-
-            Quaternion targetQuaternion = Quaternion.Euler(targetRotation);
-
-            //Percentage of rotation progress
-            float progress = 0f;
-
-            while (progress != 1)
+            if (!_pivot)
             {
-                progress += _blockControllerData.BlockTurningSpeed;
-
-                //Overflow protection
-                if (progress > 1)
-                    progress = 1;
-
-                transform.rotation = Quaternion.Lerp(transform.rotation, targetQuaternion, progress);
-
-                yield return null;
+                Vector3 targetRotation = transform.rotation * new Vector3(0, 0, Mathf.Round(transform.eulerAngles.z + rotationAngle));
+                Quaternion targetQuaternion = Quaternion.Euler(targetRotation);
+                float progress = 0f;
+                while (progress != 1)
+                {
+                    progress += _blockControllerData.BlockTurningSpeed;
+                    if (progress > 1)
+                    {
+                        progress = 1;
+                    }
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetQuaternion, progress);
+                    yield return null;
+                }
             }
+            else
+            {
+                float step = 0f;
+                float smoothStep;
+                float lastStep = 0f;
+                while(step < 1.0f) 
+                {
+                    step += _blockControllerData.BlockTurningSpeed;
+                    smoothStep = Mathf.SmoothStep(0.0f, 1.0f, step);
+                    transform.RotateAround(_pivot.position, Vector3.forward, rotationAngle * (smoothStep - lastStep));
+                    lastStep = smoothStep;
+                    yield return null;
+                }
+           
+                if(step > 1.0f) 
+                {
+                    transform.RotateAround(_pivot.position, Vector3.forward, rotationAngle * (1.0f - lastStep));
+                }
+            }
+           
+            
             _isRotating = false;
             _allowRotation = true;
-
+            
             TriggerOnMovement();
         }
     }
-
+    
     private void ForcedDropDown()
     {
         _allowRotation = false;
@@ -259,7 +281,7 @@ public class BlockController : MonoBehaviour
 
             if (successAll)
             {
-                GameObject aux = _currentBlock;
+                GameObject aux = _block;
                 GetNextBlock();
                 _nextBlock.SwitchBlock(aux);
                 TriggerOnNewBlock();
@@ -280,7 +302,7 @@ public class BlockController : MonoBehaviour
 
     public void TriggerOnNewBlock()
     {
-        OnNewBlock?.Invoke(_currentBlock, Vector2Int.RoundToInt(transform.position));
+        OnNewBlock?.Invoke(_block, Vector2Int.RoundToInt(transform.position));
     }
     
     //Get random block from block pool
@@ -304,13 +326,13 @@ public class BlockController : MonoBehaviour
         //Reset rotation of this component
         transform.rotation = Quaternion.identity;
 
-        _currentBlock = _nextBlock.Block;
-        _currentBlock.transform.localScale = new Vector3(1, 1, 1);
-        _currentBlock.transform.position = transform.position;
-        _currentBlock.transform.SetParent(transform);
+        _block = _nextBlock.Block;
+        _block.transform.localScale = new Vector3(1, 1, 1);
+        _block.transform.position = transform.position;
+        _block.transform.SetParent(transform);
 
         _tiles = new List<BlockTile>();
-        _tiles.AddRange(_currentBlock.GetComponentsInChildren<BlockTile>());
+        _tiles.AddRange(_block.GetComponentsInChildren<BlockTile>());
     }
 
     //Settle block complete routine
@@ -324,7 +346,7 @@ public class BlockController : MonoBehaviour
 
         //Resets position to the top
         transform.position = _blockControllerData.BlockStartingPosition;
-        OnNewBlock?.Invoke(_currentBlock, Vector2Int.RoundToInt(transform.position));
+        OnNewBlock?.Invoke(_block, Vector2Int.RoundToInt(transform.position));
     }
 
 
@@ -352,7 +374,7 @@ public class BlockController : MonoBehaviour
             _hasSpeed = false;
 
             //Destroy block parent game object and references
-            Destroy(_currentBlock);
+            Destroy(_block);
             _tiles = null;
         }
     }

@@ -9,14 +9,7 @@ public class InputController : MonoBehaviour
 {
     private Rect _leftArea;
     private Rect _rightArea;
-
-    private bool _detectSwipeAfterRelease;
-    private bool _blockHorizontalInput;
     
-    private Vector2 _fingerDownPos;
-    private Vector2 _fingerUpPos;
-    
-    [SerializeField] private float _swipeThreshold = 20f;
     public event HorizontalInputCallback OnHorizontalInputDown;
     public event InputCallback OnSpeedDown, OnSpeedUp, OnRotateLeftDown, OnRotateRightDown, OnSwitchDown;
     public event Action OnForcedDropDown; 
@@ -36,8 +29,18 @@ public class InputController : MonoBehaviour
     {
         OnRotateRightDown?.Invoke();
     }
+
+    public void SpeedUp()
+    {
+        OnSpeedUp?.Invoke();
+    }
+
+    public void SpeedDown()
+    {
+        OnSpeedDown?.Invoke();
+    }
     
-    public void Drop()
+    public void DropDown()
     {
         OnForcedDropDown?.Invoke();
     }
@@ -56,43 +59,16 @@ public class InputController : MonoBehaviour
                 if (touch.phase == TouchPhase.Began)
                 {
                     var point = touch.position;
-
-                    _fingerUpPos = touch.position;
-                    _fingerDownPos = touch.position;
-                    _detectSwipeAfterRelease = false;
-
-                    if (!_blockHorizontalInput)
+                    
+                    if (_leftArea.Contains(point))
                     {
-                        if (_leftArea.Contains(point))
-                        {
-                            OnHorizontalInputDown?.Invoke(-1);
-                        }
-
-                        if (_rightArea.Contains(point))
-                        {
-                            OnHorizontalInputDown?.Invoke(1);
-                        }
+                        OnHorizontalInputDown?.Invoke(-1);
                     }
-                }
-                
-                //Detects Swipe while finger is still moving on screen
-                if (touch.phase == TouchPhase.Moved)
-                {
-                    if (!_detectSwipeAfterRelease)
+
+                    if (_rightArea.Contains(point))
                     {
-                        _blockHorizontalInput = true;
-                        _fingerDownPos = touch.position;
-                        DetectSwipeDown();
-                        _detectSwipeAfterRelease = true;
+                        OnHorizontalInputDown?.Invoke(1);
                     }
-                }
-
-                //Detects swipe after finger is released from screen
-                if (touch.phase == TouchPhase.Ended)
-                {
-                    _fingerDownPos = touch.position;
-                    DetectSwipeUp();
-                    _blockHorizontalInput = false;
                 }
             }
         }
@@ -137,39 +113,5 @@ public class InputController : MonoBehaviour
                 OnSwitchDown?.Invoke();
             }
         }
-    }
-    
-    private void DetectSwipeDown()
-    {
-        if (VerticalMoveValue() > _swipeThreshold && VerticalMoveValue() > HorizontalMoveValue())
-        {
-            if (_fingerDownPos.y - _fingerUpPos.y < 0)
-            {
-                OnSpeedDown?.Invoke();
-            }
-            _fingerUpPos = _fingerDownPos;
-        }
-    }
-
-    private void DetectSwipeUp()
-    {
-        if (VerticalMoveValue() > _swipeThreshold && VerticalMoveValue() > HorizontalMoveValue())
-        {
-            if (_fingerDownPos.y - _fingerUpPos.y < 0)
-            {
-                OnSpeedUp?.Invoke();
-            }
-            _fingerUpPos = _fingerDownPos;
-        }
-    }
-
-    private float VerticalMoveValue()
-    {
-        return Mathf.Abs(_fingerDownPos.y - _fingerUpPos.y);
-    }
-
-    private float HorizontalMoveValue()
-    {
-        return Mathf.Abs(_fingerDownPos.x - _fingerUpPos.x);
     }
 }

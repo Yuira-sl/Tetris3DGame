@@ -9,6 +9,8 @@ public class NextBlock : MonoBehaviour
     private GameObject _block;
     private GameObject _blockContainer;
 
+    private Transform _pivot;
+
     public GameObject Block => _block;
     
     private void Start()
@@ -70,6 +72,8 @@ public class NextBlock : MonoBehaviour
         _block.transform.SetParent(_blockContainer.transform);
         //Center object pivot in panel
         _block.transform.localPosition = Vector3.zero;
+
+        _pivot = _block.GetComponent<TileContainer>().Pivot;
 
         //Lowering block scale to fit panel
         //Scale is proportional to a constant, and also to the screen aspect ratio

@@ -40,6 +40,6 @@ MonoBehaviour:
   - {fileID: 1528551175337760785, guid: a66f15926f91869468e77fc1ea36f792, type: 3}
   - {fileID: 3697230388533781291, guid: 1544c66496d001e4584814aac2d72b47, type: 3}
   GhostMaterial: {fileID: 2100000, guid: 365ab05aa975fb747bf74bc34f3eb297, type: 2}
-  BlockTurningSpeed: 0.25
+  BlockTurningSpeed: 0.4
   BlockStartingPosition: {x: 5, y: 20}
   NextBlockScale: {x: 0.35, y: 0.35, z: 0.35}
