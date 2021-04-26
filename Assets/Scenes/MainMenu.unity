@@ -1207,10 +1207,9 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 927673024}
         m_MethodName: LoadScene
-        m_Mode: 2
+        m_Mode: 5
         m_Arguments:
-          m_ObjectArgument: {fileID: 102900000, guid: f303f284d5d8741b295580e1c08d9152,
-            type: 3}
+          m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0

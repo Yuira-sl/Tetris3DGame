@@ -43,9 +43,9 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    public void LoadScene(Object scene)
+    public void LoadScene(string scene)
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(scene.name);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
     }
     
     public void Quit()
