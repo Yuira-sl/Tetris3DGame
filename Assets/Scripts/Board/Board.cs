@@ -9,7 +9,9 @@ public class Board : MonoBehaviour
 
     private ParticleSystem _currentEffect;
     private bool _isEffectInited;
-    
+
+    [SerializeField] private AudioManager _audioManager; 
+
     [SerializeField] private BlockController _blockController;
     [SerializeField] private BoardData _boardData;
 
@@ -102,8 +104,8 @@ public class Board : MonoBehaviour
 
             if (IsRowFull(effectiveRow))
             {
-                AudioManager.Instance.Play(AudioManager.Instance.ClearLevel);
-
+                _audioManager.Play(_audioManager.Clips[1]);
+                
                 StartCoroutine(ProcessToRemove(row));
                 StartCoroutine(RemoveRowFromBoard(effectiveRow));
                 

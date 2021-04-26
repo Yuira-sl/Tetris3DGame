@@ -21,6 +21,8 @@ public class BlockController : MonoBehaviour
     private bool _hasSpeed;
     private bool _isPaused;
     
+    [SerializeField] private AudioManager _audioManager; 
+
     [SerializeField] private InputController _inputController;
     [SerializeField] private BlockControllerData _blockControllerData;
     [SerializeField] private Board _board;
@@ -338,6 +340,7 @@ public class BlockController : MonoBehaviour
     //Settle block complete routine
     public void SettleBlockRoutine()
     {
+        
         SettleCurrentBlock();
 
         //Fetches next block and triggers a new block generation from NextBlock
@@ -353,6 +356,8 @@ public class BlockController : MonoBehaviour
     //Removes playable components from current blocks
     private void SettleCurrentBlock()
     {
+        _audioManager.Play(_audioManager.Clips[3]);
+
         if (_tiles != null)
         {
             //Get tile positions

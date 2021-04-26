@@ -2,31 +2,25 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance;
-    
     private AudioSource _audio;
 
-    [SerializeField] private AudioClip _gameOver;
-    [SerializeField] private AudioClip _clearLevel;
-    [SerializeField] private AudioClip _dropDown;
-
-    public AudioClip GameOver => _gameOver;
-    public AudioClip ClearLevel => _clearLevel;
-    public AudioClip DropDown => _dropDown;
+    [SerializeField] private AudioClip[] _clips;
+    public AudioClip[] Clips => _clips;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        
         _audio = GetComponent<AudioSource>();
     }
 
     public void Play(AudioClip clip)
     {
+        Stop();
         _audio.clip = clip;
         _audio.Play();
+    }
+
+    public void Stop()
+    {
+        _audio.Stop();
     }
 }

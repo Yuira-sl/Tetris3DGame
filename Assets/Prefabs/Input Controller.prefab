@@ -43,5 +43,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec0bedbb1f11f4eca96dd2fb2e9cdc05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _manager: {fileID: 0}
-  _swipeThreshold: 20
+  _audioManager: {fileID: 0}

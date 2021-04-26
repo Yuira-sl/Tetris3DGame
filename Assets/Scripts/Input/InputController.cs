@@ -10,6 +10,8 @@ public class InputController : MonoBehaviour
     private Rect _leftArea;
     private Rect _rightArea;
     
+    [SerializeField] private AudioManager _audioManager; 
+
     public event HorizontalInputCallback OnHorizontalInputDown;
     public event InputCallback OnSpeedDown, OnSpeedUp, OnRotateLeftDown, OnRotateRightDown, OnSwitchDown;
     public event Action OnForcedDropDown; 
@@ -22,27 +24,47 @@ public class InputController : MonoBehaviour
 
     public void RotateLeft()
     {
-        OnRotateLeftDown?.Invoke();
+        if (!GameManager.Instance.IsPaused())
+        {
+            _audioManager.Play(_audioManager.Clips[0]);
+            OnRotateLeftDown?.Invoke();
+        }
     }
     
     public void RotateRight()
     {
-        OnRotateRightDown?.Invoke();
+        if (!GameManager.Instance.IsPaused())
+        {
+            _audioManager.Play(_audioManager.Clips[0]);
+            OnRotateRightDown?.Invoke();
+        }
     }
 
     public void SpeedUp()
     {
-        OnSpeedUp?.Invoke();
+        if (!GameManager.Instance.IsPaused())
+        {
+            _audioManager.Stop();
+            OnSpeedUp?.Invoke();
+        }
     }
 
     public void SpeedDown()
     {
-        OnSpeedDown?.Invoke();
+        if (!GameManager.Instance.IsPaused())
+        {
+            _audioManager.Play(_audioManager.Clips[1]);
+            OnSpeedDown?.Invoke();
+        }
     }
     
     public void DropDown()
     {
-        OnForcedDropDown?.Invoke();
+        if (!GameManager.Instance.IsPaused())
+        {
+            _audioManager.Play(_audioManager.Clips[0]);
+            OnForcedDropDown?.Invoke();
+        }
     }
  
     private void Update()

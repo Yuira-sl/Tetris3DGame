@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4631339666228756239}
   - component: {fileID: 4631339666228756236}
   - component: {fileID: 1689371218}
+  - component: {fileID: 4542288662100436630}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -45,12 +46,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 235a72ca67fbd428dae4f3f0baf729ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _audioManager: {fileID: 0}
   _gameData: {fileID: 11400000, guid: 3de7ca192945a492cbecf6de569c9f58, type: 2}
   _inputController: {fileID: 0}
   _blockController: {fileID: 0}
   _levelController: {fileID: 1689371218}
   _gameOverUI: {fileID: 0}
-  _isNeedToCheck: 1
 --- !u!114 &4631339666228756236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,3 +82,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scoreData: {fileID: 11400000, guid: fda004bd44174459a9098a4412d8a69b, type: 2}
   _currentLevel: {fileID: 0}
+--- !u!114 &4542288662100436630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4631339666228754673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dad02e8ea6f241e4acc3ae4db95ec6b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -36,9 +36,8 @@ MonoBehaviour:
   - {fileID: 5906278632134268122, guid: 105f53c5a55887f469120e97db999327, type: 3}
   - {fileID: 7021274442716227342, guid: cd7b81c1dd6f30f41bcf1378ee200dc9, type: 3}
   - {fileID: 5952900846646190170, guid: eda9466a050141a4a9303a962db1bc14, type: 3}
-  - {fileID: 3436614435572059049, guid: db3b1a4f16807bf4da69865e56d289cd, type: 3}
-  - {fileID: 1528551175337760785, guid: a66f15926f91869468e77fc1ea36f792, type: 3}
   - {fileID: 3697230388533781291, guid: 1544c66496d001e4584814aac2d72b47, type: 3}
+  - {fileID: 1528551175337760785, guid: a66f15926f91869468e77fc1ea36f792, type: 3}
   GhostMaterial: {fileID: 2100000, guid: 365ab05aa975fb747bf74bc34f3eb297, type: 2}
   BlockTurningSpeed: 0.4
   BlockStartingPosition: {x: 5, y: 20}

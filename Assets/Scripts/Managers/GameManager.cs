@@ -1,20 +1,25 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    private PhysicsRaycaster _raycaster;
     
     private float _currentBlockSpeed;
     private float _defaultBlockSpeed;
     private int _level = 1;
+
+    [SerializeField] private AudioManager _audioManager; 
     
     [SerializeField] private GameData _gameData;
     [SerializeField] private InputController _inputController;
     [SerializeField] private BlockController _blockController;
     [SerializeField] private LevelController _levelController;
     [SerializeField] private GameObject _gameOverUI;
-    [SerializeField] private bool _isNeedToCheck;
+
     public float CurrentBlockSpeed => _currentBlockSpeed;
     public InputController InputController => _inputController;
     public BlockController BlockController => _blockController;
@@ -24,11 +29,13 @@ public class GameManager : MonoBehaviour
     {
         if (!go.activeSelf)
         {
+            _raycaster.enabled = false;
             _blockController.IsPaused = true;
             go.SetActive(true);
         }
         else
         {
+            _raycaster.enabled = true;
             _blockController.IsPaused = false;
             go.SetActive(false);
         }
@@ -38,21 +45,12 @@ public class GameManager : MonoBehaviour
     {
         if (go.activeSelf)
         { 
+            _raycaster.enabled = true;
             _blockController.IsPaused = false;
             go.SetActive(false);
         }
     }
     
-    public void LoadScene(string scene)
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
-    }
-    
-    public void Quit()
-    {
-        Application.Quit();
-    }
-
     public bool IsPaused()
     {
         return _blockController.IsPaused;
@@ -75,10 +73,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
         
-        if (!_isNeedToCheck)
-        {
-            return;
-        }
+        _raycaster = Camera.main.gameObject.GetComponent<PhysicsRaycaster>();
         
         Time.timeScale = 1;
 
@@ -95,10 +90,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (!_isNeedToCheck)
-        {
-            return;
-        }
         _inputController.OnSpeedDown += OnSpeedDown;
         _inputController.OnSpeedUp += OnSpeedUp;
         _levelController.OnLevelUp += OnLevelUp;
@@ -110,10 +101,6 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (!_isNeedToCheck)
-        {
-            return;
-        }
         _inputController.OnSpeedDown -= OnSpeedDown;
         _inputController.OnSpeedUp -= OnSpeedUp;
         _levelController.OnLevelUp -= OnLevelUp;
@@ -147,6 +134,7 @@ public class GameManager : MonoBehaviour
             gameOver = IsGameOver(position);
             if (gameOver)
             {
+                _raycaster.enabled = false;
                 GameOver();
                 return;
             }
@@ -168,5 +156,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0;
         
         _gameOverUI.SetActive(true);
+        _audioManager.Play(_audioManager.Clips[2]);
     }
 }
