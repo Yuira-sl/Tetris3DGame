@@ -5,8 +5,6 @@ using UnityEngine.EventSystems;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-
-    private PhysicsRaycaster _raycaster;
     
     private float _currentBlockSpeed;
     private float _defaultBlockSpeed;
@@ -29,13 +27,11 @@ public class GameManager : MonoBehaviour
     {
         if (!go.activeSelf)
         {
-            _raycaster.enabled = false;
             _blockController.IsPaused = true;
             go.SetActive(true);
         }
         else
         {
-            _raycaster.enabled = true;
             _blockController.IsPaused = false;
             go.SetActive(false);
         }
@@ -45,7 +41,6 @@ public class GameManager : MonoBehaviour
     {
         if (go.activeSelf)
         { 
-            _raycaster.enabled = true;
             _blockController.IsPaused = false;
             go.SetActive(false);
         }
@@ -72,8 +67,6 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
-        
-        _raycaster = Camera.main.gameObject.GetComponent<PhysicsRaycaster>();
         
         Time.timeScale = 1;
 
@@ -134,7 +127,6 @@ public class GameManager : MonoBehaviour
             gameOver = IsGameOver(position);
             if (gameOver)
             {
-                _raycaster.enabled = false;
                 GameOver();
                 return;
             }

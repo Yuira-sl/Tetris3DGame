@@ -4,13 +4,11 @@ using UnityEngine;
 public class NextBlock : MonoBehaviour
 {
     [SerializeField] private BlockControllerData _blockControllerData;
-    [SerializeField] private Vector3 _position = new Vector3(6.7f, 12.15f, -13.8f);
-
+    [SerializeField] private RectTransform _preview;
+    
     private GameObject _block;
     private GameObject _blockContainer;
-
-    private Transform _pivot;
-
+    
     public GameObject Block => _block;
     
     private void Start()
@@ -20,7 +18,10 @@ public class NextBlock : MonoBehaviour
         _blockContainer.name = "Next Block Container";
         _blockContainer.transform.SetParent(transform);
         
-        _blockContainer.transform.localPosition = _position;
+        _blockContainer.transform.localPosition = _preview.transform.position;
+        var localPosition = _blockContainer.transform.localPosition;
+        localPosition.z += 0.2f;
+        _blockContainer.transform.localPosition = localPosition;
         GenerateNewBlock();
     }
 
@@ -72,9 +73,7 @@ public class NextBlock : MonoBehaviour
         _block.transform.SetParent(_blockContainer.transform);
         //Center object pivot in panel
         _block.transform.localPosition = Vector3.zero;
-
-        _pivot = _block.GetComponent<TileContainer>().Pivot;
-
+        
         //Lowering block scale to fit panel
         //Scale is proportional to a constant, and also to the screen aspect ratio
         Vector3 newScale = _blockControllerData.NextBlockScale * (Mathf.Sqrt(Camera.main.aspect));
