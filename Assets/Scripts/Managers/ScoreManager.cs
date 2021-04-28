@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -89,6 +90,7 @@ public class ScoreManager : MonoBehaviour
     {
         _currentScoreText.text = _currentScore.ToString();
         _highScoreText.text = _highScore.ToString();
-        _currentPeriodText.text = GameManager.Instance.GetPeriod().ToString();
+        var period = GameManager.Instance.GetPeriod();
+        _currentPeriodText.text = $"{period:0.0}";
     }
 }
