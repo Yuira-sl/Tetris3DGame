@@ -39,6 +39,17 @@ public class BlockController : MonoBehaviour
     public event BlockTilesCallback OnBlockSettle;
     public event BlockMovementCallback OnMovement;
     public event BlockCallback OnNewBlock;
+
+    public GameObject GetCurrentBlock()
+    {
+        return _block;
+    }
+    
+    public List<GameObject> GetCurrentChildObjects()
+    {
+        return _block.GetComponentsInChildren<GameObject>().GetChildOnlyObjects();
+    }
+
     
     private void Start()
     {
@@ -340,7 +351,6 @@ public class BlockController : MonoBehaviour
     //Settle block complete routine
     public void SettleBlockRoutine()
     {
-        
         SettleCurrentBlock();
 
         //Fetches next block and triggers a new block generation from NextBlock

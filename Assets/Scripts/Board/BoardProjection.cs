@@ -6,6 +6,16 @@ public class BoardProjection : MonoBehaviour
     private Board _board;
     private GameObject _projectionBlock;
     private BlockTile _collisionTile;
+
+    public GameObject GetCurrentProjection()
+    {
+        return _projectionBlock;
+    }
+
+    public List<GameObject> GetCurrentProjectionChildObjects()
+    {
+        return _projectionBlock.GetComponentsInChildren<GameObject>().GetChildOnlyObjects();
+    }
     
     private void Awake()
     {
