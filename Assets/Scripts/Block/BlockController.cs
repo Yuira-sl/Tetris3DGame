@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -39,6 +40,7 @@ public class BlockController : MonoBehaviour
     public event BlockTilesCallback OnBlockSettle;
     public event BlockMovementCallback OnMovement;
     public event BlockCallback OnNewBlock;
+    public event Action OnIntersectionExist;
     
     public BlockTile[] GetBlockTiles()
     {
@@ -109,6 +111,7 @@ public class BlockController : MonoBehaviour
             if (CanBlockMove(new Vector2Int(0, -1)))
             {
                 transform.position += Vector3Int.down;
+                OnIntersectionExist?.Invoke();
             }
             else
             {

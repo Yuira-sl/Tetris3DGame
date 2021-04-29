@@ -13,15 +13,17 @@ public class BoardProjection : MonoBehaviour
         _board = GetComponent<Board>();
         _board.BlockController.OnMovement += OnMovement;
         _board.BlockController.OnNewBlock += OnNewBlock;
+        _board.BlockController.OnIntersectionExist += OnIntersectionExist;
     }
     
     private void OnDestroy()
     {
         _board.BlockController.OnMovement -= OnMovement;
         _board.BlockController.OnNewBlock -= OnNewBlock;
+        _board.BlockController.OnIntersectionExist -= OnIntersectionExist;
     }
 
-    private void Update()
+    private void OnIntersectionExist()
     {
         if (CheckIntersection(_board.BlockController.GetBlockTiles()))
         {

@@ -1,19 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Board : MonoBehaviour
 {
     private GameObject _blocksContainer;
-    private BoardProjection _boardProjection;
     private int[,] _boardMatrix;
 
     private ParticleSystem _currentEffect;
     private bool _isEffectInited;
 
-    [SerializeField] private AudioManager _audioManager; 
-
+    [SerializeField] private AudioManager _audioManager;
     [SerializeField] private BlockController _blockController;
     [SerializeField] private BoardData _boardData;
 
@@ -24,7 +21,6 @@ public class Board : MonoBehaviour
     {
         _blockController.OnBlockSettle += OnBlockSettle;
         gameObject.AddComponent<BoardProjection>();
-        _boardProjection = GetComponent<BoardProjection>();
     }
 
     private void Start()
