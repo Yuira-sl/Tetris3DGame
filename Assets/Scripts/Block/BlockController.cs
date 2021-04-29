@@ -39,17 +39,11 @@ public class BlockController : MonoBehaviour
     public event BlockTilesCallback OnBlockSettle;
     public event BlockMovementCallback OnMovement;
     public event BlockCallback OnNewBlock;
-
-    public GameObject GetCurrentBlock()
-    {
-        return _block;
-    }
     
-    public List<GameObject> GetCurrentChildObjects()
+    public BlockTile[] GetBlockTiles()
     {
-        return _block.GetComponentsInChildren<GameObject>().GetChildOnlyObjects();
+        return _block.GetComponentsInChildren<BlockTile>();
     }
-
     
     private void Start()
     {

@@ -5,17 +5,8 @@ public class BoardProjection : MonoBehaviour
 {
     private Board _board;
     private GameObject _projectionBlock;
-    private BlockTile _collisionTile;
-
-    public GameObject GetCurrentProjection()
-    {
-        return _projectionBlock;
-    }
-
-    public List<GameObject> GetCurrentProjectionChildObjects()
-    {
-        return _projectionBlock.GetComponentsInChildren<GameObject>().GetChildOnlyObjects();
-    }
+    private BlockTile[] _projectionTiles;
+    private bool _intersection;
     
     private void Awake()
     {
@@ -30,6 +21,34 @@ public class BoardProjection : MonoBehaviour
         _board.BlockController.OnNewBlock -= OnNewBlock;
     }
 
+    private void Update()
+    {
+        if (CheckIntersection(_board.BlockController.GetBlockTiles()))
+        {
+            foreach (var projectionTile in _projectionTiles)
+            {
+                projectionTile.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private bool CheckIntersection(BlockTile[] blockTiles)
+    {
+        foreach (var tile in blockTiles)
+        {
+            foreach (var projectionTile in _projectionTiles)
+            {
+                if(!_intersection && projectionTile.transform.position == tile.transform.position)
+                {
+                    _intersection = true;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    
     private void OnNewBlock(GameObject block, Vector2Int position)
     {
         //Destroy current projection if exists
@@ -45,14 +64,9 @@ public class BoardProjection : MonoBehaviour
         //Call first movement update
         OnMovement(_board.BlockController.gameObject);
 
-        //Remove script from projection tiles
-        foreach (var blockTile in _projectionBlock.GetComponentsInChildren<BlockTile>())
-        {
-            Destroy(blockTile);
-        }
-
+        _projectionTiles = _projectionBlock.GetComponentsInChildren<BlockTile>();
+      
         //Change color alpha to make block tiles look like a projection
-
         var renderers = new List<Renderer>();
         renderers.AddRange(_projectionBlock.GetComponentsInChildren<Renderer>());
 
@@ -60,6 +74,8 @@ public class BoardProjection : MonoBehaviour
         {
             r.sharedMaterial = _board.BlockController.BlockControllerData.GhostMaterial;
         }
+
+        _intersection = false;
     }
 
     private void OnMovement(GameObject controller)
