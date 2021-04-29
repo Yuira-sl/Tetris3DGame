@@ -6,7 +6,6 @@ public class BoardProjection : MonoBehaviour
     private Board _board;
     private GameObject _projectionBlock;
     private BlockTile[] _projectionTiles;
-    private bool _intersection;
     
     private void Awake()
     {
@@ -25,30 +24,21 @@ public class BoardProjection : MonoBehaviour
 
     private void OnIntersectionExist()
     {
-        if (CheckIntersection(_board.BlockController.GetBlockTiles()))
-        {
-            foreach (var projectionTile in _projectionTiles)
-            {
-                projectionTile.gameObject.SetActive(false);
-            }
-        }
+        CheckIntersection(_board.BlockController.GetBlockTiles());
     }
 
-    private bool CheckIntersection(BlockTile[] blockTiles)
+    private void CheckIntersection(BlockTile[] blockTiles)
     {
         foreach (var tile in blockTiles)
         {
             foreach (var projectionTile in _projectionTiles)
             {
-                if(!_intersection && projectionTile.transform.position == tile.transform.position)
+                if(projectionTile.transform.position == tile.transform.position)
                 {
-                    _intersection = true;
-                    return true;
+                    projectionTile.gameObject.SetActive(false);
                 }
             }
         }
-
-        return false;
     }
     
     private void OnNewBlock(GameObject block, Vector2Int position)
@@ -63,11 +53,11 @@ public class BoardProjection : MonoBehaviour
         _projectionBlock = Instantiate(block, Vector3.zero, Quaternion.identity);
         _projectionBlock.name = "Projection";
 
+        _projectionTiles = _projectionBlock.GetComponentsInChildren<BlockTile>();
+
         //Call first movement update
         OnMovement(_board.BlockController.gameObject);
-
-        _projectionTiles = _projectionBlock.GetComponentsInChildren<BlockTile>();
-      
+        
         //Change color alpha to make block tiles look like a projection
         var renderers = new List<Renderer>();
         renderers.AddRange(_projectionBlock.GetComponentsInChildren<Renderer>());
@@ -76,8 +66,6 @@ public class BoardProjection : MonoBehaviour
         {
             r.sharedMaterial = _board.BlockController.BlockControllerData.GhostMaterial;
         }
-
-        _intersection = false;
     }
 
     private void OnMovement(GameObject controller)

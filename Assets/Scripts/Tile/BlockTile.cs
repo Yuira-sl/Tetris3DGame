@@ -22,11 +22,23 @@ public class BlockTile : MonoBehaviour
         else
         {
             //Game object to project possible position after rotation
-            var projectedGO = gameObject;
+            var projectedGO = Instantiate(gameObject);
+
+            //Simulating BlockController object, which the rotation is based in
+            var parentGO = new GameObject();
+            parentGO.transform.position = controllerTransform.position;
+            parentGO.transform.rotation = controllerTransform.rotation;
+            projectedGO.transform.SetParent(parentGO.transform);
+
             //Equalizing local position to real tile's and simulating rotation to get possible position
             projectedGO.transform.localPosition = transform.localPosition;
-            controllerTransform.transform.Rotate(new Vector3(0, 0, rotation));
+            parentGO.transform.Rotate(new Vector3(0, 0, rotation));
+
             possiblePosition = Vector2Int.RoundToInt(projectedGO.transform.position);
+
+            //Destroy auxilliary game objects
+            Destroy(projectedGO);
+            Destroy(parentGO);
         }
 
         //Check if move is legal according to board matrix
