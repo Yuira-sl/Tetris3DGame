@@ -1,4 +1,4 @@
-﻿namespace Tomino
+﻿namespace Octamino
 {
     public interface IPlayerInput
     {
