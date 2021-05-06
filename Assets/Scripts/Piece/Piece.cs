@@ -7,7 +7,7 @@ namespace Octamino
     {
         private readonly bool _canRotate;
         
-        public Block[] blocks;
+        public Block[] Blocks;
         public bool CanRotate => _canRotate;
         
         public PieceType Type { get; }
@@ -17,18 +17,18 @@ namespace Octamino
         {
             get
             {
-                var min = blocks.Map(block => block.Position.Column).Min();
-                var max = blocks.Map(block => block.Position.Column).Max();
+                var min = Blocks.Map(block => block.Position.Column).Min();
+                var max = Blocks.Map(block => block.Position.Column).Max();
                 return Math.Abs(max - min);
             }
         }
         
         // Returns the topmost row in which a block of the piece is positioned
-        public int Top => blocks.Map(block => block.Position.Row).Max();
+        public int Top => Blocks.Map(block => block.Position.Row).Max();
         
         public Piece(Position[] blockPositions, PieceType type, bool canRotate = true)
         {
-            blocks = blockPositions.Map(position => new Block(position, type));
+            Blocks = blockPositions.Map(position => new Block(position, type));
             Type = type;
             _canRotate = canRotate;
         }
@@ -37,7 +37,7 @@ namespace Octamino
         public Dictionary<Block, Position> GetPositions()
         {
             var positions = new Dictionary<Block, Position>();
-            foreach (Block block in blocks)
+            foreach (Block block in Blocks)
             {
                 positions[block] = block.Position;
             }

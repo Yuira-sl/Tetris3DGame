@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace Octamino
 {
@@ -9,16 +10,26 @@ namespace Octamino
         private PieceType? _renderedPieceType;
         private int _blockPoolSize = 10;
         private bool _forceRender;
+        private RenderTexture _renderTexture;
 
-        // random blocks here
-        public GameObject blockPrefab;
-        public Material[] _blockMaterials;
-        public RectTransform container;
+        private RawImage _image;
+
+        public PieceData Data;
+        public Camera NextBlockCameraView;
+        public GameObject NextBlockContainer;
+        
+        private void Awake()
+        {
+            _image = GetComponent<RawImage>();
+        }
 
         public void SetBoard(Board board)
         {
             _board = board;
-            _blockViewPool = new Pool<BlockView>(blockPrefab, _blockPoolSize, gameObject);
+            _blockViewPool = new Pool<BlockView>(Data.Block, _blockPoolSize, NextBlockContainer);
+            _renderTexture = new RenderTexture(140, 140, 0);
+            _image.texture = _renderTexture;
+            NextBlockCameraView.targetTexture = _renderTexture;
         }
 
         private void Update()
@@ -30,38 +41,32 @@ namespace Octamino
                 _forceRender = false;
             }
         }
-
-        private void OnRectTransformDimensionsChange()
-        {
-            _forceRender = true;
-        }
-
+        
         private void DrawPiece(Piece piece)
         {
             _blockViewPool.DeactivateAll();
-
-            var blockSize = BlockSize(piece);
-
-            foreach (var block in piece.blocks)
+            
+            foreach (var block in piece.Blocks)
             {
                 var blockView = _blockViewPool.GetAndActivate();
-                blockView.SetMaterial(BlockMaterial());
-                blockView.SetPosition(BlockPosition(block.Position, blockSize));
+                blockView.SetMaterial(BlockMaterial(block.Type));
+                blockView.SetPosition(BlockPosition(block.Position));
+                blockView.gameObject.layer = 10;
             }
-
-            var pieceBlocks = _blockViewPool.Items.First(piece.blocks.Length);
+            
+            var pieceBlocks = _blockViewPool.Items.First(piece.Blocks.Length);
             var xValues = pieceBlocks.Map(b => b.transform.localPosition.x);
             var yValues = pieceBlocks.Map(b => b.transform.localPosition.y);
 
-            var halfBlockSize = blockSize / 2.0f;
+            var halfBlockSize = 0.5f;
             var minX = Mathf.Min(xValues) - halfBlockSize;
             var maxX = Mathf.Max(xValues) + halfBlockSize;
             var minY = Mathf.Min(yValues) - halfBlockSize;
             var maxY = Mathf.Max(yValues) + halfBlockSize;
             var width = maxX - minX;
             var height = maxY - minY;
-            var offsetX = (-width / 2.0f) - minX;
-            var offsetY = (-height / 2.0f) - minY;
+            var offsetX = -width * 0.5f - minX;
+            var offsetY = -height * 0.5f - minY;
 
             foreach (var block in pieceBlocks)
             {
@@ -69,23 +74,19 @@ namespace Octamino
             }
         }
 
-        private Vector3 BlockPosition(Position position, float blockSize)
+        private Vector3 BlockPosition(Position position)
         {
-            return new Vector3(position.Column * blockSize, position.Row * blockSize);
+            return new Vector3(position.Column, position.Row);
+        }
+        
+        private Material BlockMaterial(PieceType type)
+        {
+            return Data.PieceMaterials[(int)type];
         }
 
-        private float BlockSize(Piece piece)
+        private void OnDestroy()
         {
-            var width = container.rect.size.x;
-            var height = container.rect.size.y;
-            var numBlocks = piece.blocks.Length;
-            return Mathf.Min(width / numBlocks, height / numBlocks);
-        }
-
-        private Material BlockMaterial()
-        {
-            int index = Random.Range(0, _blockMaterials.Length - 1);
-            return _blockMaterials[index];
+            _renderTexture.Release();
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Octamino
 
         public Text TitleText;
         public Toggle MusicToggle;
-        public Toggle ScreenButtonsToggle;
         public Button CloseButton;
         public AudioPlayer AudioPlayer;
 
@@ -31,15 +30,7 @@ namespace Octamino
                 Settings.MusicEnabled = enabled;
                 PlayToggleAudioClip(enabled);
             });
-
-            ScreenButtonsToggle.isOn = Settings.ScreenButonsEnabled;
-            ScreenButtonsToggle.GetComponentInChildren<Text>().text = Constant.Text.ScreenButtons;
-            ScreenButtonsToggle.onValueChanged.AddListener(enabled =>
-            {
-                Settings.ScreenButonsEnabled = enabled;
-                PlayToggleAudioClip(enabled);
-            });
-
+            
             CloseButton.GetComponentInChildren<Text>().text = Constant.Text.Close;
             CloseButton.onClick.AddListener(() =>
             {
@@ -61,9 +52,13 @@ namespace Octamino
         private void PlayToggleAudioClip(bool enabled)
         {
             if (enabled)
+            {
                 AudioPlayer.PlayToggleOnClip();
+            }
             else
+            {
                 AudioPlayer.PlayToggleOffClip();
+            }
         }
     }
 }

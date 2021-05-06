@@ -1,3 +1,6 @@
+using System;
+using UnityEngine;
+
 namespace Octamino
 {
     public class Game
@@ -17,6 +20,9 @@ namespace Octamino
         public event GameEventHandler OnPieceRotated = delegate { };
         public event GameEventHandler OnPieceFinishedFalling = delegate { };
         
+        public event Action<Board> OnPieceStartedFalling;
+
+        
         public Score Score { get; private set; }
         public Level Level { get; private set; }
         
@@ -25,6 +31,7 @@ namespace Octamino
             _board = board;
             _input = input;
             OnPieceFinishedFalling += input.Cancel;
+            OnPieceStartedFalling += OnNewPiece;
         }
         
         public void Start()
@@ -80,12 +87,18 @@ namespace Octamino
         private void AddPiece()
         {
             _board.AddPiece();
+            OnPieceStartedFalling?.Invoke(_board);
             if (_board.HasCollisions())
             {
                 _isPlaying = false;
                 OnPaused();
                 OnGameFinished();
             }
+        }
+
+        private void OnNewPiece(Board board)
+        {
+            Debug.Log(board.Piece.Type);
         }
         
         private void HandleAutomaticPieceFalling(float deltaTime)

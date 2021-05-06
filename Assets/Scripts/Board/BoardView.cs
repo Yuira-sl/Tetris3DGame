@@ -10,21 +10,17 @@ namespace Octamino
         private Pool<BlockView> _blockViewPool;
         private RectTransform _rectTransform;
 
-        // multiple blocks with different meshes and materials
-        public GameObject BlockPrefab;
-        public GameObject RootSpawner;
-        
-        public Material[] Materials;
-        public Material GhostBlockMaterial;
+        public PieceData Data;
+        public GameObject BlocksContaiter;
         public TouchInput TouchInput = new TouchInput();
 
         public void SetBoard(Board board)
         {
             _gameBoard = board;
             var size = board.Width * board.Height + 10;
-            _blockViewPool = new Pool<BlockView>(BlockPrefab, size, RootSpawner);
+            _blockViewPool = new Pool<BlockView>(Data.Block, size, BlocksContaiter);
         }
-
+        
         private void RenderGameBoard()
         {
             _blockViewPool.DeactivateAll();
@@ -44,7 +40,7 @@ namespace Octamino
         {
             foreach (var position in _gameBoard.GetGhostPiecePositions())
             {
-                RenderBlock(GhostBlockMaterial, position);
+                RenderBlock(Data.GhostPieceMaterial, position);
             }
         }
                 
@@ -62,8 +58,6 @@ namespace Octamino
 
         private void Update()
         {
-            TouchInput.BlockSize = BlockSize();
-
             var hash = _gameBoard.GetHashCode();
             if (_forceRender || hash != _renderedBoardHash)
             {
@@ -91,8 +85,7 @@ namespace Octamino
        
         private Material BlockMaterial(PieceType type)
         {
-            int index = Random.Range(0, Materials.Length);
-            return Materials[(int) type];
+            return Data.PieceMaterials[(int) type];
         }
     }
 }

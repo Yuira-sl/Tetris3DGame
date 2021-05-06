@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace Octamino
 {
@@ -56,12 +55,12 @@ namespace Octamino
             var offsetRow = _top - Piece.Top;
             var offsetCol = (Width - Piece.Width) / 2;
 
-            foreach (var block in Piece.blocks)
+            foreach (var block in Piece.Blocks)
             {
                 block.MoveByOffset(offsetRow, offsetCol);
             }
 
-            Blocks.AddRange(Piece.blocks);
+            Blocks.AddRange(Piece.Blocks);
         }
         
         // Returns position of the ghost piece which is the final piece position if it starts
@@ -87,9 +86,9 @@ namespace Octamino
             }
 
             var piecePosition = Piece.GetPositions();
-            var offset = Piece.blocks[0].Position;
+            var offset = Piece.Blocks[0].Position;
 
-            foreach (var block in Piece.blocks)
+            foreach (var block in Piece.Blocks)
             {
                 var row = block.Position.Row - offset.Row;
                 var column = block.Position.Column - offset.Column;
@@ -165,14 +164,14 @@ namespace Octamino
         
         private bool MovePiece(int rowOffset, int columnOffset)
         {
-            foreach (var block in Piece.blocks)
+            foreach (var block in Piece.Blocks)
             {
                 block.MoveByOffset(rowOffset, columnOffset);
             }
 
             if (HasCollisions())
             {
-                foreach (var block in Piece.blocks)
+                foreach (var block in Piece.Blocks)
                 {
                     block.MoveByOffset(-rowOffset, -columnOffset);
                 }
@@ -203,7 +202,7 @@ namespace Octamino
 
         private void RestoreSavedPiecePosition(Dictionary<Block, Position> piecePosition)
         {
-            foreach (var block in Piece.blocks)
+            foreach (var block in Piece.Blocks)
             {
                 block.MoveTo(piecePosition[block]);
             }

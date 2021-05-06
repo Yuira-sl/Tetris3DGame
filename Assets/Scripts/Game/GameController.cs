@@ -61,7 +61,6 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         Board board = new Board(10, 20);
-        _boardView.TouchInput.Initialize(board);
         
         _boardView.SetBoard(board);
         _nextPieceView.SetBoard(board);
@@ -107,8 +106,8 @@ public class GameController : MonoBehaviour
 
     private void HandlePlayerSettings()
     {
-        _screenButtons.SetActive(Settings.ScreenButonsEnabled);
-        _boardView.TouchInput.Enabled = !Settings.ScreenButonsEnabled;
+        _screenButtons.SetActive(true);
+        //_boardView.TouchInput.Enabled = !Settings.ScreenButonsEnabled;
         _musicAudioSource.gameObject.SetActive(Settings.MusicEnabled);
     }
 }

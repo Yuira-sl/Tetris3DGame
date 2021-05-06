@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1386708a0c0c4034860e65198f031a05, type: 3}
+  m_Name: Piece Data
+  m_EditorClassIdentifier: 
+  Block: {fileID: 2469169289148832460, guid: 6df03dac37cc8e24096a74cb72399fbf, type: 3}
+  PieceMaterials:
+  - {fileID: 2100000, guid: 2710206144d5e204da324d912f35ffee, type: 2}
+  - {fileID: 2100000, guid: a28f3467440220340ba21df81a2cad57, type: 2}
+  - {fileID: 2100000, guid: f6d12aef8d5b93c4e86780160a951c0b, type: 2}
+  - {fileID: 2100000, guid: 9e7b82f51c9047a449a6c5c7029d5e38, type: 2}
+  - {fileID: 2100000, guid: 797e7ec03618cf944b6491bfcb3a74e1, type: 2}
+  - {fileID: 2100000, guid: 423c35ca7297267418f6cd69bd50a018, type: 2}
+  - {fileID: 2100000, guid: df3933dae5cd4214e82109d4931fe44c, type: 2}
+  GhostPieceMaterial: {fileID: 2100000, guid: abd9b12f3d020ca4f9ab7434b17311ad, type: 2}
