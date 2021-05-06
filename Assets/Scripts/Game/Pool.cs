@@ -12,6 +12,11 @@ namespace Octamino
             for (int i = 0; i < size; ++i)
             {
                 var newItem = Object.Instantiate(prefab, parent.transform, true);
+                var component = newItem.GetComponent<T>();
+                if (!component)
+                {
+                    newItem.AddComponent<T>();
+                }
                 Items[i] = newItem.GetComponent<T>();
             }
         }

@@ -12,7 +12,7 @@ namespace Octamino
 
         // random blocks here
         public GameObject blockPrefab;
-        public Sprite[] blockSprites;
+        public Material[] _blockMaterials;
         public RectTransform container;
 
         public void SetBoard(Board board)
@@ -45,8 +45,7 @@ namespace Octamino
             foreach (var block in piece.blocks)
             {
                 var blockView = _blockViewPool.GetAndActivate();
-                blockView.SetSprite(BlockSprite(block.Type));
-                blockView.SetSize(blockSize);
+                blockView.SetMaterial(BlockMaterial());
                 blockView.SetPosition(BlockPosition(block.Position, blockSize));
             }
 
@@ -83,9 +82,10 @@ namespace Octamino
             return Mathf.Min(width / numBlocks, height / numBlocks);
         }
 
-        private Sprite BlockSprite(PieceType type)
+        private Material BlockMaterial()
         {
-            return blockSprites[(int) type];
+            int index = Random.Range(0, _blockMaterials.Length - 1);
+            return _blockMaterials[index];
         }
     }
 }

@@ -6,14 +6,14 @@ namespace Octamino
     {
         private readonly IPieceProvider _pieceProvider;
         private readonly int _top;
-        private Piece Piece { get; set; }
+        
         
         public readonly int Width;
         public readonly int Height;
         
         public Piece NextPiece => _pieceProvider.GetNextPiece();
         public List<Block> Blocks { get; } = new List<Block>();
-
+        public Piece Piece { get; set; }
         public Board(int width, int height) : this(width, height, new BalancedRandomPieceProvider())
         {
         }

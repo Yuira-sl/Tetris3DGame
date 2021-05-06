@@ -4,12 +4,6 @@ namespace Octamino
 {
     public class BoardView : MonoBehaviour
     {
-        private enum Layer
-        {
-            Blocks,
-            PieceShadow
-        }
-
         private Board _gameBoard;
         private int _renderedBoardHash = -1;
         private bool _forceRender;
@@ -18,41 +12,47 @@ namespace Octamino
 
         // multiple blocks with different meshes and materials
         public GameObject BlockPrefab;
-        public Sprite[] BlockSprites;
-        public Sprite GhostBlockSprite;
+        public GameObject RootSpawner;
+        
+        public Material[] Materials;
+        public Material GhostBlockMaterial;
         public TouchInput TouchInput = new TouchInput();
 
         public void SetBoard(Board board)
         {
             _gameBoard = board;
             var size = board.Width * board.Height + 10;
-            _blockViewPool = new Pool<BlockView>(BlockPrefab, size, gameObject);
+            _blockViewPool = new Pool<BlockView>(BlockPrefab, size, RootSpawner);
         }
 
         private void RenderGameBoard()
         {
             _blockViewPool.DeactivateAll();
             RenderGhostPiece();
-            DrawBlocks();
+            RenderBlocks();
         }
 
-        private void DrawBlocks()
+        private void RenderBlocks()
         {
-            foreach (var block in _gameBoard.Blocks) RenderBlock(BlockSprite(block.Type), block.Position, Layer.Blocks);
+            foreach (var block in _gameBoard.Blocks)
+            {
+                RenderBlock(BlockMaterial(block.Type), block.Position);
+            }
         }
 
         private void RenderGhostPiece()
         {
             foreach (var position in _gameBoard.GetGhostPiecePositions())
-                RenderBlock(GhostBlockSprite, position, Layer.PieceShadow);
+            {
+                RenderBlock(GhostBlockMaterial, position);
+            }
         }
-
-        private void RenderBlock(Sprite sprite, Position position, Layer layer)
+                
+        private void RenderBlock(Material material, Position position)
         {
             var view = _blockViewPool.GetAndActivate();
-            view.SetSprite(sprite);
-            view.SetSize(BlockSize());
-            view.SetPosition(BlockPosition(position.Row, position.Column, layer));
+            view.SetMaterial(material);
+            view.SetPosition(BlockPosition(position.Row, position.Column));
         }
 
         private void Awake()
@@ -78,12 +78,9 @@ namespace Octamino
             _forceRender = true;
         }
 
-        private Vector3 BlockPosition(int row, int column, Layer layer)
+        private Vector3 BlockPosition(int row, int column)
         {
-            var size = BlockSize();
-            var position = new Vector3(column * size, row * size, (float) layer);
-            var offset = new Vector3(size / 2, size / 2, 0);
-            return position + offset - PivotOffset();
+            return new Vector3(column, row, 0);
         }
 
         private float BlockSize()
@@ -91,17 +88,11 @@ namespace Octamino
             var boardWidth = _rectTransform.rect.size.x;
             return boardWidth / _gameBoard.Width;
         }
-
-        private Sprite BlockSprite(PieceType type)
+       
+        private Material BlockMaterial(PieceType type)
         {
-            return BlockSprites[(int) type];
-        }
-
-        private Vector3 PivotOffset()
-        {
-            var pivot = _rectTransform.pivot;
-            var boardSize = _rectTransform.rect.size;
-            return new Vector3(boardSize.x * pivot.x, boardSize.y * pivot.y);
+            int index = Random.Range(0, Materials.Length);
+            return Materials[(int) type];
         }
     }
 }
