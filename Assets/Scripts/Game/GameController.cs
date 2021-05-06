@@ -42,9 +42,14 @@ public class GameController : MonoBehaviour
         _game.SetNextAction(PlayerAction.Fall);
     }
 
-    public void OnRotateButtonTap()
+    public void OnRotateLeftButtonTap()
     {
-        _game.SetNextAction(PlayerAction.Rotate);
+        _game.SetNextAction(PlayerAction.RotateLeft);
+    }
+    
+    public void OnRotateRightButtonTap()
+    {
+        _game.SetNextAction(PlayerAction.RotateRight);
     }
 
     private void Awake()
@@ -56,7 +61,8 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         Board board = new Board(10, 20);
-
+        _boardView.TouchInput.Initialize(board);
+        
         _boardView.SetBoard(board);
         _nextPieceView.SetBoard(board);
 

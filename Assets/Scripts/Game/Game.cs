@@ -127,9 +127,20 @@ namespace Octamino
                     }
                     break;
 
-                case PlayerAction.Rotate:
-                    var didRotate = _board.RotatePiece();
-                    if (didRotate) OnPieceRotated();
+                case PlayerAction.RotateRight:
+                    var didRightRotate = _board.RotatePiece(false);
+                    if (didRightRotate)
+                    {
+                        OnPieceRotated();
+                    }
+                    break;
+                
+                case PlayerAction.RotateLeft:
+                    var didLeftRotate = _board.RotatePiece(true);
+                    if (didLeftRotate)
+                    {
+                        OnPieceRotated();
+                    }
                     break;
 
                 case PlayerAction.Fall:

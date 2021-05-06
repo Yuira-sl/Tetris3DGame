@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Octamino
 {
@@ -6,7 +7,6 @@ namespace Octamino
     {
         private readonly IPieceProvider _pieceProvider;
         private readonly int _top;
-        
         
         public readonly int Width;
         public readonly int Height;
@@ -79,7 +79,7 @@ namespace Octamino
         public bool MovePieceDown() => MovePiece(-1, 0);
         
         // Rotates the current piece clockwise
-        public bool RotatePiece()
+        public bool RotatePiece(bool counterclockwise)
         {
             if (!Piece.CanRotate)
             {
@@ -93,7 +93,15 @@ namespace Octamino
             {
                 var row = block.Position.Row - offset.Row;
                 var column = block.Position.Column - offset.Column;
-                block.MoveTo(-column + offset.Row, row + offset.Column);
+
+                if (!counterclockwise)
+                {
+                    block.MoveTo(-column + offset.Row, row + offset.Column);
+                }
+                else
+                {
+                    block.MoveTo(column + offset.Row, -row + offset.Column);
+                }
             }
 
             if (HasCollisions() && !ResolveCollisionsAfterRotation())
