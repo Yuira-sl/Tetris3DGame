@@ -1,12 +1,10 @@
-using System;
-using UnityEngine;
-
 namespace Octamino
 {
     public class Game
     {
         private readonly Board _board;
         private readonly IPlayerInput _input;
+        private BoardView _boardView;
         private PlayerAction? _nextAction;
         private float _elapsedTime;
         private bool _isPlaying;
@@ -18,9 +16,8 @@ namespace Octamino
         public event GameEventHandler OnGameFinished = delegate { };
         public event GameEventHandler OnPieceMoved = delegate { };
         public event GameEventHandler OnPieceRotated = delegate { };
-        public event GameEventHandler OnPieceFinishedFalling = delegate { };
-        
-        public event Action<Board> OnPieceStartedFalling;
+        public event GameEventHandler OnPieceSettled = delegate { };
+        public event GameEventHandler OnPieceAppeared = delegate { };
 
         
         public Score Score { get; private set; }
@@ -30,8 +27,13 @@ namespace Octamino
         {
             _board = board;
             _input = input;
-            OnPieceFinishedFalling += input.Cancel;
-            OnPieceStartedFalling += OnNewPiece;
+            OnPieceSettled += input.Cancel;
+            OnPieceAppeared += OnNewPiece;
+        }
+
+        public void SetBoard(BoardView boardView)
+        {
+            _boardView = boardView;
         }
         
         public void Start()
@@ -87,7 +89,7 @@ namespace Octamino
         private void AddPiece()
         {
             _board.AddPiece();
-            OnPieceStartedFalling?.Invoke(_board);
+            OnPieceAppeared();
             if (_board.HasCollisions())
             {
                 _isPlaying = false;
@@ -95,10 +97,10 @@ namespace Octamino
                 OnGameFinished();
             }
         }
-
-        private void OnNewPiece(Board board)
+        
+        private void OnNewPiece()
         {
-            Debug.Log(board.Piece.Type);
+            
         }
         
         private void HandleAutomaticPieceFalling(float deltaTime)
@@ -108,7 +110,7 @@ namespace Octamino
             {
                 if (!_board.MovePieceDown())
                 {
-                    PieceFinishedFalling();
+                    PieceSettled();
                 }
                 ResetElapsedTime();
             }
@@ -136,7 +138,7 @@ namespace Octamino
                     }
                     else
                     {
-                        PieceFinishedFalling();
+                        PieceSettled();
                     }
                     break;
 
@@ -159,7 +161,7 @@ namespace Octamino
                 case PlayerAction.Fall:
                     Score.PieceFinishedFalling(_board.FallPiece());
                     ResetElapsedTime();
-                    PieceFinishedFalling();
+                    PieceSettled();
                     break;
             }
             if (pieceMoved)
@@ -168,15 +170,15 @@ namespace Octamino
             }
         }
 
-        private void PieceFinishedFalling()
+        private void PieceSettled()
         {
-            OnPieceFinishedFalling();
+            OnPieceSettled();
             int rowsCount = _board.RemoveFullRows();
             Score.RowsCleared(rowsCount);
             Level.RowsCleared(rowsCount);
             AddPiece();
         }
-
+        
         private void ResetElapsedTime()
         {
             _elapsedTime = 0;

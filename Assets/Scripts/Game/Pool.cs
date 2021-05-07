@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Octamino
@@ -21,6 +22,20 @@ namespace Octamino
             }
         }
 
+        public List<T> GetActiveItems()
+        {
+            List<T> result = new List<T>();   
+            for (int i = 0; i < Items.Length; ++i)
+            {
+                if (Items[i].gameObject.activeInHierarchy)
+                {
+                    result.Add(Items[i]);
+                }
+            }
+            
+            return result;
+        }
+        
         public T GetAndActivate()
         {
             var result = Items.FindFirst(item => !item.gameObject.activeInHierarchy);

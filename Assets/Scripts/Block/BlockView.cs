@@ -4,16 +4,16 @@ namespace Octamino
 {
     public class BlockView : MonoBehaviour
     {
-        private Renderer _renderer;
-
+        public Renderer Renderer { get; set; }
+        
         private void Awake()
         {
-            _renderer = GetComponent<Renderer>();
+            Renderer = GetComponent<Renderer>();
         }
         
         public void SetMaterial(Material material)
         { 
-            _renderer.material = material;
+            Renderer.material = material;
         }
         
         public void SetPosition(Vector3 position)

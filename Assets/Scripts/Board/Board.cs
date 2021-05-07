@@ -6,13 +6,17 @@ namespace Octamino
     {
         private readonly IPieceProvider _pieceProvider;
         private readonly int _top;
+        private Game _game;
+        public Game Game => _game;
         
         public readonly int Width;
         public readonly int Height;
         
         public Piece NextPiece => _pieceProvider.GetNextPiece();
         public List<Block> Blocks { get; } = new List<Block>();
+
         public Piece Piece { get; set; }
+        
         public Board(int width, int height) : this(width, height, new BalancedRandomPieceProvider())
         {
         }
@@ -23,6 +27,11 @@ namespace Octamino
             Height = height;
             _pieceProvider = pieceProvider;
             _top = height - 1;
+        }
+
+        public void SetGame(Game game)
+        {
+            _game = game;
         }
         
         // Determines whether blocks on the board collide with board bounds or with themselves.
@@ -45,9 +54,7 @@ namespace Octamino
             return hash;
         }
 
-        /// <summary>
-        /// Adds new piece.
-        /// </summary>
+        // Adds new piece.
         public void AddPiece()
         {
             Piece = _pieceProvider.GetPiece();
@@ -136,6 +143,26 @@ namespace Octamino
             }
             return rowsRemoved;
         }
+        
+        // public IEnumerator RemoveFullRows(float time)
+        // {
+        //     var rowsRemoved = 0;
+        //     for (int row = Height - 1; row >= 0; --row)
+        //     {
+        //         var rowBlocks = GetBlocksFromRow(row);
+        //         if (rowBlocks.Count == Width)
+        //         {
+        //             yield return new WaitForSeconds(time);
+        //             
+        //             Remove(rowBlocks);
+        //             MoveDownBlocksBelowRow(row);
+        //             rowsRemoved += 1;
+        //         }
+        //     }
+        //
+        //     RemovedRows = rowsRemoved;
+        //     yield return rowsRemoved;
+        // }
         
         public void RemoveAllBlocks()
         {

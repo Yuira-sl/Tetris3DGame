@@ -5,11 +5,8 @@ namespace Octamino
 {
     public class Piece
     {
-        private readonly bool _canRotate;
-        
         public Block[] Blocks;
-        public bool CanRotate => _canRotate;
-        
+        public bool CanRotate { get; }
         public PieceType Type { get; }
         
         // Returns number of columns occupied by this piece
@@ -29,8 +26,9 @@ namespace Octamino
         public Piece(Position[] blockPositions, PieceType type, bool canRotate = true)
         {
             Blocks = blockPositions.Map(position => new Block(position, type));
+            
             Type = type;
-            _canRotate = canRotate;
+            CanRotate = canRotate;
         }
         
         // Returns a mapping of blocks to the positions of blocks
