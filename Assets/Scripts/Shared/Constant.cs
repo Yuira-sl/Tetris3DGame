@@ -9,8 +9,6 @@
         public static readonly string NewGame = "NEW GAME";
         public static readonly string Settings = "SETTINGS";
         public static readonly string Music = "MUSIC";
-        public static readonly string ScreenButtons = "SCREEN BUTTONS";
-        public static readonly string Close = "CLOSE";
     }
 
     public static class ScoreFormat

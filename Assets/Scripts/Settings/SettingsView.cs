@@ -12,7 +12,7 @@ namespace Octamino
         public Toggle MusicToggle;
         public Button CloseButton;
         public AudioPlayer AudioPlayer;
-
+        
         public void Show(UnityAction onCloseCallback)
         {
             OnCloseCallback = onCloseCallback;
@@ -31,7 +31,6 @@ namespace Octamino
                 PlayToggleAudioClip(enabled);
             });
             
-            CloseButton.GetComponentInChildren<Text>().text = Constant.Text.Close;
             CloseButton.onClick.AddListener(() =>
             {
                 Hide();

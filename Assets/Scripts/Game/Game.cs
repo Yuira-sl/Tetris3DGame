@@ -2,13 +2,15 @@ namespace Octamino
 {
     public class Game
     {
+        public static Game Instance;
+        
         private readonly Board _board;
         private readonly IPlayerInput _input;
         private BoardView _boardView;
         private PlayerAction? _nextAction;
         private float _elapsedTime;
         private bool _isPlaying;
-        
+
         public delegate void GameEventHandler();
         
         public event GameEventHandler OnResumed = delegate { };
@@ -25,6 +27,11 @@ namespace Octamino
         
         public Game(Board board, IPlayerInput input)
         {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            
             _board = board;
             _input = input;
             OnPieceSettled += input.Cancel;

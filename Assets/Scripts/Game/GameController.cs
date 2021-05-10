@@ -11,11 +11,13 @@ public class GameController : MonoBehaviour
     [SerializeField] private PieceView _nextPieceView;
     [SerializeField] private ScoreView _scoreView;
     [SerializeField] private LevelView _levelView;
-    [SerializeField] private EndGameView _endGameView;
+    [SerializeField] private GamePauseView _gamePauseView;
     [SerializeField] private SettingsView _settingsView;
     [SerializeField] private GameObject _screenButtons;
     [SerializeField] private AudioPlayer _audioPlayer;
     [SerializeField] private AudioSource _musicAudioSource;
+
+    [SerializeField] private ButtonsData _buttonsData;
     
     public void OnPauseButtonTap()
     {
@@ -65,12 +67,10 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         _board = new Board(10, 20);
-
         _nextPieceView.SetBoard(_board);
-
         _universalInput = new UniversalInput(new KeyboardInput(), _boardView.TouchInput);
-
         _game = new Game(_board, _universalInput);
+        
         _game.OnGameFinished += GameGameFinished;
         _game.OnPieceSettled += _audioPlayer.PlayPieceDropClip;
         _game.OnPieceRotated += _audioPlayer.PlayPieceRotateClip;
@@ -87,23 +87,25 @@ public class GameController : MonoBehaviour
     
     private void GameGameFinished()
     {
-        _endGameView.SetTitle(Octamino.Constant.Text.GameFinished);
-        _endGameView.AddButton(Octamino.Constant.Text.PlayAgain, _game.Start, _audioPlayer.PlayNewGameClip);
-        _endGameView.Show();
+        _gamePauseView.SetTitle(Octamino.Constant.Text.GameFinished);
+        _gamePauseView.AddButton(_buttonsData.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
+        _gamePauseView.AddButton(_buttonsData.ExitGame, Application.Quit, _audioPlayer.PlayNewGameClip);
+        _gamePauseView.Show();
     }
 
     private void Update()
     {
         _game.Update(Time.deltaTime);
     }
-
+    
     private void ShowPauseView()
     {
-        _endGameView.SetTitle(Octamino.Constant.Text.GamePaused);
-        _endGameView.AddButton(Octamino.Constant.Text.Resume, _game.Resume, _audioPlayer.PlayResumeClip);
-        _endGameView.AddButton(Octamino.Constant.Text.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
-        _endGameView.AddButton(Octamino.Constant.Text.Settings, ShowSettingsView, _audioPlayer.PlayResumeClip);
-        _endGameView.Show();
+        _gamePauseView.SetTitle(Octamino.Constant.Text.GamePaused);
+        _gamePauseView.AddButton(_buttonsData.Resume, _game.Resume, _audioPlayer.PlayResumeClip);
+        _gamePauseView.AddButton(_buttonsData.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
+        _gamePauseView.AddButton(_buttonsData.Settings, ShowSettingsView, _audioPlayer.PlayResumeClip);
+        _gamePauseView.AddButton(_buttonsData.ExitGame, Application.Quit, _audioPlayer.PlayResumeClip);
+        _gamePauseView.Show();
     }
 
     private void ShowSettingsView()
