@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using Octamino;
+using Input = Octamino.Input;
 
 public class GameController : MonoBehaviour
 {
     private Game _game;
     private Board _board;
-    private UniversalInput _universalInput;
+    private Input _input;
 
     [SerializeField] private BoardView _boardView;
     [SerializeField] private PieceView _nextPieceView;
@@ -68,8 +69,8 @@ public class GameController : MonoBehaviour
     {
         _board = new Board(10, 20);
         _nextPieceView.SetBoard(_board);
-        _universalInput = new UniversalInput(new KeyboardInput(), _boardView.TouchInput);
-        _game = new Game(_board, _universalInput);
+        _input = new Input(new KeyboardInput(), _boardView.TouchInput);
+        _game = new Game(_board, _input);
         
         _game.OnGameFinished += GameGameFinished;
         _game.OnPieceSettled += _audioPlayer.PlayPieceDropClip;

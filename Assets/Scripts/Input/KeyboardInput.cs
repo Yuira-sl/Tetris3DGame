@@ -31,7 +31,7 @@ namespace Octamino
                 return _actionForKey[actionKeyDown];
             }
 
-            if (Input.GetKeyUp(_pressedKey))
+            if (UnityEngine.Input.GetKeyUp(_pressedKey))
             {
                 Cancel();
             }
@@ -65,7 +65,7 @@ namespace Octamino
         {
             foreach (var key in _actionForKey.Keys)
             {
-                if (Input.GetKeyDown(key))
+                if (UnityEngine.Input.GetKeyDown(key))
                 {
                     return key;
                 }

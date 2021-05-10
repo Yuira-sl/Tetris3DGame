@@ -2,11 +2,11 @@
 
 namespace Octamino
 {
-    public class UniversalInput : IPlayerInput
+    public class Input : IPlayerInput
     {
         private readonly List<IPlayerInput> _inputs;
 
-        public UniversalInput(params IPlayerInput[] inputs)
+        public Input(params IPlayerInput[] inputs)
         {
             _inputs = new List<IPlayerInput>(inputs);
         }

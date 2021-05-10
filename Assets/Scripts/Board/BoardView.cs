@@ -7,9 +7,9 @@ namespace Octamino
         private Board _board;
         private int _renderedBoardHash = -1;
         private bool _forceRender;
-        
+        private BlockView _currentGhostBlock;
+       
         public Pool<BlockView> BlockViewPool { get; set; }
-
         
         public PieceData Data;
         public GameObject BlocksContaiter;
@@ -77,14 +77,13 @@ namespace Octamino
         //     }
         // }
         
-        
         private void RenderGameBoard()
         {
             BlockViewPool.DeactivateAll();
             RenderGhostPiece();
             RenderPiece();
         }
-
+        
         private void RenderPiece()
         {
             foreach (var block in _board.Blocks)
@@ -97,8 +96,24 @@ namespace Octamino
         {
             foreach (var position in _board.GetGhostPiecePositions())
             {
-                RenderBlock(Data.GhostPieceMaterial, position);
+                _currentGhostBlock = RenderBlock(Data.GhostPieceMaterial, position);
+                if (CheckIntersectsPositions(position))
+                {
+                    _currentGhostBlock.gameObject.SetActive(false);
+                }
             }
+        }
+        
+        private bool CheckIntersectsPositions(Position position)
+        {
+            foreach (var block in _board.Blocks)
+            {
+                if (block.Position == position)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         
         private BlockView RenderBlock(Material material, Position position)

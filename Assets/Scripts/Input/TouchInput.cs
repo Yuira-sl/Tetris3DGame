@@ -32,9 +32,9 @@ namespace Octamino
         {
             _playerAction = null;
 
-            if (Input.touchCount > 0)
+            if (UnityEngine.Input.touchCount > 0)
             {
-                var touch = Input.GetTouch(0);
+                var touch = UnityEngine.Input.GetTouch(0);
                 
                 if (_cancelCurrentTouch)
                 {
@@ -58,7 +58,7 @@ namespace Octamino
 
         public void Cancel()
         {
-            _cancelCurrentTouch |= Input.touchCount > 0;
+            _cancelCurrentTouch |= UnityEngine.Input.touchCount > 0;
         }
         
         private PlayerAction? ActionForHorizontalMoveOffset(Vector2 position)
