@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Octamino
 {
@@ -8,8 +10,10 @@ namespace Octamino
         private int _renderedBoardHash = -1;
         private bool _forceRender;
         private BlockView _currentGhostBlock;
-       
-        public Pool<BlockView> BlockViewPool { get; set; }
+        
+        private readonly List<BlockView> _settledBlocksInRow = new List<BlockView>();
+        
+        private Pool<BlockView> BlockViewPool { get; set; }
         
         public PieceData Data;
         public GameObject BlocksContaiter;
@@ -21,61 +25,67 @@ namespace Octamino
             _board = board;
             _board.Game.OnPieceSettled += OnBlockSettled;
             _board.Game.OnPieceAppeared += OnBlockAppeared;
+            _board.Game.OnGameStarted += OnGameStarted;
+            _board.OnBoardRowCleared += OnBoardRowCleared;
             
             var size = board.Width * board.Height + 10;
             BlockViewPool = new Pool<BlockView>(Data.Block, size, BlocksContaiter);
         }
 
+        private void OnGameStarted()
+        {
+        }
         private void OnBlockAppeared()
         {
-            
         }
         
         private void OnBlockSettled()
         {
-
         }
 
-        // public void StartProcessBlockViewRemove(float time)
-        // {
-        //     StartCoroutine(ProcessBlockViewRemove(time));
-        // }
-        //
-        // public void StartRemoveFullRows(float time)
-        // {
-        //     StartCoroutine(_board.RemoveFullRows(time));
-        // }
-        //
-        // private IEnumerator ProcessBlockViewRemove(float time)
-        // {
-        //     for (int row = _board.Height - 1; row >= 0; --row)
-        //     {
-        //         List<BlockView> views = new List<BlockView>();
-        //         foreach (var block in BlockViewPool.GetActiveItems())
-        //         {
-        //             var blocks = _board.Blocks.FindAll(b => b.Position.Row == row);
-        //             if (blocks.Count == _board.Width)
-        //             {
-        //                 views.Add(block);
-        //             }
-        //         }
-        //         
-        //         float elapsedTime = 0;
-        //         while (elapsedTime < time)
-        //         {
-        //             elapsedTime += Time.deltaTime;
-        //
-        //             foreach (var view in views)
-        //             {
-        //                 view.Renderer.material.color 
-        //                     = Color.Lerp(view.Renderer.material.color, 
-        //                         Color.black, elapsedTime / time);
-        //             }
-        //
-        //             yield return null;
-        //         }
-        //     }
-        // }
+        private void OnBoardRowCleared(int row, float time)
+        {
+            StartCoroutine(GetBlocksInRow(row, time));
+        }
+
+        private IEnumerator GetBlocksInRow(int row, float time)
+        {
+            yield return null;
+
+            var temp = new List<BlockView>();
+            foreach (var view in BlockViewPool.GetActiveItems())
+            {
+                if (view.transform.position.y.Equals(row))
+                {
+                    temp.Add(view);
+                }
+            }
+
+            foreach (var r in temp)
+            {
+                _settledBlocksInRow.Add(r);
+            }
+            
+            if (_settledBlocksInRow.Count > 0)
+            {
+                float elapsedTime = 0;
+                while (elapsedTime < time)
+                {
+                    elapsedTime += Time.deltaTime;
+        
+                    foreach (var view in _settledBlocksInRow)
+                    {
+                        view.Renderer.material.color = Color.Lerp(view.Renderer.material.color, Color.black, elapsedTime / time);
+                    }
+        
+                    yield return null;
+                }
+                _settledBlocksInRow.Clear();
+            }
+            
+            _board.Remove(_board.GetBlocksFromRow(row));
+            _board.MoveDownBlocksBelowRow(row);
+        }
         
         private void RenderGameBoard()
         {
@@ -149,6 +159,8 @@ namespace Octamino
         {
             _board.Game.OnPieceSettled -= OnBlockSettled;
             _board.Game.OnPieceAppeared -= OnBlockAppeared;
+            _board.Game.OnGameStarted -= OnGameStarted;
+            _board.OnBoardRowCleared -= OnBoardRowCleared;
         }
     }
 }

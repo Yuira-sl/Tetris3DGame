@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Octamino
 {
@@ -7,6 +10,9 @@ namespace Octamino
         private readonly IPieceProvider _pieceProvider;
         private readonly int _top;
         private Game _game;
+
+        public event Action<int, float> OnBoardRowCleared;
+        
         public Game Game => _game;
         
         public readonly int Width;
@@ -16,7 +22,7 @@ namespace Octamino
         public List<Block> Blocks { get; } = new List<Block>();
 
         public Piece Piece { get; set; }
-        
+        public int RowsToRemove { get; set; }
         public Board(int width, int height) : this(width, height, new BalancedRandomPieceProvider())
         {
         }
@@ -128,41 +134,46 @@ namespace Octamino
             return rowsCount;
         }
         
-        public int RemoveFullRows()
+        public List<Block> GetBlocksFromRow(int row)
         {
+            return Blocks.FindAll(block => block.Position.Row == row);
+        }
+        
+        public void Remove(List<Block> blocksToRemove)
+        {
+            Blocks.RemoveAll(blocksToRemove.Contains);
+        }
+
+        public void MoveDownBlocksBelowRow(int row)
+        {
+            foreach (var block in Blocks)
+            {
+                if (block.Position.Row > row)
+                {
+                    block.MoveByOffset(-1, 0);
+                }
+            }
+        }
+        
+        public IEnumerator RemoveFullRows(float time)
+        {
+            yield return new WaitForSeconds(time);
+
             var rowsRemoved = 0;
             for (int row = Height - 1; row >= 0; --row)
             {
                 var rowBlocks = GetBlocksFromRow(row);
+
                 if (rowBlocks.Count == Width)
                 {
-                    Remove(rowBlocks);
-                    MoveDownBlocksBelowRow(row);
+                    OnBoardRowCleared?.Invoke(row, time);
                     rowsRemoved += 1;
                 }
             }
-            return rowsRemoved;
+
+            RowsToRemove = rowsRemoved;
+            yield return null;
         }
-        
-        // public IEnumerator RemoveFullRows(float time)
-        // {
-        //     var rowsRemoved = 0;
-        //     for (int row = Height - 1; row >= 0; --row)
-        //     {
-        //         var rowBlocks = GetBlocksFromRow(row);
-        //         if (rowBlocks.Count == Width)
-        //         {
-        //             yield return new WaitForSeconds(time);
-        //             
-        //             Remove(rowBlocks);
-        //             MoveDownBlocksBelowRow(row);
-        //             rowsRemoved += 1;
-        //         }
-        //     }
-        //
-        //     RemovedRows = rowsRemoved;
-        //     yield return rowsRemoved;
-        // }
         
         public void RemoveAllBlocks()
         {
@@ -232,27 +243,6 @@ namespace Octamino
             foreach (var block in Piece.Blocks)
             {
                 block.MoveTo(piecePosition[block]);
-            }
-        }
-        
-        private List<Block> GetBlocksFromRow(int row)
-        {
-            return Blocks.FindAll(block => block.Position.Row == row);
-        }
-
-        private void Remove(List<Block> blocksToRemove)
-        {
-            Blocks.RemoveAll(blocksToRemove.Contains);
-        }
-
-        private void MoveDownBlocksBelowRow(int row)
-        {
-            foreach (var block in Blocks)
-            {
-                if (block.Position.Row > row)
-                {
-                    block.MoveByOffset(-1, 0);
-                }
             }
         }
     }

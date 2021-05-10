@@ -15,6 +15,7 @@ namespace Octamino
         
         public event GameEventHandler OnResumed = delegate { };
         public event GameEventHandler OnPaused = delegate { };
+        public event GameEventHandler OnGameStarted = delegate { };
         public event GameEventHandler OnGameFinished = delegate { };
         public event GameEventHandler OnPieceMoved = delegate { };
         public event GameEventHandler OnPieceRotated = delegate { };
@@ -46,6 +47,7 @@ namespace Octamino
         public void Start()
         {
             _isPlaying = true;
+            OnGameStarted();
             OnResumed();
             _elapsedTime = 0;
             Score = new Score();
@@ -180,7 +182,8 @@ namespace Octamino
         private void PieceSettled()
         {
             OnPieceSettled();
-            int rowsCount = _board.RemoveFullRows();
+            _boardView.StartCoroutine(_board.RemoveFullRows(0.5f));
+            int rowsCount = _board.RowsToRemove;
             Score.RowsCleared(rowsCount);
             Level.RowsCleared(rowsCount);
             AddPiece();
