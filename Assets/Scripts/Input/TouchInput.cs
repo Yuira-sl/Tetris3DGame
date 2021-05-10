@@ -7,9 +7,11 @@ namespace Octamino
         private PlayerAction? _playerAction;
         private bool _cancelCurrentTouch;
         private bool _enabled = true;
-
+        
         private Rect _leftScreenPart;
         private Rect _rightScreenPart;
+
+        private float _timePressed;
         
         public bool Enabled
         {
@@ -40,9 +42,20 @@ namespace Octamino
                 {
                     _cancelCurrentTouch &= touch.phase != TouchPhase.Ended;
                 }
-                else if (touch.phase == TouchPhase.Ended)
+                
+                if(touch.phase == TouchPhase.Began)
                 {
+                    _timePressed = 0;
                     _playerAction = ActionForHorizontalMoveOffset(touch.position);
+                }
+               
+                if(touch.phase == TouchPhase.Stationary)
+                {
+                    _timePressed += Time.deltaTime;
+                    if (_timePressed > 0.3f)
+                    {
+                        _playerAction = ActionForHorizontalMoveOffset(touch.position);
+                    }
                 }
             }
             else
