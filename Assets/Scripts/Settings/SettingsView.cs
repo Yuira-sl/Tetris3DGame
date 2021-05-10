@@ -22,12 +22,14 @@ namespace Octamino
         private void Awake()
         {
             TitleText.text = Constant.Text.Settings;
+            AudioPlayer.gameObject.SetActive(Settings.MusicEnabled);
 
             MusicToggle.isOn = Settings.MusicEnabled;
             MusicToggle.GetComponentInChildren<Text>().text = Constant.Text.Music;
             MusicToggle.onValueChanged.AddListener(enabled =>
             {
                 Settings.MusicEnabled = enabled;
+                AudioPlayer.gameObject.SetActive(Settings.MusicEnabled);
                 PlayToggleAudioClip(enabled);
             });
             
