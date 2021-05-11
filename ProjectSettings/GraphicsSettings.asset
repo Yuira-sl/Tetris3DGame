@@ -54,7 +54,7 @@ GraphicsSettings:
     m_Settings:
       standardShaderQuality: 0
       renderingPath: 1
-      hdrMode: 2
+      hdrMode: 1
       realtimeGICPUUsage: 25
       useReflectionProbeBoxProjection: 0
       useReflectionProbeBlending: 0
@@ -71,7 +71,7 @@ GraphicsSettings:
     m_Settings:
       standardShaderQuality: 1
       renderingPath: 1
-      hdrMode: 2
+      hdrMode: 1
       realtimeGICPUUsage: 25
       useReflectionProbeBoxProjection: 0
       useReflectionProbeBlending: 0
@@ -88,7 +88,7 @@ GraphicsSettings:
     m_Settings:
       standardShaderQuality: 1
       renderingPath: 1
-      hdrMode: 2
+      hdrMode: 1
       realtimeGICPUUsage: 25
       useReflectionProbeBoxProjection: 0
       useReflectionProbeBlending: 0

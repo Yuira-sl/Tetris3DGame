@@ -98,7 +98,7 @@ namespace Octamino
             var mat = view.Renderer.material;
             mat.EnableKeyword(EmissionKey);
             var color = view.Renderer.material.color;
-            mat.SetColor(EmissionColorId, Color.Lerp(color, color * 8f, time));
+            mat.SetColor(EmissionColorId, Color.Lerp(color, color * 2f, time));
         }
         
         private void RenderGameBoard()
