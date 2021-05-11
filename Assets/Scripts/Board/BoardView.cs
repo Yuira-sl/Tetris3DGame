@@ -6,11 +6,15 @@ namespace Octamino
 {
     public class BoardView : MonoBehaviour
     {
+        private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+        private const string EmissionKey = "_EMISSION";
+
         private Board _board;
         private int _renderedBoardHash = -1;
         private bool _forceRender;
         private BlockView _currentGhostBlock;
         
+        private readonly List<ParticleSystem> _clearedRowEffects = new List<ParticleSystem>();
         private readonly List<BlockView> _settledBlocksInRow = new List<BlockView>();
         
         private Pool<BlockView> BlockViewPool { get; set; }
@@ -18,7 +22,7 @@ namespace Octamino
         public PieceData Data;
         public GameObject BlocksContaiter;
         public TouchInput TouchInput = new TouchInput();
-
+        public ParticleSystem ClearedEffect;
         
         public void SetBoard(Board board)
         {
@@ -41,6 +45,7 @@ namespace Octamino
         
         private void OnBlockSettled()
         {
+            CleanRowEffects();
         }
 
         private void OnBoardRowCleared(int row, float time)
@@ -75,16 +80,25 @@ namespace Octamino
         
                     foreach (var view in _settledBlocksInRow)
                     {
-                        view.Renderer.material.color = Color.Lerp(view.Renderer.material.color, Color.black, elapsedTime / time);
+                        InitGlowingRows(view, elapsedTime / time);
                     }
         
                     yield return null;
                 }
                 _settledBlocksInRow.Clear();
             }
-            
+
+            _clearedRowEffects.Add(Instantiate(ClearedEffect, new Vector3(4.5f, row, 0), Quaternion.identity));
             _board.Remove(_board.GetBlocksFromRow(row));
             _board.MoveDownBlocksBelowRow(row);
+        }
+
+        private void InitGlowingRows(BlockView view, float time)
+        {
+            var mat = view.Renderer.material;
+            mat.EnableKeyword(EmissionKey);
+            var color = view.Renderer.material.color;
+            mat.SetColor(EmissionColorId, Color.Lerp(color, color * 8f, time));
         }
         
         private void RenderGameBoard()
@@ -155,6 +169,23 @@ namespace Octamino
             return Data.PieceMaterials[(int) type];
         }
 
+        private void CleanRowEffects()
+        {
+            if (_clearedRowEffects.Count <= 0)
+            {
+                return;
+            }
+            
+            foreach (var effect in _clearedRowEffects)
+            {
+                if (effect != null && !effect.isPlaying)
+                {
+                    Destroy(effect.gameObject);
+                }
+            }
+            _clearedRowEffects.Clear();
+        }
+        
         private void OnDestroy()
         {
             _board.Game.OnPieceSettled -= OnBlockSettled;

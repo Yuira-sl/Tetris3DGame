@@ -182,7 +182,7 @@ namespace Octamino
         private void PieceSettled()
         {
             OnPieceSettled();
-            _boardView.StartCoroutine(_board.RemoveFullRows(0.3f));
+            _boardView.StartCoroutine(_board.RemoveFullRows(0.4f));
             int rowsCount = _board.RowsToRemove;
             Score.RowsCleared(rowsCount);
             Level.RowsCleared(rowsCount);
