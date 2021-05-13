@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private LevelView _levelView;
     [SerializeField] private GamePauseView _gamePauseView;
     [SerializeField] private SettingsView _settingsView;
+    [SerializeField] private HighscoreView _highscoreView;
     [SerializeField] private GameObject _screenButtons;
     [SerializeField] private AudioPlayer _audioPlayer;
     [SerializeField] private AudioSource _musicAudioSource;
@@ -52,19 +53,6 @@ public class GameController : MonoBehaviour
         Settings.ChangedEvent += HandlePlayerSettings;
     }
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 10; j++)
-            {
-                Gizmos.DrawWireCube(new Vector3(j,i,1), Vector3.one);
-            }
-        }
-    }
-#endif
     private void Start()
     {
         _board = new Board(10, 20);
@@ -105,6 +93,7 @@ public class GameController : MonoBehaviour
         _gamePauseView.AddButton(_buttonsData.Resume, _game.Resume, _audioPlayer.PlayResumeClip);
         _gamePauseView.AddButton(_buttonsData.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
         _gamePauseView.AddButton(_buttonsData.Settings, ShowSettingsView, _audioPlayer.PlayResumeClip);
+        _gamePauseView.AddButton(_buttonsData.Highscore, ShowHighscoreView, _audioPlayer.PlayResumeClip);
         _gamePauseView.AddButton(_buttonsData.ExitGame, Application.Quit, _audioPlayer.PlayResumeClip);
         _gamePauseView.Show();
     }
@@ -114,6 +103,11 @@ public class GameController : MonoBehaviour
         _settingsView.Show(ShowPauseView);
     }
 
+    private void ShowHighscoreView()
+    {
+        _highscoreView.Show(ShowPauseView);
+    }
+    
     private void HandlePlayerSettings()
     {
         _screenButtons.SetActive(true);

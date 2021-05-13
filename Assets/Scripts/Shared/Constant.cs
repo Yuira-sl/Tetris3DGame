@@ -4,10 +4,8 @@
     {
         public static readonly string GameFinished = "GAME FINISHED";
         public static readonly string GamePaused = "GAME PAUSED";
-        public static readonly string PlayAgain = "PLAY AGAIN";
-        public static readonly string Resume = "RESUME";
-        public static readonly string NewGame = "NEW GAME";
         public static readonly string Settings = "SETTINGS";
+        public static readonly string HighScore = "HIGH SCORE";
         public static readonly string Music = "MUSIC";
     }
 

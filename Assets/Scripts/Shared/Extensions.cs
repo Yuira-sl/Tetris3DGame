@@ -90,6 +90,26 @@ namespace Octamino
             }
         }
 
+        public static List<T> SortByDescending<T>(this List<T> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = i + 1; j < list.Count; j++)
+                {
+                    var temp = list[i];
+                    list[i] = list[j];
+                    list[j] = temp;
+                }
+            }
+
+            return list;
+        }
+        
+        public static void RemoveFrom<T>(this List<T> lst, int from)
+        {
+            lst.RemoveRange(from, lst.Count - from);
+        }
+        
         public static void Swap<T>(this IList<T> list, int i, int j)
         {
             var temp = list[i];
