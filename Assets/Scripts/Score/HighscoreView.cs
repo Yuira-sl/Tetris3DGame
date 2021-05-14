@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -8,6 +7,7 @@ namespace Octamino
 {
     public class HighscoreView : MonoBehaviour
     {
+        private const string Highscore = "highscores";
         private const int MaxScoreEntries = 3;
         private HighscoreData _highscoreData;
         private UnityAction _onCloseCallback;
@@ -23,9 +23,9 @@ namespace Octamino
             _onCloseCallback = onCloseCallback;
             gameObject.SetActive(true);
             
-            Remove();
             AddScore(new HighscoreEntry(Game.Instance.Score.Value));
-            BuildBoard();
+            var scores = BuildBoard();
+            RemoveUnnecessaryElements(scores);
         }
         
         private void Awake()
@@ -43,21 +43,19 @@ namespace Octamino
             Hide();
         }
         
-        private void Remove()
+        private void RemoveUnnecessaryElements(HighscoreEntry[] scores)
         {
-            if (_highscoreData.Highscores.Count > 3)
+            if (scores.Length > 3)
             {
-                for (int i = 0; i < _highscoreData.Highscores.Count; i++)
-                {
-                    if (_highscoreData.Highscores[i].Score > _currentScore)
-                    {
-                        _highscoreData.Highscores.RemoveAt(i);
-                    }
-                }
+                _highscoreData.Highscores.Clear();
+                _highscoreData.Highscores.AddRange(scores);
+                _highscoreData.Highscores.RemoveRange(
+                    _highscoreData.Highscores.Count - 1, 
+                    _highscoreData.Highscores.Count - 3);
             }
         }
         
-        private void BuildBoard()
+        private HighscoreEntry[] BuildBoard()
         {
             var scores = GetSortedScores();
             for (int i = 0; i < MaxScoreEntries; i++)
@@ -68,6 +66,8 @@ namespace Octamino
                 entryView.Rank.text = RankName(i + 1);
                 entryView.ScoreText.text = scores[i].Score.ToString();
             }
+
+            return scores;
         }
 
         private string RankName(int value)
@@ -86,10 +86,27 @@ namespace Octamino
         
         private HighscoreEntry[] GetSortedScores()
         {
-            var res = _highscoreData.Highscores.ToArray();
-            Array.Sort(res);
-            Array.Reverse(res);
-            return res;
+            var highscoreEntriesList = _highscoreData.Highscores;
+            var highscoreEntriesArray = _highscoreData.Highscores.ToArray();
+            
+            if (highscoreEntriesArray.Length == 0 || highscoreEntriesArray.Length < 3)
+            {
+                while (highscoreEntriesList.Count < 3)
+                {
+                    highscoreEntriesList.Add(new HighscoreEntry(0));
+                }
+
+                highscoreEntriesArray = highscoreEntriesList.ToArray();
+                return highscoreEntriesArray;
+            }
+            
+            if (highscoreEntriesArray.Length > 0)
+            {
+                Array.Sort(highscoreEntriesArray);
+                Array.Reverse(highscoreEntriesArray);
+            }
+            
+            return highscoreEntriesArray;
         }
         
         private void AddScore(HighscoreEntry highscoreEntry)
@@ -104,13 +121,13 @@ namespace Octamino
         private void Save()
         {
             var json = JsonUtility.ToJson(_highscoreData);
-            PlayerPrefs.SetString("highscores", json);
+            PlayerPrefs.SetString(Highscore, json);
             PlayerPrefs.Save();
         }
 
         private void Load()
         {
-            var json = PlayerPrefs.GetString("highscores", "{}");
+            var json = PlayerPrefs.GetString(Highscore, "{}");
             _highscoreData = JsonUtility.FromJson<HighscoreData>(json);
         }
         
