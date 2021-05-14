@@ -45,13 +45,13 @@ namespace Octamino
         
         private void RemoveUnnecessaryElements(HighscoreEntry[] scores)
         {
-            if (scores.Length > 3)
+            if (scores.Length > MaxScoreEntries)
             {
                 _highscoreData.Highscores.Clear();
                 _highscoreData.Highscores.AddRange(scores);
                 _highscoreData.Highscores.RemoveRange(
                     _highscoreData.Highscores.Count - 1, 
-                    _highscoreData.Highscores.Count - 3);
+                    _highscoreData.Highscores.Count - MaxScoreEntries);
             }
         }
         
@@ -89,9 +89,9 @@ namespace Octamino
             var highscoreEntriesList = _highscoreData.Highscores;
             var highscoreEntriesArray = _highscoreData.Highscores.ToArray();
             
-            if (highscoreEntriesArray.Length == 0 || highscoreEntriesArray.Length < 3)
+            if (highscoreEntriesArray.Length == 0 || highscoreEntriesArray.Length < MaxScoreEntries)
             {
-                while (highscoreEntriesList.Count < 3)
+                while (highscoreEntriesList.Count < MaxScoreEntries)
                 {
                     highscoreEntriesList.Add(new HighscoreEntry(0));
                 }
