@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BlueSkyesDay
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
+  m_Name: StarSkybox
+  m_Shader: {fileID: 4800000, guid: 791e3cddb5052fb4e80a4eab7003ed3f, type: 3}
+  m_ShaderKeywords: _STARS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,6 +20,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cubemap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -55,23 +59,60 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SunTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _BoostSun: 0.76
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Exponent: 1.83
+    - _Exponent1: 1
+    - _Exponent2: 1
+    - _Exposure: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Intensity: 2
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _SkyExponent1: 8.5
+    - _SkyExponent2: 3
+    - _SkyIntensity: 0.56
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Stars: 1
+    - _StarsDensity: 0.02
+    - _StarsSize: 0.001
+    - _SunAlpha: 550
+    - _SunAltitude: 38
+    - _SunAzimuth: 18.27
+    - _SunBeta: 6.8
+    - _SunIntensity: 2
+    - _SunSize: 0.108
     - _UVSec: 0
+    - _UpVectorPitch: 26.82
+    - _UpVectorYaw: 94.36
+    - _YawAngle: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color1: {r: 0, g: 0, b: 0, a: 1}
+    - _Color2: {r: 1, g: 0, b: 0, a: 1}
+    - _Color3: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Offset: {r: -0.72, g: -1.34, b: -0.33, a: 0}
+    - _Scale: {r: 9.3, g: 14.33, b: -0.52, a: 1}
+    - _SkyColor1: {r: 0.35294116, g: 0.44396928, b: 1, a: 0}
+    - _SkyColor2: {r: 0.6611229, g: 0.1372549, b: 1, a: 0}
+    - _SkyColor3: {r: 0, g: 0, b: 0, a: 0}
+    - _StarsHash: {r: 641, g: -113, b: 271, a: 1117}
+    - _SunColor: {r: 0.9339623, g: 0.8606711, b: 0.12775902, a: 1}
+    - _SunVector: {r: 0.24703766, g: 0.6156615, b: 0.74828696, a: 0}
+    - _UpVector: {r: 0.44988337, g: 0.8924284, b: -0.03430071, a: 0}
