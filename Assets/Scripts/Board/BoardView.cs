@@ -6,8 +6,7 @@ namespace Octamino
 {
     public class BoardView : MonoBehaviour
     {
-        private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
-        private const string EmissionKey = "_EMISSION";
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
 
         private Board _board;
         private int _renderedBoardHash = -1;
@@ -96,9 +95,8 @@ namespace Octamino
         private void InitGlowingRows(BlockView view, float time)
         {
             var mat = view.Renderer.material;
-            mat.EnableKeyword(EmissionKey);
-            var color = view.Renderer.material.color;
-            mat.SetColor(EmissionColorId, Color.Lerp(color, color * 2f, time));
+            var color = mat.color;
+            mat.SetColor(ColorId, Color.Lerp(color, color * 1.25f, time * 0.5f));
         }
         
         private void RenderGameBoard()
