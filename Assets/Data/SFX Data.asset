@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a84135f32a8e4b10ae8314669f46a66d, type: 3}
+  m_Name: SFX Data
+  m_EditorClassIdentifier: 
+  PauseClip: {fileID: 8300000, guid: da2f00297523a4cf5be0cbace0b04e33, type: 3}
+  ResumeClip: {fileID: 8300000, guid: 33ec767387583451f87dbc362fdd665f, type: 3}
+  NewGameClip: {fileID: 8300000, guid: 1d549119714bc46e4b95b8ba3a3d018b, type: 3}
+  PieceMoveClip: {fileID: 8300000, guid: 4cd439232f68e4172a5b1abb9fd4a0a8, type: 3}
+  PieceRotateClip: {fileID: 8300000, guid: dca9815ede1d74e5baaed59ba447b143, type: 3}
+  PieceDropClip: {fileID: 8300000, guid: 7b26c5323daf64f6a9f1550f4666b3ee, type: 3}
+  CollectRowClip: {fileID: 8300000, guid: d4d22d8369df7a6448225a83bb24f8a5, type: 3}

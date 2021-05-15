@@ -22,7 +22,8 @@ namespace Octamino
         public GameObject BlocksContaiter;
         public TouchInput TouchInput = new TouchInput();
         public ParticleSystem ClearedEffect;
-        
+        public AudioPlayer AudioPlayer;
+
         public void SetBoard(Board board)
         {
             _board = board;
@@ -90,6 +91,7 @@ namespace Octamino
             _clearedRowEffects.Add(Instantiate(ClearedEffect, new Vector3(4.5f, row, 0), Quaternion.identity));
             _board.Remove(_board.GetBlocksFromRow(row));
             _board.MoveDownBlocksBelowRow(row);
+            AudioPlayer.PlayCollectRowClip();
         }
 
         private void InitGlowingRows(BlockView view, float time)
