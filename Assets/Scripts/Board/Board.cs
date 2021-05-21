@@ -19,7 +19,7 @@ namespace Octamino
         public List<Block> Blocks { get; } = new List<Block>();
 
         public Piece Piece { get; set; }
-        public int RowsToRemove { get; set; }
+
         public Board(int width, int height) : this(width, height, new BalancedRandomPieceProvider())
         {
         }
@@ -162,8 +162,10 @@ namespace Octamino
                     rowsRemoved += 1;
                 }
             }
+            
+            Game.Instance.Score.RowsCleared(rowsRemoved);
+            Game.Instance.Level.RowsCleared(rowsRemoved);
 
-            RowsToRemove = rowsRemoved;
             yield return null;
         }
         
