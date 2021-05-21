@@ -752,7 +752,11 @@ PlayerSettings:
       daydreamIconForeground: {fileID: 0}
       daydreamIconBackground: {fileID: 0}
   cloudServicesEnabled:
-    UNet: 1
+    Build: 0
+    Collab: 0
+    ErrorHub: 0
+    Hub: 0
+    UNet: 0
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -765,10 +769,10 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: 03d50244-176f-4e20-854f-6bd0af638965
+  cloudProjectId: b692ac5d-f061-49f1-9cc6-5f536690e32c
   framebufferDepthMemorylessMode: 0
   projectName: Tetris3D
-  organizationId: owl-empire
+  organizationId: owl-empire-games
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
