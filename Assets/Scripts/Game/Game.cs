@@ -62,6 +62,13 @@ namespace Octamino
             OnResumed();
         }
         
+        public void RollBack()
+        {
+            Resume();
+            _board.RemoveLastRows(10);
+            AddPiece();
+        }
+        
         public void Pause()
         {
             _isPlaying = false;

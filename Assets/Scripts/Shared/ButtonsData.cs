@@ -10,5 +10,6 @@ namespace Octamino
         public Sprite Settings;
         public Sprite Highscore;
         public Sprite ExitGame;
+        public Sprite RollBack;
     }
 }

@@ -9,11 +9,8 @@ namespace Octamino
     {
         private readonly IPieceProvider _pieceProvider;
         private readonly int _top;
-        private Game _game;
 
         public event Action<int, float> OnBoardRowCleared;
-        
-        public Game Game => _game;
         
         public readonly int Width;
         public readonly int Height;
@@ -33,11 +30,6 @@ namespace Octamino
             Height = height;
             _pieceProvider = pieceProvider;
             _top = height - 1;
-        }
-
-        public void SetGame(Game game)
-        {
-            _game = game;
         }
         
         // Determines whether blocks on the board collide with board bounds or with themselves.
@@ -178,6 +170,14 @@ namespace Octamino
         public void RemoveAllBlocks()
         {
             Blocks.Clear();
+        }
+
+        public void RemoveLastRows(int rowsCount)
+        {
+            var hMax = Height - 1;
+            var hCurrent = hMax - rowsCount;
+            var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
+            Remove(blocksToRemove);
         }
         
         private bool HasBlockCollisions()

@@ -17,3 +17,4 @@ MonoBehaviour:
   Settings: {fileID: 21300000, guid: aabfea681edc83c44b1b1b237e2fdd46, type: 3}
   Highscore: {fileID: 21300000, guid: a09847d3e321eae4a9e20e19d6ba50ea, type: 3}
   ExitGame: {fileID: 21300000, guid: c137fd9fd9a023248b80f6e869b69680, type: 3}
+  RollBack: {fileID: 21300000, guid: 9065c9fb41909264b934eb3c3e94d3cd, type: 3}

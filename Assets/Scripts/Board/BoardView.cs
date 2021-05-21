@@ -27,9 +27,9 @@ namespace Octamino
         public void SetBoard(Board board)
         {
             _board = board;
-            _board.Game.OnPieceSettled += OnBlockSettled;
-            _board.Game.OnPieceAppeared += OnBlockAppeared;
-            _board.Game.OnGameStarted += OnGameStarted;
+            Game.Instance.OnPieceSettled += OnBlockSettled;
+            Game.Instance.OnPieceAppeared += OnBlockAppeared;
+            Game.Instance.OnGameStarted += OnGameStarted;
             _board.OnBoardRowCleared += OnBoardRowCleared;
             
             var size = board.Width * board.Height + 10;
@@ -188,9 +188,9 @@ namespace Octamino
         
         private void OnDestroy()
         {
-            _board.Game.OnPieceSettled -= OnBlockSettled;
-            _board.Game.OnPieceAppeared -= OnBlockAppeared;
-            _board.Game.OnGameStarted -= OnGameStarted;
+            Game.Instance.OnPieceSettled -= OnBlockSettled;
+            Game.Instance.OnPieceAppeared -= OnBlockAppeared;
+            Game.Instance.OnGameStarted -= OnGameStarted;
             _board.OnBoardRowCleared -= OnBoardRowCleared;
         }
     }

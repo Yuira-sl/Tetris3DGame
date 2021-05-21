@@ -89,7 +89,7 @@ Material:
     - _SrcBlend: 1
     - _Stars: 1
     - _StarsDensity: 0.02
-    - _StarsSize: 0.001
+    - _StarsSize: 0.015
     - _SunAlpha: 550
     - _SunAltitude: 38
     - _SunAzimuth: 18.27
