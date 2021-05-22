@@ -2,19 +2,12 @@
 {
     Properties {
 
-        [Header(Sun)]
-        _SunSize ("Sun Size", Range(0,1)) = 0.04
-        _BoostSun ("Boost Sun", Range(0, 10)) = 1
-        _SunTex ("Sun Texture", 2D) = "white" {}
         _Scale ("Scale", Vector) = (1,1,1,1)
         _Offset ("Offset", Vector) = (1,1,1,1)
-
-        [Header(Stars)]
         [Toggle] _Stars ("Stars", Int) = 1
         _StarsSize ("Stars Size", Range(0,0.1)) = 0.009
         _StarsDensity ("Stars Density", Range(0,1)) = 0.02
         _StarsHash ("Stars Hash", Vector) = (641, -113, 271, 1117)
-
     }
 
     SubShader {
@@ -31,14 +24,11 @@
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
 
-            uniform half _SunSize;
             uniform half4 _Offset;
             uniform half4 _Scale;
             uniform half _StarsDensity;
             uniform half _StarsSize;
             uniform half4 _StarsHash;
-            uniform half _BoostSun;
-            sampler2D _SunTex;
 
             struct appdata_t {
 
@@ -47,8 +37,8 @@
 
             struct v2f {
 
-                float4  pos             : SV_POSITION;
-                half3   vertex          : TEXCOORD0;
+                float4  pos : SV_POSITION;
+                float4   vertex : TEXCOORD0;
             };
 
             v2f vert (appdata_t v) {
@@ -65,26 +55,27 @@
                 half3 col   = half3(0.0, 0.0, 0.0);
 
                 // setup view and light directions
-                half3 ray   = normalize(mul((float3x3)unity_ObjectToWorld, i.vertex));
+                half3 ray   = normalize(mul((float3x3)unity_ObjectToWorld, i.vertex ));
                 half3 ray2   = normalize(mul((float3x3)unity_ObjectToWorld, i.vertex * _Scale + _Offset));
                 half eyeCos = dot(_WorldSpaceLightPos0.xyz, ray2);
 
                 // overall radial gradient
-                half x = pow((1-eyeCos)*2000, 0.5); //pow((1-eyeCos)*3000, 0.5);
+                half x = pow((1-eyeCos)*2000, 0.5) ;
 
-                half r = 1.7 * pow(1.16, -x*2); // 1.5 * pow(1.16, -x);
-                half g = 1.7 * pow(1.08, -x*2); // 1.5 * pow(1.08, -x);
-                half b = 1.7 * pow(1.03, -x*2); // 1.5 * pow(1.03, -x);
+                half r = 1.7 * pow(1.16, -x*2);
+                half g = 1.7 * pow(1.08, -x*2);
+                half b = 1.7 * pow(1.03, -x*2);
 
                 col += half3(r, g, b);
 
                 // light spikes
                 half3 delta = _WorldSpaceLightPos0 + ray2;
                 half theta  = atan2(delta.y, delta.z);
+               
                 half radius = length(delta);
 
-                half spike = pow(cos(12*theta) * cos(10*theta), 2);
-                col += clamp(spike / ((radius+1)*10) * saturate((1.414-radius)), 0, 3);
+                half spike = pow(sin(14*theta) * cos(7*delta.x), 2) * 2.5;
+                col += clamp(spike  / ((radius+1)*10) * saturate((1.414-radius)), 0, 3);
 
                 // stars by n-yoda
                 half3 pos = ray / _StarsSize;
