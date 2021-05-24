@@ -17,9 +17,11 @@ namespace Octamino
         private readonly List<BlockView> _settledBlocksInRow = new List<BlockView>();
         
         private Pool<BlockView> BlockViewPool { get; set; }
+        private Pool<ParticleSystem> EffectsPool { get; set; }
         
         public PieceData Data;
         public GameObject BlocksContaiter;
+        public GameObject EffectsContaiter;
         public TouchInput TouchInput = new TouchInput();
         public ParticleSystem ClearedEffect;
         public AudioPlayer AudioPlayer;
@@ -31,9 +33,10 @@ namespace Octamino
             Game.Instance.OnPieceAppeared += OnBlockAppeared;
             Game.Instance.OnGameStarted += OnGameStarted;
             _board.OnBoardRowCleared += OnBoardRowCleared;
-            _board.OnBoardLastRowCleared += OnBoardLastRowCleared;
             var size = board.Width * board.Height + 10;
             BlockViewPool = new Pool<BlockView>(Data.Block, size, BlocksContaiter);
+            EffectsPool = new Pool<ParticleSystem>(ClearedEffect.gameObject,board.Height + 10,EffectsContaiter);
+            EffectsPool.DeactivateAll();
         }
 
         private void OnGameStarted()
@@ -51,11 +54,6 @@ namespace Octamino
         private void OnBoardRowCleared(int row, float time)
         {
             StartCoroutine(GetBlocksInRow(row, time));
-        }
-
-        private void OnBoardLastRowCleared(List<Block> blocks, float time)
-        {
-            StartCoroutine(GetLastBlocks(blocks, time));
         }
         
         private IEnumerator GetBlocksInRow(int row, float time)
@@ -93,55 +91,13 @@ namespace Octamino
                 _settledBlocksInRow.Clear();
             }
 
-            _clearedRowEffects.Add(Instantiate(ClearedEffect, new Vector3(4.5f, row, 0), Quaternion.identity));
+            var effect = EffectsPool.GetAndActivate(new Vector3(4.5f, row, 0));
+            _clearedRowEffects.Add(effect);
             _board.Remove(_board.GetBlocksFromRow(row));
             _board.MoveDownBlocksBelowRow(row);
             AudioPlayer.PlayCollectRowClip();
         }
-
-        private IEnumerator GetLastBlocks(List<Block> blocks, float time)
-        {
-            yield return null;
-            Game.Instance.Resume();
-            var temp = new List<BlockView>();
-            foreach (var view in BlockViewPool.GetActiveItems())
-            {
-                foreach (var block in blocks)
-                {
-                    if (view.transform.position.y.Equals(block.Position.Row))
-                    {
-                        temp.Add(view);
-                    }
-                }
-            }
-
-            foreach (var r in temp)
-            {
-                _settledBlocksInRow.Add(r);
-            }
-            
-            if (_settledBlocksInRow.Count > 0)
-            {
-                float elapsedTime = 0;
-                while (elapsedTime < time)
-                {
-                    elapsedTime += Time.deltaTime;
         
-                    foreach (var view in _settledBlocksInRow)
-                    {
-                        InitGlowingRows(view, elapsedTime / time);
-                    }
-        
-                    yield return null;
-                }
-                _settledBlocksInRow.Clear();
-            }
-            yield return null;
-
-            //Game.Instance.AddPiece();
-            _board.Remove(blocks);
-            AudioPlayer.PlayCollectRowClip();
-        }
 
         private void InitGlowingRows(BlockView view, float time)
         {
@@ -225,13 +181,9 @@ namespace Octamino
                 return;
             }
             
-            foreach (var effect in _clearedRowEffects)
-            {
-                if (effect != null && !effect.isPlaying)
-                {
-                    Destroy(effect.gameObject);
-                }
-            }
+            EffectsPool.DeactivateAll();
+
+         
             _clearedRowEffects.Clear();
         }
         
@@ -241,7 +193,6 @@ namespace Octamino
             Game.Instance.OnPieceAppeared -= OnBlockAppeared;
             Game.Instance.OnGameStarted -= OnGameStarted;
             _board.OnBoardRowCleared -= OnBoardRowCleared;
-            _board.OnBoardLastRowCleared -= OnBoardLastRowCleared;
         }
     }
 }

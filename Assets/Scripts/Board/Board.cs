@@ -170,14 +170,23 @@ namespace Octamino
             yield return null;
         }
         
-        public IEnumerator RemoveLastRows(int rowsCount, float time)
+        public void RemoveLastRows(int rowsCount)
         {
             var hMax = Height - 1;
             var hCurrent = hMax - rowsCount;
             var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
-            yield return new WaitForSeconds(time);
-            OnBoardLastRowCleared?.Invoke(blocksToRemove, time);
+            Remove(blocksToRemove);
         }
+        
+        // public IEnumerator RemoveLastRows(int rowsCount, float time)
+        // {
+        //     Game.Instance.Resume();
+        //     var hMax = Height - 1;
+        //     var hCurrent = hMax - rowsCount;
+        //     var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
+        //     yield return new WaitForSeconds(time);
+        //     OnBoardLastRowCleared?.Invoke(blocksToRemove, time);
+        // }
         
         public void RemoveAllBlocks()
         {

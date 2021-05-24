@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Octamino
 {
-    public class Pool<T> where T : MonoBehaviour
+    public class Pool<T> where T : Component
     {
         public T[] Items { get; }
 
@@ -39,6 +39,14 @@ namespace Octamino
         public T GetAndActivate()
         {
             var result = Items.FindFirst(item => !item.gameObject.activeInHierarchy);
+            result.gameObject.SetActive(true);
+            return result;
+        }
+        
+        public T GetAndActivate(Vector3 position)
+        {
+            var result = Items.FindFirst(item => !item.gameObject.activeInHierarchy);
+            result.transform.position = position;
             result.gameObject.SetActive(true);
             return result;
         }
