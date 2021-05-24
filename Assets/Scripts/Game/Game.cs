@@ -10,7 +10,7 @@ namespace Octamino
         private PlayerAction? _nextAction;
         private float _elapsedTime;
         private bool _isPlaying;
-
+        
         public delegate void GameEventHandler();
         
         public event GameEventHandler OnResumed = delegate { };
@@ -25,6 +25,9 @@ namespace Octamino
         
         public Score Score { get; private set; }
         public Level Level { get; private set; }
+        
+        public int LifeCount { get; set; }
+
         
         public Game(Board board, IPlayerInput input)
         {
@@ -52,6 +55,7 @@ namespace Octamino
             _elapsedTime = 0;
             Score = new Score();
             Level = new Level();
+            LifeCount = 3;
             _board.RemoveAllBlocks();
             AddPiece();
         }
@@ -110,6 +114,7 @@ namespace Octamino
             {
                 _isPlaying = false;
                 OnPaused();
+                LifeCount--;
                 OnGameFinished();
             }
         }

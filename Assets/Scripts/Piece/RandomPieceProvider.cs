@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Octamino
 {
-    public class BalancedRandomPieceProvider : IPieceProvider
+    public class RandomPieceProvider : IPieceProvider
     {
         private Random _random = new Random();
         private List<int> _pool = new List<int>();
@@ -25,9 +25,9 @@ namespace Octamino
 
         private void PopulatePool()
         {
-            for (var index = 0; index < PiecesCreator.All().Length; ++index)
+            for (var i = 0; i < PiecesCreator.All().Length; ++i)
             {
-                _pool.Add(index, NumDuplicates);
+                _pool.Add(i, NumDuplicates);
             }
             _pool.Shuffle(_random);
         }

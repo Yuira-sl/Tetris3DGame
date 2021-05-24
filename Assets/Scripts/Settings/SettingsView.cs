@@ -8,7 +8,7 @@ namespace Octamino
     {
         private UnityAction OnCloseCallback;
 
-        public Text TitleText;
+        public Text Title;
         public Toggle MusicToggle;
         public Button CloseButton;
         public AudioPlayer AudioPlayer;
@@ -21,7 +21,7 @@ namespace Octamino
 
         private void Awake()
         {
-            TitleText.text = Constant.Text.Settings;
+            Title.text = Constant.Text.Settings;
             AudioPlayer.gameObject.SetActive(Settings.MusicEnabled);
 
             MusicToggle.isOn = Settings.MusicEnabled;

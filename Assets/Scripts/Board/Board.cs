@@ -20,7 +20,7 @@ namespace Octamino
 
         public Piece Piece { get; set; }
 
-        public Board(int width, int height) : this(width, height, new BalancedRandomPieceProvider())
+        public Board(int width, int height) : this(width, height, new RandomPieceProvider())
         {
         }
         

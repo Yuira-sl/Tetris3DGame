@@ -7,18 +7,21 @@ namespace Octamino
     {
         private const string AdvertisementId = "4138367";
         private const string AdvertisementType = "video";
-
+        
         public AdvertisementController()
         {
             Advertisement.AddListener(this);
-            Advertisement.Initialize (AdvertisementId, false);
+            Advertisement.Initialize(AdvertisementId, false);
         }
 
-        public void ShowRewardedVideo() 
+        public void ShowRewardedVideo(int rewardCount) 
         {
             if (Advertisement.IsReady(AdvertisementType)) 
             {
-                Advertisement.Show(AdvertisementType);
+                if (rewardCount > 0)
+                {
+                    Advertisement.Show(AdvertisementType);
+                }
             } 
             else 
             {

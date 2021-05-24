@@ -85,15 +85,20 @@ namespace Octamino
         private void GameGameFinished()
         {
             _gamePauseView.SetTitle(Text.GameFinished);
+            _gamePauseView.SetSubscript(Text.LifesRemaning + _game.LifeCount);
+            if (_game.LifeCount > 0)
+            {
+                _gamePauseView.AddButton(_buttonsData.RollBack, ShowAds, _audioPlayer.PlayNewGameClip);
+            }
             _gamePauseView.AddButton(_buttonsData.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
             _gamePauseView.AddButton(_buttonsData.ExitGame, Application.Quit, _audioPlayer.PlayNewGameClip);
-            _gamePauseView.AddButton(_buttonsData.RollBack, ShowAds, _audioPlayer.PlayNewGameClip);
             _gamePauseView.Show();
         }
 
         private void ShowPauseView()
         {
             _gamePauseView.SetTitle(Text.GamePaused);
+            _gamePauseView.SetSubscript();
             _gamePauseView.AddButton(_buttonsData.Resume, _game.Resume, _audioPlayer.PlayResumeClip);
             _gamePauseView.AddButton(_buttonsData.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
             _gamePauseView.AddButton(_buttonsData.Settings, ShowSettingsView, _audioPlayer.PlayResumeClip);
@@ -114,7 +119,8 @@ namespace Octamino
 
         private void ShowAds()
         {
-            _advertisement.ShowRewardedVideo();
+            var count = Game.Instance.LifeCount;
+            _advertisement.ShowRewardedVideo(count);
         }
 
         private void HandlePlayerSettings()

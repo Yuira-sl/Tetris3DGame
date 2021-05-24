@@ -14,7 +14,7 @@ namespace Octamino
         private int _currentScore;
         
         public HighscoreEntryView HighscoreEntryView;
-        public Text TitleText;
+        public Text Title;
         public RectTransform TableContainer;
         public Button CloseButton;
         
@@ -30,7 +30,7 @@ namespace Octamino
         
         private void Awake()
         {
-            TitleText.text = Constant.Text.HighScore;
+            Title.text = Constant.Text.HighScore;
 
             CloseButton.onClick.AddListener(() =>
             {
@@ -136,7 +136,7 @@ namespace Octamino
             for (var i = TableContainer.childCount - 1; i >= 0; i--)
             {
                 var go = TableContainer.GetChild(i).gameObject;
-                if (!go.Equals(TitleText.gameObject) && !go.Equals(CloseButton.gameObject)) Destroy(go);
+                if (!go.Equals(Title.gameObject) && !go.Equals(CloseButton.gameObject)) Destroy(go);
             }
 
             gameObject.SetActive(false);

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
@@ -6,12 +7,18 @@ namespace Octamino
 {
     public class GamePauseView : MonoBehaviour
     {
-        public Text TitleText;
+        public Text Title;
+        public Text Subscript;
         public RectTransform ButtonsContainer;
         public GameObject ButtonPrefab;
     
-        public void SetTitle(string text) => TitleText.text = text;
-        
+        public void SetTitle(string text) => Title.text = text;
+        public void SetSubscript(string text = null)
+        {
+            Subscript.text = text;
+            Subscript.gameObject.SetActive(!String.IsNullOrEmpty(text));
+        }
+
         public void AddButton(Sprite sprite, UnityAction onClickAction, UnityAction pointerDownAction)
         {
             var buttonGameObject = Instantiate(ButtonPrefab);
@@ -36,7 +43,7 @@ namespace Octamino
             for (var i = ButtonsContainer.childCount - 1; i >= 0; i--)
             {
                 var go = ButtonsContainer.GetChild(i).gameObject;
-                if (!go.Equals(TitleText.gameObject))
+                if (!go.GetComponent<Text>())
                 {
                     Destroy(go);
                 }
