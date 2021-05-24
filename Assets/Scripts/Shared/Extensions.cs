@@ -5,6 +5,27 @@ namespace Octamino
 {
     public static class Extensions
     {
+        public static float GetScreenToWorldHeight
+        {
+            get
+            {
+                UnityEngine.Vector2 topRightCorner = new UnityEngine.Vector2(1, 1);
+                UnityEngine.Vector2 edgeVector = UnityEngine.Camera.main.ViewportToWorldPoint(topRightCorner);
+                var height = edgeVector.y * 2;
+                return height;
+            }
+        }
+        public static float GetScreenToWorldWidth
+        {
+            get
+            {
+                UnityEngine.Vector2 topRightCorner = new UnityEngine.Vector2(1, 1);
+                UnityEngine.Vector2 edgeVector = UnityEngine.Camera.main.ViewportToWorldPoint(topRightCorner);
+                var width = edgeVector.x * 2;
+                return width;
+            }
+        }
+        
         // Enum Ex
         public static T Next<T>(this T src) where T : struct
         {
@@ -138,5 +159,6 @@ namespace Octamino
         // Int Ex
 
         public static bool BoolValue(this int value) => value == 1;
+        
     }
 }

@@ -9,10 +9,10 @@
 
 	SubShader {
 
-		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True"}
+		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderPipeline" = "UniversalRenderPipeline" "RenderType"="Transparent" "DisableBatching"="True"}
 		
 		Pass{
-			Tags { "LightMode"="ForwardBase" }	
+			Tags { "LightMode"="UniversalForward" }	
 			
 			Blend One One
 			ZWrite Off

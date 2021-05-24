@@ -6,7 +6,7 @@ namespace Octamino
 {
     public class BoardView : MonoBehaviour
     {
-        private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private static readonly int ColorId = Shader.PropertyToID("_BaseColor");
 
         private Board _board;
         private int _renderedBoardHash = -1;
@@ -31,7 +31,7 @@ namespace Octamino
             Game.Instance.OnPieceAppeared += OnBlockAppeared;
             Game.Instance.OnGameStarted += OnGameStarted;
             _board.OnBoardRowCleared += OnBoardRowCleared;
-            
+            _board.OnBoardLastRowCleared += OnBoardLastRowCleared;
             var size = board.Width * board.Height + 10;
             BlockViewPool = new Pool<BlockView>(Data.Block, size, BlocksContaiter);
         }
@@ -53,6 +53,11 @@ namespace Octamino
             StartCoroutine(GetBlocksInRow(row, time));
         }
 
+        private void OnBoardLastRowCleared(List<Block> blocks, float time)
+        {
+            StartCoroutine(GetLastBlocks(blocks, time));
+        }
+        
         private IEnumerator GetBlocksInRow(int row, float time)
         {
             yield return null;
@@ -91,6 +96,50 @@ namespace Octamino
             _clearedRowEffects.Add(Instantiate(ClearedEffect, new Vector3(4.5f, row, 0), Quaternion.identity));
             _board.Remove(_board.GetBlocksFromRow(row));
             _board.MoveDownBlocksBelowRow(row);
+            AudioPlayer.PlayCollectRowClip();
+        }
+
+        private IEnumerator GetLastBlocks(List<Block> blocks, float time)
+        {
+            yield return null;
+            Game.Instance.Resume();
+            var temp = new List<BlockView>();
+            foreach (var view in BlockViewPool.GetActiveItems())
+            {
+                foreach (var block in blocks)
+                {
+                    if (view.transform.position.y.Equals(block.Position.Row))
+                    {
+                        temp.Add(view);
+                    }
+                }
+            }
+
+            foreach (var r in temp)
+            {
+                _settledBlocksInRow.Add(r);
+            }
+            
+            if (_settledBlocksInRow.Count > 0)
+            {
+                float elapsedTime = 0;
+                while (elapsedTime < time)
+                {
+                    elapsedTime += Time.deltaTime;
+        
+                    foreach (var view in _settledBlocksInRow)
+                    {
+                        InitGlowingRows(view, elapsedTime / time);
+                    }
+        
+                    yield return null;
+                }
+                _settledBlocksInRow.Clear();
+            }
+            yield return null;
+
+            //Game.Instance.AddPiece();
+            _board.Remove(blocks);
             AudioPlayer.PlayCollectRowClip();
         }
 
@@ -192,6 +241,7 @@ namespace Octamino
             Game.Instance.OnPieceAppeared -= OnBlockAppeared;
             Game.Instance.OnGameStarted -= OnGameStarted;
             _board.OnBoardRowCleared -= OnBoardRowCleared;
+            _board.OnBoardLastRowCleared -= OnBoardLastRowCleared;
         }
     }
 }
