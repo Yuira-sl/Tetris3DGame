@@ -85,6 +85,8 @@ namespace Octamino
         {
             _gamePauseView.SetTitle(Text.GameFinished);
             _gamePauseView.SetSubscript(Text.LifesRemaning + _game.LifeCount);
+            _gamePauseView.SetSlider(_game.LifeCount);
+
             if (_game.LifeCount > 0)
             {
                 _gamePauseView.AddButton(_buttonsData.RollBack, ShowAds, _audioPlayer.PlayNewGameClip);
@@ -98,6 +100,7 @@ namespace Octamino
         {
             _gamePauseView.SetTitle(Text.GamePaused);
             _gamePauseView.SetSubscript();
+            _gamePauseView.SetSlider();
             _gamePauseView.AddButton(_buttonsData.Resume, _game.Resume, _audioPlayer.PlayResumeClip);
             _gamePauseView.AddButton(_buttonsData.NewGame, _game.Start, _audioPlayer.PlayNewGameClip);
             _gamePauseView.AddButton(_buttonsData.Settings, ShowSettingsView, _audioPlayer.PlayResumeClip);

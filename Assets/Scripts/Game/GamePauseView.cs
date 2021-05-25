@@ -9,16 +9,19 @@ namespace Octamino
     {
         public Text Title;
         public Text Subscript;
+        public Slider Slider;
         public RectTransform ButtonsContainer;
         public GameObject ButtonPrefab;
     
         public void SetTitle(string text) => Title.text = text;
-        public void SetSubscript(string text = null)
-        {
-            Subscript.text = text;
-            Subscript.gameObject.SetActive(!String.IsNullOrEmpty(text));
-        }
+        public void SetSubscript(string text = null) => Subscript.text = text;
 
+        public void SetSlider(int value = 0)
+        {
+            Slider.value = value;
+            Slider.gameObject.SetActive(!value.Equals(0));
+        }
+        
         public void AddButton(Sprite sprite, UnityAction onClickAction, UnityAction pointerDownAction)
         {
             var buttonGameObject = Instantiate(ButtonPrefab);
@@ -43,10 +46,11 @@ namespace Octamino
             for (var i = ButtonsContainer.childCount - 1; i >= 0; i--)
             {
                 var go = ButtonsContainer.GetChild(i).gameObject;
-                if (!go.GetComponent<Text>())
+                if (go.GetComponent<Text>() || go.GetComponent<Slider>())
                 {
-                    Destroy(go);
+                    continue;
                 }
+                Destroy(go);
             }
             gameObject.SetActive(false);
         }
