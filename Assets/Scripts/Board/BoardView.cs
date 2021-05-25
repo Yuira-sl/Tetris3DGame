@@ -33,6 +33,7 @@ namespace Octamino
             Game.Instance.OnPieceAppeared += OnBlockAppeared;
             Game.Instance.OnGameStarted += OnGameStarted;
             _board.OnBoardRowCleared += OnBoardRowCleared;
+            _board.OnBoardLastRowCleared += OnBoardLastRowCleared;
             var size = board.Width * board.Height + 10;
             BlockViewPool = new Pool<BlockView>(Data.Block, size, BlocksContaiter);
             EffectsPool = new Pool<ParticleSystem>(ClearedEffect.gameObject,board.Height + 10,EffectsContaiter);
@@ -56,10 +57,55 @@ namespace Octamino
             StartCoroutine(GetBlocksInRow(row, time));
         }
         
+        private void OnBoardLastRowCleared(List<Block> blocks, float time)
+        {
+            StartCoroutine(GetLastBlocks(blocks, time));
+        }
+
+        private IEnumerator GetLastBlocks(List<Block> blocks, float time)
+        {
+            var temp = new List<BlockView>();
+            foreach (var view in BlockViewPool.GetActiveItems())
+            {
+                foreach (var block in blocks)
+                {
+                    if (view.transform.position.y.Equals(block.Position.Row))
+                    {
+                        temp.Add(view);
+                    }
+                }
+            }
+
+            foreach (var r in temp)
+            {
+                _settledBlocksInRow.Add(r);
+            }
+            
+            if (_settledBlocksInRow.Count > 0)
+            {
+                float elapsedTime = 0;
+                while (elapsedTime < time)
+                {
+                    elapsedTime += Time.deltaTime;
+        
+                    foreach (var view in _settledBlocksInRow)
+                    {
+                        EnableGlowInRows(view, elapsedTime / time);
+                    }
+        
+                    yield return null;
+                }
+                _settledBlocksInRow.Clear();
+            }
+            
+            Game.Instance.Resume();
+            _board.Remove(blocks);
+            _board.AddPiece();
+            AudioPlayer.PlayCollectRowClip();
+        }
+        
         private IEnumerator GetBlocksInRow(int row, float time)
         {
-            yield return null;
-
             var temp = new List<BlockView>();
             foreach (var view in BlockViewPool.GetActiveItems())
             {
@@ -83,7 +129,7 @@ namespace Octamino
         
                     foreach (var view in _settledBlocksInRow)
                     {
-                        InitGlowingRows(view, elapsedTime / time);
+                        EnableGlowInRows(view, elapsedTime / time);
                     }
         
                     yield return null;
@@ -97,12 +143,11 @@ namespace Octamino
             _board.MoveDownBlocksBelowRow(row);
             AudioPlayer.PlayCollectRowClip();
         }
-        
 
-        private void InitGlowingRows(BlockView view, float time)
+        private void EnableGlowInRows(BlockView view, float time)
         {
             var mat = view.Renderer.material;
-            var color = mat.color;
+            var color = mat.GetColor(ColorId);
             mat.SetColor(ColorId, Color.Lerp(color, color * 1.25f, time * 0.5f));
         }
         
@@ -193,6 +238,7 @@ namespace Octamino
             Game.Instance.OnPieceAppeared -= OnBlockAppeared;
             Game.Instance.OnGameStarted -= OnGameStarted;
             _board.OnBoardRowCleared -= OnBoardRowCleared;
+            _board.OnBoardLastRowCleared -= OnBoardLastRowCleared;
         }
     }
 }

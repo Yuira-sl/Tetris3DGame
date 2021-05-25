@@ -166,27 +166,16 @@ namespace Octamino
             
             Game.Instance.Score.RowsCleared(rowsRemoved);
             Game.Instance.Level.RowsCleared(rowsRemoved);
-
-            yield return null;
         }
         
-        public void RemoveLastRows(int rowsCount)
+        public IEnumerator RemoveLastRows(int rowsCount, float time)
         {
             var hMax = Height - 1;
             var hCurrent = hMax - rowsCount;
             var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
-            Remove(blocksToRemove);
+            yield return new WaitForSeconds(time);
+            OnBoardLastRowCleared?.Invoke(blocksToRemove, time);
         }
-        
-        // public IEnumerator RemoveLastRows(int rowsCount, float time)
-        // {
-        //     Game.Instance.Resume();
-        //     var hMax = Height - 1;
-        //     var hCurrent = hMax - rowsCount;
-        //     var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
-        //     yield return new WaitForSeconds(time);
-        //     OnBoardLastRowCleared?.Invoke(blocksToRemove, time);
-        // }
         
         public void RemoveAllBlocks()
         {

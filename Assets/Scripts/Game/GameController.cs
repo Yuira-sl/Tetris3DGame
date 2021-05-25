@@ -1,5 +1,4 @@
-﻿using System;
-using Octamino.Constant;
+﻿using Octamino.Constant;
 using UnityEngine;
 
 namespace Octamino
