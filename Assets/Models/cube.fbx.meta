@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7fcc36a3d6582a34ca8fb095cb0077e8
+guid: a9abe86025b67dd46a7ae1a3e6595623
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
@@ -67,7 +67,7 @@ ModelImporter:
     normalCalculationMode: 4
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
-    normalSmoothingSource: 1
+    normalSmoothingSource: 0
   referencedClips: []
   importAnimation: 0
   humanDescription:
@@ -81,7 +81,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.5
+    globalScale: 50
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
