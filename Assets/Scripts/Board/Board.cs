@@ -9,31 +9,29 @@ namespace Octamino
     {
         private readonly IPieceProvider _pieceProvider;
         private readonly int _top;
-
-        public event Action<int, float> OnBoardRowCleared;
-        public event Action<List<Block>, float> OnBoardLastRowCleared;
         
-        public readonly int Width;
-        public readonly int Height;
+        public readonly int Width = 10;
+        public readonly int Height = 20;
         
         public Piece NextPiece => _pieceProvider.GetNextPiece();
         public List<Block> Blocks { get; } = new List<Block>();
-
         public Piece Piece { get; set; }
-
-        public Board(int width, int height) : this(width, height, new RandomPieceProvider())
+        public int RowsRemoved { get; set; }
+        
+        public event Action<int, float> OnRowsCleared;
+        public event Action<List<Block>, float> OnLastRowsCleared;
+        
+        public Board() : this(new RandomPieceProvider())
         {
         }
         
-        public Board(int width, int height, IPieceProvider pieceProvider)
+        private Board(IPieceProvider pieceProvider)
         {
-            Width = width;
-            Height = height;
+            _top = Height - 1;
             _pieceProvider = pieceProvider;
-            _top = height - 1;
         }
         
-        // Determines whether blocks on the board collide with board bounds or with themselves.
+        // Determines whether blocks on the board collide with board bounds or with themselves
         public bool HasCollisions()
         {
             return HasBoardCollisions() || HasBlockCollisions();
@@ -158,13 +156,12 @@ namespace Octamino
 
                 if (rowBlocks.Count == Width)
                 {
-                    OnBoardRowCleared?.Invoke(row, time);
+                    OnRowsCleared?.Invoke(row, time);
                     rowsRemoved += 1;
                 }
             }
-            
-            Game.Instance.Score.RowsCleared(rowsRemoved);
-            Game.Instance.Level.RowsCleared(rowsRemoved);
+
+            RowsRemoved = rowsRemoved;
         }
         
         public IEnumerator RemoveLastRows(int rowsCount, float time)
@@ -173,7 +170,7 @@ namespace Octamino
             var hCurrent = hMax - rowsCount;
             var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
             yield return new WaitForSeconds(time);
-            OnBoardLastRowCleared?.Invoke(blocksToRemove, time);
+            OnLastRowsCleared?.Invoke(blocksToRemove, time);
         }
         
         public void RemoveAllBlocks()

@@ -58,7 +58,7 @@ namespace Octamino
         
         private void Start()
         {
-            _board = new Board(10, 20);
+            _board = new Board();
             _nextPieceView.SetBoard(_board);
             _input = new Input(new KeyboardInput(), new TouchInput());
             _game = new Game(_board, _input);
