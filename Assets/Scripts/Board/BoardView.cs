@@ -10,7 +10,6 @@ namespace Octamino
 
         private Board _board;
         private int _renderedBoardHash = -1;
-        private bool _forceRender;
         private BlockView _currentGhostBlock;
         
         private readonly List<ParticleSystem> _clearedRowEffects = new List<ParticleSystem>();
@@ -22,7 +21,6 @@ namespace Octamino
         public PieceData Data;
         public GameObject BlocksContaiter;
         public GameObject EffectsContaiter;
-        public TouchInput TouchInput = new TouchInput();
         public ParticleSystem ClearedEffect;
         public AudioPlayer AudioPlayer;
 
@@ -30,8 +28,6 @@ namespace Octamino
         {
             _board = board;
             Game.Instance.OnPieceSettled += OnBlockSettled;
-            Game.Instance.OnPieceAppeared += OnBlockAppeared;
-            Game.Instance.OnGameStarted += OnGameStarted;
             _board.OnBoardRowCleared += OnBoardRowCleared;
             _board.OnBoardLastRowCleared += OnBoardLastRowCleared;
             var size = board.Width * board.Height + 10;
@@ -40,13 +36,6 @@ namespace Octamino
             EffectsPool.DeactivateAll();
         }
 
-        private void OnGameStarted()
-        {
-        }
-        private void OnBlockAppeared()
-        {
-        }
-        
         private void OnBlockSettled()
         {
             CleanRowEffects();
@@ -201,11 +190,10 @@ namespace Octamino
         private void Update()
         {
             var hash = _board.GetHashCode();
-            if (_forceRender || hash != _renderedBoardHash)
+            if (hash != _renderedBoardHash)
             {
                 RenderGameBoard();
                 _renderedBoardHash = hash;
-                _forceRender = false;
             }
         }
         
@@ -227,16 +215,12 @@ namespace Octamino
             }
             
             EffectsPool.DeactivateAll();
-
-         
             _clearedRowEffects.Clear();
         }
         
         private void OnDestroy()
         {
             Game.Instance.OnPieceSettled -= OnBlockSettled;
-            Game.Instance.OnPieceAppeared -= OnBlockAppeared;
-            Game.Instance.OnGameStarted -= OnGameStarted;
             _board.OnBoardRowCleared -= OnBoardRowCleared;
             _board.OnBoardLastRowCleared -= OnBoardLastRowCleared;
         }

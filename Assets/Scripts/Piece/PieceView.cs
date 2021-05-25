@@ -9,7 +9,6 @@ namespace Octamino
         private Pool<BlockView> _blockViewPool;
         private PieceType? _renderedPieceType;
         private int _blockPoolSize = 10;
-        private bool _forceRender;
         private RenderTexture _renderTexture;
 
         private RawImage _image;
@@ -34,11 +33,10 @@ namespace Octamino
 
         private void Update()
         {
-            if (_renderedPieceType == null || _forceRender || _board.NextPiece.Type != _renderedPieceType)
+            if (_renderedPieceType == null || _board.NextPiece.Type != _renderedPieceType)
             {
                 DrawPiece(_board.NextPiece);
                 _renderedPieceType = _board.NextPiece.Type;
-                _forceRender = false;
             }
         }
         

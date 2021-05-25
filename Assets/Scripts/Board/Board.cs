@@ -53,7 +53,6 @@ namespace Octamino
             return hash;
         }
 
-        // Adds new piece.
         public void AddPiece()
         {
             Piece = _pieceProvider.GetPiece();

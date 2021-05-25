@@ -13,7 +13,8 @@ namespace Octamino
             {KeyCode.A, PlayerAction.MoveLeft},
             {KeyCode.D, PlayerAction.MoveRight},
             {KeyCode.S, PlayerAction.MoveDown},
-            {KeyCode.W, PlayerAction.RotateRight},
+            {KeyCode.E, PlayerAction.RotateRight},
+            {KeyCode.Q, PlayerAction.RotateLeft},
             {KeyCode.Space, PlayerAction.Fall}
         };
 

@@ -5,25 +5,12 @@ namespace Octamino
     public class TouchInput : IPlayerInput
     {
         private PlayerAction? _playerAction;
-        private bool _cancelCurrentTouch;
-        private bool _enabled = true;
         
         private Rect _leftScreenPart;
         private Rect _rightScreenPart;
 
         private float _timePressed;
         
-        public bool Enabled
-        {
-            get => _enabled;
-            set
-            {
-                _enabled = value;
-                _cancelCurrentTouch = false;
-                _playerAction = null;
-            }
-        }
-
         public TouchInput()
         {
             _leftScreenPart = new Rect(0, Screen.height * 0.15f, Screen.width / 2, Screen.height * 0.85f);
@@ -37,12 +24,6 @@ namespace Octamino
             if (UnityEngine.Input.touchCount > 0)
             {
                 var touch = UnityEngine.Input.GetTouch(0);
-                
-                if (_cancelCurrentTouch)
-                {
-                    _cancelCurrentTouch &= touch.phase != TouchPhase.Ended;
-                }
-                
                 if(touch.phase == TouchPhase.Began)
                 {
                     _timePressed = 0;
@@ -58,20 +39,15 @@ namespace Octamino
                     }
                 }
             }
-            else
-            {
-                _cancelCurrentTouch = false;
-            }
         }
 
         public PlayerAction? GetPlayerAction()
         {
-            return Enabled ? _playerAction : null;
+            return _playerAction;
         }
 
         public void Cancel()
         {
-            _cancelCurrentTouch |= UnityEngine.Input.touchCount > 0;
         }
         
         private PlayerAction? ActionForHorizontalMoveOffset(Vector2 position)

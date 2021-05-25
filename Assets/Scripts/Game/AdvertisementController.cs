@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Advertisements;
 
 namespace Octamino
 {
-    public class AdvertisementController : IUnityAdsListener
+    public class AdvertisementController : IUnityAdsListener, IDisposable
     {
         private const string AdvertisementId = "4138367";
         private const string AdvertisementType = "video";
@@ -28,12 +29,12 @@ namespace Octamino
                 Debug.Log("Rewarded video is not ready at the moment! Please try again later!");
             }
         }
-
-        ~AdvertisementController()
+        
+        public void Dispose()
         {
             Advertisement.RemoveListener(this);
         }
-        
+
         public void OnUnityAdsReady(string placementId)
         {
         }

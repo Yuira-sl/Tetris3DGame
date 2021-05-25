@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Octamino
@@ -6,10 +7,16 @@ namespace Octamino
     public class SpriteSwapper: MonoBehaviour
     {
         private bool _isInitialized;
+        private Image _image;
         
         [SerializeField] private Sprite _source;
         [SerializeField] private Sprite _target;
 
+        private void Awake()
+        {
+            _image = GetComponent<Image>();
+        }
+        
         private void Update()
         {
             if(!_isInitialized)
@@ -23,17 +30,17 @@ namespace Octamino
 
         private void OnPaused()
         {
-            GetComponent<Image>().sprite = _target;
+            _image.sprite = _target;
         }
 
         private void OnResumed()
         {
-            GetComponent<Image>().sprite = _source;
+            _image.sprite = _source;
         }
 
         public void SwapTextures()
         {
-            GetComponent<Image>().sprite = GetComponent<Toggle>().isOn ? _target : _source;
+            _image.sprite = GetComponent<Toggle>().isOn ? _target : _source;
         }
 
         private void OnDestroy()

@@ -15,17 +15,13 @@ namespace Octamino
         
         public event GameEventHandler OnResumed = delegate { };
         public event GameEventHandler OnPaused = delegate { };
-        public event GameEventHandler OnGameStarted = delegate { };
         public event GameEventHandler OnGameFinished = delegate { };
         public event GameEventHandler OnPieceMoved = delegate { };
         public event GameEventHandler OnPieceRotated = delegate { };
         public event GameEventHandler OnPieceSettled = delegate { };
-        public event GameEventHandler OnPieceAppeared = delegate { };
-
         
         public Score Score { get; private set; }
         public Level Level { get; private set; }
-        
         public int LifeCount { get; set; }
 
         
@@ -38,8 +34,6 @@ namespace Octamino
             
             _board = board;
             _input = input;
-            OnPieceSettled += input.Cancel;
-            OnPieceAppeared += OnNewPiece;
         }
 
         public void SetBoard(BoardView boardView)
@@ -50,7 +44,6 @@ namespace Octamino
         public void Start()
         {
             _isPlaying = true;
-            OnGameStarted();
             OnResumed();
             _elapsedTime = 0;
             Score = new Score();
@@ -84,10 +77,11 @@ namespace Octamino
         
         public void Update(float deltaTime)
         {
-            if (!_isPlaying) return;
-
-            _input.Update();
-
+            if (!_isPlaying)
+            {
+                return;
+            }
+            
             var action = _input?.GetPlayerAction();
             if (action.HasValue)
             {
@@ -107,7 +101,6 @@ namespace Octamino
         private void AddPiece()
         {
             _board.AddPiece();
-            OnPieceAppeared();
             if (_board.HasCollisions())
             {
                 _isPlaying = false;
@@ -115,11 +108,6 @@ namespace Octamino
                 LifeCount--;
                 OnGameFinished();
             }
-        }
-        
-        private void OnNewPiece()
-        {
-            
         }
         
         private void HandleAutomaticPieceFalling(float deltaTime)

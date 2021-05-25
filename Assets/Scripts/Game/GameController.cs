@@ -55,12 +55,12 @@ namespace Octamino
             HandlePlayerSettings();
             Settings.ChangedEvent += HandlePlayerSettings;
         }
-
+        
         private void Start()
         {
             _board = new Board(10, 20);
             _nextPieceView.SetBoard(_board);
-            _input = new Input(new KeyboardInput(), _boardView.TouchInput);
+            _input = new Input(new KeyboardInput(), new TouchInput());
             _game = new Game(_board, _input);
 
             _game.OnGameFinished += GameGameFinished;
@@ -76,9 +76,20 @@ namespace Octamino
             _levelView.Game = _game;
         }
 
+        private void OnDestroy()
+        {
+            Settings.ChangedEvent -= HandlePlayerSettings;
+            _game.OnGameFinished -= GameGameFinished;
+            _game.OnPieceSettled -= _audioPlayer.PlayPieceDropClip;
+            _game.OnPieceRotated -= _audioPlayer.PlayPieceRotateClip;
+            _game.OnPieceMoved -= _audioPlayer.PlayPieceMoveClip;
+            _advertisement.Dispose();
+        }
+
         private void Update()
         {
             _game.Update(Time.deltaTime);
+            _input.Update();
         }
 
         private void GameGameFinished()
