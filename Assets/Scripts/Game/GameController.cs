@@ -12,8 +12,6 @@ namespace Octamino
         
         [SerializeField] private BoardView _boardView;
         [SerializeField] private PieceView _nextPieceView;
-        [SerializeField] private ScoreView _scoreView;
-        [SerializeField] private LevelView _levelView;
         [SerializeField] private GamePauseView _gamePauseView;
         [SerializeField] private SettingsView _settingsView;
         [SerializeField] private HighscoreView _highscoreView;
@@ -71,9 +69,6 @@ namespace Octamino
 
             _boardView.SetBoard(_board);
             _game.SetBoard(_boardView);
-
-            _scoreView.Game = _game;
-            _levelView.Game = _game;
         }
 
         private void OnDestroy()

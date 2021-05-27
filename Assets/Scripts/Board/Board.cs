@@ -16,7 +16,6 @@ namespace Octamino
         public Piece NextPiece => _pieceProvider.GetNextPiece();
         public List<Block> Blocks { get; } = new List<Block>();
         public Piece Piece { get; set; }
-        public int RowsRemoved { get; set; }
         
         public event Action<int, float> OnRowsCleared;
         public event Action<List<Block>, float> OnLastRowsCleared;
@@ -160,8 +159,8 @@ namespace Octamino
                     rowsRemoved += 1;
                 }
             }
-
-            RowsRemoved = rowsRemoved;
+            Game.Instance.Score.RowsCleared(rowsRemoved); 
+            Game.Instance.Level.RowsCleared(rowsRemoved);
         }
         
         public IEnumerator RemoveLastRows(int rowsCount, float time)

@@ -181,9 +181,6 @@ namespace Octamino
         {
             OnPieceSettled();
             _boardView.StartCoroutine(_board.RemoveFullRows(0.3f));
-            var rowsRemoved = _board.RowsRemoved; 
-            Score.RowsCleared(rowsRemoved); 
-            Level.RowsCleared(rowsRemoved);
             AddPiece();
         }
         
