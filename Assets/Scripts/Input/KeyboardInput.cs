@@ -20,6 +20,11 @@ namespace Octamino
 
         public void Update()
         {
+            if (!Game.Instance.IsPlaying)
+            {
+                return;
+            }
+            
             foreach (var pair in _actionForKey)
             {
                 if (UnityEngine.Input.GetKeyDown(pair.Key))

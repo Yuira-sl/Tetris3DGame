@@ -5,29 +5,40 @@ using UnityEngine;
 
 namespace Octamino
 {
-    public class Board
+    public class Board: IDisposable
     {
-        private readonly IPieceProvider _pieceProvider;
-        private readonly int _top;
+        private readonly int _topEdge;
         
         public readonly int Width = 10;
         public readonly int Height = 20;
         
-        public Piece NextPiece => _pieceProvider.GetNextPiece();
+        public Piece NextPiece;
         public List<Block> Blocks { get; } = new List<Block>();
         public Piece Piece { get; set; }
-        
+
         public event Action<int, float> OnRowsCleared;
         public event Action<List<Block>, float> OnLastRowsCleared;
         
-        public Board() : this(new RandomPieceProvider())
+        public Board()
         {
+            _topEdge = Height - 1;
+            NextPiece = PiecesCreator.GetPiece();
+            Piece = PiecesCreator.GetPiece();
+        }
+
+        public void Subscribe()
+        {
+            Game.Instance.OnPieceSettled += OnPieceSettled;
         }
         
-        private Board(IPieceProvider pieceProvider)
+        public void Dispose()
         {
-            _top = Height - 1;
-            _pieceProvider = pieceProvider;
+            Game.Instance.OnPieceSettled -= OnPieceSettled;
+        }
+
+        private void OnPieceSettled()
+        {
+            Piece = NextPiece;
         }
         
         // Determines whether blocks on the board collide with board bounds or with themselves
@@ -49,12 +60,12 @@ namespace Octamino
             }
             return hash;
         }
-
+        
         public void AddPiece()
         {
-            Piece = _pieceProvider.GetPiece();
+            NextPiece = PiecesCreator.GetPiece();
 
-            var offsetRow = _top - Piece.Top;
+            var offsetRow = _topEdge - Piece.Top;
             var offsetCol = (Width - Piece.Width) / 2;
 
             foreach (var block in Piece.Blocks)

@@ -18,6 +18,7 @@ namespace Octamino
         public event GameEventHandler OnPieceRotated = delegate { };
         public event GameEventHandler OnPieceSettled = delegate { };
 
+        public bool IsPlaying => _isPlaying;
         public Score Score { get; private set; }
         public Level Level { get; private set; }
         public int LifeCount { get; set; }

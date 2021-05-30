@@ -2,19 +2,25 @@ namespace Octamino
 {
     public static class PiecesCreator
     {
-        public static Piece[] All()
+        private static PieceType _pieceType;
+        public static Piece GetPiece()
         {
-            return new[] {
-                OPiece(),
-                TPiece(),
-                SPiece(),
-                ZPiece(),
-                JPiece(),
-                LPiece(),
-                IPiece()
-            };
-        }
+            var pieceType = _pieceType.RandomValue();  
+            
+            switch (pieceType)
+            {
+                case PieceType.O: return OPiece();
+                case PieceType.T: return TPiece();
+                case PieceType.S: return SPiece();
+                case PieceType.Z: return ZPiece();
+                case PieceType.J: return JPiece();
+                case PieceType.L: return LPiece();
+                case PieceType.I: return IPiece();
+            }
 
+            return null;
+        }
+      
         public static Piece OPiece()
         {
             var positions = new[] {

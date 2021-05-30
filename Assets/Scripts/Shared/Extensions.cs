@@ -39,6 +39,18 @@ namespace Octamino
             return array.Length==j ? array[0] : array[j];            
         }
         
+        public static T RandomValue<T>(this T src)
+        {
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException($"Argument {typeof(T).FullName} is not an Enum");
+            }
+            
+            var values = Enum.GetValues(src.GetType());
+            int random = UnityEngine.Random.Range(0, values.Length);
+            return (T)values.GetValue(random);
+        }
+        
         // ICollection Ex
         public static T FindFirst<T>(this ICollection<T> collection, Func<T, bool> condition)
         {
