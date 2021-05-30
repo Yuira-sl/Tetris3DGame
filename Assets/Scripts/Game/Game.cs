@@ -5,9 +5,7 @@ namespace Octamino
         public static Game Instance;
         
         private readonly Board _board;
-        private readonly IPlayerInput _input;
         private BoardView _boardView;
-        private PlayerAction? _nextAction;
         private float _elapsedTime;
         private bool _isPlaying;
         
@@ -19,13 +17,13 @@ namespace Octamino
         public event GameEventHandler OnPieceMoved = delegate { };
         public event GameEventHandler OnPieceRotated = delegate { };
         public event GameEventHandler OnPieceSettled = delegate { };
-        
+
         public Score Score { get; private set; }
         public Level Level { get; private set; }
         public int LifeCount { get; set; }
 
         
-        public Game(Board board, IPlayerInput input)
+        public Game(Board board)
         {
             if (Instance == null)
             {
@@ -33,7 +31,6 @@ namespace Octamino
             }
             
             _board = board;
-            _input = input;
         }
 
         public void SetBoard(BoardView boardView)
@@ -70,9 +67,49 @@ namespace Octamino
             OnPaused();
         }
         
-        public void SetNextAction(PlayerAction action)
+       
+        public void MoveHorizontal(float pos)
         {
-            _nextAction = action;
+            var pieceMoved = pos > 0.5 ? _board.MovePieceRight() : _board.MovePieceLeft();
+            if (pieceMoved)
+            {
+                OnPieceMoved();
+            }
+        }
+
+        public void MoveDown()
+        {
+            bool pieceMoved = false;
+            ResetElapsedTime();
+            if (_board.MovePieceDown())
+            {
+                pieceMoved = true;
+                Score.PieceMovedDown();
+            }
+            else
+            {
+                PieceSettled();
+            }
+            if (pieceMoved)
+            {
+                OnPieceMoved();
+            }
+        }
+
+        public void FallDown()
+        {
+            Score.PieceFinishedFalling(_board.FallPiece());
+            ResetElapsedTime();
+            PieceSettled();
+        }
+        
+        public void Rotate(bool counterclockwise)
+        {
+            var isRotate = _board.RotatePiece(counterclockwise);
+            if (isRotate)
+            {
+                OnPieceRotated();
+            }
         }
         
         public void Update(float deltaTime)
@@ -82,20 +119,7 @@ namespace Octamino
                 return;
             }
             
-            var action = _input?.GetPlayerAction();
-            if (action.HasValue)
-            {
-                HandlePlayerAction(action.Value);
-            }
-            else if (_nextAction.HasValue)
-            {
-                HandlePlayerAction(_nextAction.Value);
-                _nextAction = null;
-            }
-            else
-            {
-                HandleAutomaticPieceFalling(deltaTime);
-            }
+            PieceFalling(deltaTime);
         }
         
         private void AddPiece()
@@ -110,7 +134,7 @@ namespace Octamino
             }
         }
         
-        private void HandleAutomaticPieceFalling(float deltaTime)
+        private void PieceFalling(float deltaTime)
         {
             _elapsedTime += deltaTime;
             if (_elapsedTime >= Level.FallDelay)
@@ -122,61 +146,7 @@ namespace Octamino
                 ResetElapsedTime();
             }
         }
-
-        private void HandlePlayerAction(PlayerAction action)
-        {
-            var pieceMoved = false;
-            switch (action)
-            {
-                case PlayerAction.MoveLeft:
-                    pieceMoved = _board.MovePieceLeft();
-                    break;
-
-                case PlayerAction.MoveRight:
-                    pieceMoved = _board.MovePieceRight();
-                    break;
-
-                case PlayerAction.MoveDown:
-                    ResetElapsedTime();
-                    if (_board.MovePieceDown())
-                    {
-                        pieceMoved = true;
-                        Score.PieceMovedDown();
-                    }
-                    else
-                    {
-                        PieceSettled();
-                    }
-                    break;
-
-                case PlayerAction.RotateRight:
-                    var didRightRotate = _board.RotatePiece(false);
-                    if (didRightRotate)
-                    {
-                        OnPieceRotated();
-                    }
-                    break;
-                
-                case PlayerAction.RotateLeft:
-                    var didLeftRotate = _board.RotatePiece(true);
-                    if (didLeftRotate)
-                    {
-                        OnPieceRotated();
-                    }
-                    break;
-
-                case PlayerAction.Fall:
-                    Score.PieceFinishedFalling(_board.FallPiece());
-                    ResetElapsedTime();
-                    PieceSettled();
-                    break;
-            }
-            if (pieceMoved)
-            {
-                OnPieceMoved();
-            }
-        }
-
+        
         private void PieceSettled()
         {
             OnPieceSettled();

@@ -2579,8 +2579,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _boardView: {fileID: 1593429130}
   _nextPieceView: {fileID: 2001834797}
-  _scoreView: {fileID: 1242004194}
-  _levelView: {fileID: 143449692}
   _gamePauseView: {fileID: 1353625251}
   _settingsView: {fileID: 1886488834}
   _highscoreView: {fileID: 1830278885}

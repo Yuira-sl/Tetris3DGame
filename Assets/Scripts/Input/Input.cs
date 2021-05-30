@@ -15,21 +15,5 @@ namespace Octamino
         {
             _inputs.ForEach(input => input.Update());
         }
-
-        public void Cancel()
-        {
-            _inputs.ForEach(input => input.Cancel());
-        }
-
-        public PlayerAction? GetPlayerAction()
-        {
-            foreach (var input in _inputs)
-            {
-                var action = input.GetPlayerAction();
-                if (action != null) return action;
-            }
-
-            return null;
-        }
     }
 }

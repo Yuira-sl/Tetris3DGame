@@ -20,7 +20,6 @@ namespace Octamino
         [SerializeField] private AudioSource _musicAudioSource;
 
         [SerializeField] private ButtonsData _buttonsData;
-
         public void OnPauseButtonTap()
         {
             _game.Pause();
@@ -29,22 +28,22 @@ namespace Octamino
 
         public void OnMoveDownButtonTap()
         {
-            _game.SetNextAction(PlayerAction.MoveDown);
+            _game.MoveDown();
         }
 
         public void OnFallButtonTap()
         {
-            _game.SetNextAction(PlayerAction.Fall);
+            _game.FallDown();
         }
 
         public void OnRotateLeftButtonTap()
         {
-            _game.SetNextAction(PlayerAction.RotateLeft);
+            _game.Rotate(true);
         }
 
         public void OnRotateRightButtonTap()
         {
-            _game.SetNextAction(PlayerAction.RotateRight);
+            _game.Rotate(false);
         }
 
         private void Awake()
@@ -59,7 +58,7 @@ namespace Octamino
             _board = new Board();
             _nextPieceView.SetBoard(_board);
             _input = new Input(new KeyboardInput(), new TouchInput());
-            _game = new Game(_board, _input);
+            _game = new Game(_board);
 
             _game.OnGameFinished += GameGameFinished;
             _game.OnPieceSettled += _audioPlayer.PlayPieceDropClip;

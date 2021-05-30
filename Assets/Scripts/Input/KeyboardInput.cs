@@ -1,89 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Octamino
 {
     public class KeyboardInput : IPlayerInput
     {
-        private KeyCode _pressedKey = KeyCode.None;
-        private float _nextRepeatedKeyTime;
-
-        private readonly Dictionary<KeyCode, PlayerAction> _actionForKey = new Dictionary<KeyCode, PlayerAction>
+        private readonly Dictionary<KeyCode, Action> _actionForKey = new Dictionary<KeyCode, Action>
         {
-            {KeyCode.A, PlayerAction.MoveLeft},
-            {KeyCode.D, PlayerAction.MoveRight},
-            {KeyCode.S, PlayerAction.MoveDown},
-            {KeyCode.E, PlayerAction.RotateRight},
-            {KeyCode.Q, PlayerAction.RotateLeft},
-            {KeyCode.Space, PlayerAction.Fall}
+            { KeyCode.A, () => Game.Instance.MoveHorizontal(0) },
+            { KeyCode.D, () => Game.Instance.MoveHorizontal(1) },
+            { KeyCode.S, () => Game.Instance.MoveDown() },
+            { KeyCode.E, () => Game.Instance.Rotate(false) },
+            { KeyCode.Q, () => Game.Instance.Rotate(true) },
+            { KeyCode.Space, () => Game.Instance.FallDown() }
         };
 
-        private readonly List<KeyCode> _repeatingKeys = new List<KeyCode>
-        {
-            KeyCode.A, KeyCode.D, KeyCode.S
-        };
-
-        public PlayerAction? GetPlayerAction()
-        {
-            var actionKeyDown = GetActionKeyDown();
-            if (actionKeyDown != KeyCode.None)
-            {
-                StartKeyRepeatIfPossible(actionKeyDown);
-                return _actionForKey[actionKeyDown];
-            }
-
-            if (UnityEngine.Input.GetKeyUp(_pressedKey))
-            {
-                Cancel();
-            }
-            else
-            {
-                return GetActionForRepeatedKey();
-            }
-
-            return null;
-        }
+        private float _repeatedKeyTime;
 
         public void Update()
         {
-        }
-
-        public void Cancel()
-        {
-            _pressedKey = KeyCode.None;
-        }
-
-        private void StartKeyRepeatIfPossible(KeyCode key)
-        {
-            if (_repeatingKeys.Contains(key))
+            foreach (var pair in _actionForKey)
             {
-                _pressedKey = key;
-                _nextRepeatedKeyTime = Time.time + Constant.Input.KeyRepeatDelay;
-            }
-        }
-
-        private KeyCode GetActionKeyDown()
-        {
-            foreach (var key in _actionForKey.Keys)
-            {
-                if (UnityEngine.Input.GetKeyDown(key))
+                if (UnityEngine.Input.GetKeyDown(pair.Key))
                 {
-                    return key;
+                    pair.Value.Invoke();
+                    _repeatedKeyTime = Time.time + Constant.Input.KeyRepeatDelay;
+                }
+                else if (UnityEngine.Input.GetKeyUp(pair.Key))
+                {
+                    _repeatedKeyTime = 0;
+                }
+
+                if (UnityEngine.Input.GetKey(pair.Key))
+                {
+                    if (Time.time >= _repeatedKeyTime)
+                    {
+                        pair.Value.Invoke();
+                        _repeatedKeyTime = Time.time + Constant.Input.KeyRepeatInterval;
+                    }
                 }
             }
-
-            return KeyCode.None;
-        }
-
-        private PlayerAction? GetActionForRepeatedKey()
-        {
-            if (_pressedKey != KeyCode.None && Time.time >= _nextRepeatedKeyTime)
-            {
-                _nextRepeatedKeyTime = Time.time + Constant.Input.KeyRepeatInterval;
-                return _actionForKey[_pressedKey];
-            }
-
-            return null;
         }
     }
 }
