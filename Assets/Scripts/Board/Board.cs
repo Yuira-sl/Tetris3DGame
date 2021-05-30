@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Octamino
 {
-    public class Board: IDisposable
+    public class Board
     {
         private readonly int _topEdge;
         
@@ -24,21 +24,6 @@ namespace Octamino
             _topEdge = Height - 1;
             NextPiece = PiecesCreator.GetPiece();
             Piece = PiecesCreator.GetPiece();
-        }
-
-        public void Subscribe()
-        {
-            Game.Instance.OnPieceSettled += OnPieceSettled;
-        }
-        
-        public void Dispose()
-        {
-            Game.Instance.OnPieceSettled -= OnPieceSettled;
-        }
-
-        private void OnPieceSettled()
-        {
-            Piece = NextPiece;
         }
         
         // Determines whether blocks on the board collide with board bounds or with themselves
@@ -63,6 +48,7 @@ namespace Octamino
         
         public void AddPiece()
         {
+            Piece = NextPiece;
             NextPiece = PiecesCreator.GetPiece();
 
             var offsetRow = _topEdge - Piece.Top;

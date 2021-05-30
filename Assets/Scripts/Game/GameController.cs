@@ -68,8 +68,6 @@ namespace Octamino
 
             _boardView.SetBoard(_board);
             _game.SetBoard(_boardView);
-            
-            _board.Subscribe();
         }
 
         private void OnDestroy()
@@ -79,8 +77,7 @@ namespace Octamino
             _game.OnPieceSettled -= _audioPlayer.PlayPieceDropClip;
             _game.OnPieceRotated -= _audioPlayer.PlayPieceRotateClip;
             _game.OnPieceMoved -= _audioPlayer.PlayPieceMoveClip;
-            
-            _board.Dispose();
+
             _advertisement.Dispose();
         }
 
