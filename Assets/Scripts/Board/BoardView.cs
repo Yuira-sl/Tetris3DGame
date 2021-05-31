@@ -48,7 +48,7 @@ namespace Octamino
 
         private void OnLastRowsCleared(List<Block> blocks, float time)
         { 
-            StartCoroutine(ClearBlocks(blocks, time));
+            StartCoroutine(ClearBlocks(blocks, time * 1.5f));
         }
 
         private void OnBlockSettled()
