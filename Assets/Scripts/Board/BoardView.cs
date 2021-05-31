@@ -10,18 +10,19 @@ namespace Octamino
 
         private Board _board;
         private int _renderedBoardHash = -1;
-        private BlockView _currentGhostBlock;
-        
-        private readonly List<ParticleSystem> _clearedRowEffects = new List<ParticleSystem>();
+
+        private readonly List<BlockView> _currentPiece = new List<BlockView>();
+        private readonly List<BlockView> _currentGhostPiece = new List<BlockView>();
+        private readonly List<PoolEffect> _clearedRowEffects = new List<PoolEffect>();
         private readonly List<BlockView> _settledBlocksInRow = new List<BlockView>();
         
         private Pool<BlockView> BlockViewPool { get; set; }
-        private Pool<ParticleSystem> EffectsPool { get; set; }
+        private Pool<PoolEffect> EffectsPool { get; set; }
         
         public PieceData Data;
-        public GameObject BlocksContaiter;
-        public GameObject EffectsContaiter;
-        public ParticleSystem ClearedEffect;
+        public Transform BlocksContaiter;
+        public Transform EffectsContaiter;
+        public PoolEffect ClearedEffect;
         public AudioPlayer AudioPlayer;
 
         public void SetBoard(Board board)
@@ -33,9 +34,9 @@ namespace Octamino
 
             var size = board.Width * board.Height + 10;
             
-            BlockViewPool = new Pool<BlockView>(Data.Block, size, BlocksContaiter);
-            EffectsPool = new Pool<ParticleSystem>(ClearedEffect.gameObject, board.Height,EffectsContaiter);
-            EffectsPool.DeactivateAll();
+            BlockViewPool = new Pool<BlockView>(Data.Block, Data.Block, size, BlocksContaiter);
+            EffectsPool = new Pool<PoolEffect>(ClearedEffect, ClearedEffect, board.Height, EffectsContaiter);
+            EffectsPool.PushRange(_clearedRowEffects);
         }
         
         private void OnRowsCleared(int row, float time)
@@ -50,12 +51,12 @@ namespace Octamino
 
         private void OnBlockSettled()
         {
-            CleanRowEffects();
+            EffectsPool.PushRange(_clearedRowEffects);
         }
         
         private IEnumerator GetBlocksInRow(int row, float time)
         {
-            var views = GetNecessaryBlocks(new List<BlockView>(), row);
+           var views = GetNecessaryBlocks(new List<BlockView>(), row);
            
             foreach (var view in views)
             {
@@ -64,10 +65,11 @@ namespace Octamino
 
             yield return EnableGlowInRows(time);
             
-            AudioPlayer.PlayCollectRowClip();
-
-            var effect = EffectsPool.GetAndActivate(new Vector3(4.5f, row, 0));
+            AudioPlayer.PlayCollectRowClip(); 
+            var effect = EffectsPool.Pop<PoolEffect>(ClearedEffect);
+            effect.transform.parent.position = new Vector3(4.5f, row, 0);
             _clearedRowEffects.Add(effect);
+            
             _board.Remove(_board.GetBlocksFromRow(row));
             _board.MoveDownBlocksBelowRow(row);
         }
@@ -78,8 +80,8 @@ namespace Octamino
 
             foreach (var block in blocks)
             {
-                var temp = GetNecessaryBlocks(new List<BlockView>(), block.Position.Row);
-                views.AddRange(temp);
+               var temp = GetNecessaryBlocks(new List<BlockView>(), block.Position.Row);
+               views.AddRange(temp);
             }
             
             foreach (var view in views)
@@ -98,7 +100,7 @@ namespace Octamino
         
         private List<BlockView> GetNecessaryBlocks(List<BlockView> views, int row)
         {
-            foreach (var view in BlockViewPool.GetActiveItems())
+            foreach (var view in _currentPiece)
             {
                 if (view.transform.position.y.Equals(row))
                 {
@@ -137,7 +139,8 @@ namespace Octamino
         
         private void RenderGameBoard()
         {
-            BlockViewPool.DeactivateAll();
+            BlockViewPool.PushRange(_currentPiece);
+            BlockViewPool.PushRange(_currentGhostPiece);
             RenderGhostPiece();
             RenderPiece();
         }
@@ -146,7 +149,8 @@ namespace Octamino
         {
             foreach (var block in _board.Blocks)
             {
-                RenderBlock(BlockMaterial(block.Type), block.Position);
+                var piece = RenderBlock(BlockMaterial(block.Type), block.Position);
+                _currentPiece.Add(piece);
             }
         }
         
@@ -154,11 +158,13 @@ namespace Octamino
         {
             foreach (var position in _board.GetGhostPiecePositions())
             {
-                _currentGhostBlock = RenderBlock(Data.GhostPieceMaterial, position);
+                var ghostPiece = RenderBlock(Data.GhostPieceMaterial, position);
                 if (CheckIntersectsPositions(position))
                 {
-                    _currentGhostBlock.gameObject.SetActive(false);
+                    ghostPiece.gameObject.SetActive(false);
                 }
+                
+                _currentGhostPiece.Add(ghostPiece);
             }
         }
         
@@ -176,7 +182,7 @@ namespace Octamino
         
         private BlockView RenderBlock(Material material, Position position)
         {
-            var view = BlockViewPool.GetAndActivate();
+            var view = BlockViewPool.Pop<BlockView>(Data.Block);
             view.SetMaterial(material);
             view.SetPosition(BlockPosition(position.Row, position.Column));
             return view;
@@ -200,17 +206,6 @@ namespace Octamino
         private Material BlockMaterial(PieceType type)
         {
             return Data.PieceMaterials[(int) type];
-        }
-
-        private void CleanRowEffects()
-        {
-            if (_clearedRowEffects.Count <= 0)
-            {
-                return;
-            }
-            
-            EffectsPool.DeactivateAll();
-            _clearedRowEffects.Clear();
         }
         
         private void OnDestroy()

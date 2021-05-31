@@ -1,59 +1,83 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Octamino
 {
-    public class Pool<T> where T : Component
-    {
-        public T[] Items { get; }
+    public class Pool<T>
+    { 
+        private readonly Dictionary<T, Stack<IPoolItem<T>>> _items = new Dictionary<T, Stack<IPoolItem<T>>>();
+        private readonly Dictionary<T, IPoolItem<T>> _originals = new Dictionary<T, IPoolItem<T>>();
+        private readonly Transform _root;
 
-        public Pool(GameObject prefab, int size, GameObject parent)
+        public List<T> Items = new List<T>();
+        
+        public Pool(T key, IPoolItem<T> original, int count, Transform parent)
         {
-            Items = new T[size];
-            for (int i = 0; i < size; ++i)
+            _root = parent;
+            Populate(key, original, count);
+        }
+
+        public bool Contains(T key)
+        {
+            return _originals.ContainsKey(key);
+        }
+
+        public void Populate(T key, IPoolItem<T> original, int count)
+        {
+            if (!_originals.ContainsKey(key))
             {
-                var newItem = Object.Instantiate(prefab, parent.transform, true);
-                var component = newItem.GetComponent<T>();
-                if (!component)
-                {
-                    newItem.AddComponent<T>();
-                }
-                Items[i] = newItem.GetComponent<T>();
+                _originals.Add(key, original);
+            }
+
+            if (!_items.ContainsKey(key))
+            {
+                _items.Add(key, new Stack<IPoolItem<T>>());
+            }
+
+            for (var j = 0; j < count; ++j)
+            {
+                var newItem = original.Replicate();
+                newItem.GameObject.transform.parent = _root;
+                newItem.GameObject.SetActive(false);
+                newItem.PoolOwner = this;
+                newItem.Key = key;
+
+                _items[key].Push(newItem);
             }
         }
 
-        public List<T> GetActiveItems()
+        public T1 Pop<T1>(T key) where T1 : IPoolItem<T>
         {
-            List<T> result = new List<T>();   
-            for (int i = 0; i < Items.Length; ++i)
+            if (!_items.ContainsKey(key))
             {
-                if (Items[i].gameObject.activeInHierarchy)
-                {
-                    result.Add(Items[i]);
-                }
+                Debug.LogError("There no " + key + " type inside pool!");
+            }
+
+            if (_items[key].Count == 0)
+            {
+                Populate(key, _originals[key], 1);
             }
             
-            return result;
-        }
-        
-        public T GetAndActivate()
-        {
-            var result = Items.FindFirst(item => !item.gameObject.activeInHierarchy);
-            result.gameObject.SetActive(true);
-            return result;
-        }
-        
-        public T GetAndActivate(Vector3 position)
-        {
-            var result = Items.FindFirst(item => !item.gameObject.activeInHierarchy);
-            result.transform.position = position;
-            result.gameObject.SetActive(true);
-            return result;
+            var item = (T1)_items[key].Pop();
+            Items.Add(item.Key);
+            item.GameObject.SetActive(true);
+            return item;
         }
 
-        public void DeactivateAll()
+        public void Push(IPoolItem<T> item)
         {
-            foreach (var item in Items) item.gameObject.SetActive(false);
+            if (_root == null)
+            {
+                Object.Destroy(item.GameObject);
+            }
+            else
+            {
+                Items.Remove(item.Key);
+                item.GameObject.transform.parent = _root;
+                item.ReturnToPool();
+                _items[item.Key].Push(item);
+            }
         }
     }
 }

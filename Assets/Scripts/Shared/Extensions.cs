@@ -5,6 +5,22 @@ namespace Octamino
 {
     public static class Extensions
     {
+        // Pool
+        
+        public static void PushRange<TKey, TValue>(this Pool<TKey> pool, List<TValue> list) where TValue: IPoolItem<TKey>
+        {
+            if (list.Count <= 0)
+            {
+                return;
+            }
+            
+            foreach (var view in list)
+            {
+                pool.Push(view);
+            }
+            list.Clear();
+        }
+        
         public static float GetScreenToWorldHeight
         {
             get

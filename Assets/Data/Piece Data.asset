@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1386708a0c0c4034860e65198f031a05, type: 3}
   m_Name: Piece Data
   m_EditorClassIdentifier: 
-  Block: {fileID: 2469169289148832460, guid: 6df03dac37cc8e24096a74cb72399fbf, type: 3}
+  Block: {fileID: 5726325971182040259, guid: 6df03dac37cc8e24096a74cb72399fbf, type: 3}
   PieceMaterials:
   - {fileID: 2100000, guid: 2710206144d5e204da324d912f35ffee, type: 2}
   - {fileID: 2100000, guid: a28f3467440220340ba21df81a2cad57, type: 2}

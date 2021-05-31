@@ -6,7 +6,7 @@ namespace Octamino
     [CreateAssetMenu()]
     public class PieceData : ScriptableObject
     {
-        public GameObject Block;
+        public BlockView Block;
         public List<Material> PieceMaterials = new List<Material>();
         public Material GhostPieceMaterial;
     }

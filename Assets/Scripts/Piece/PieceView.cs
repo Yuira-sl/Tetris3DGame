@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Octamino
@@ -7,6 +8,8 @@ namespace Octamino
     {
         private Board _board;
         private Pool<BlockView> _blockViewPool;
+        private readonly List<BlockView> _currentPiece = new List<BlockView>();
+
         private PieceType? _renderedPieceType;
         private int _blockPoolSize = 10;
         private RenderTexture _renderTexture;
@@ -15,7 +18,7 @@ namespace Octamino
 
         public PieceData Data;
         public Camera NextBlockCameraView;
-        public GameObject NextBlockContainer;
+        public Transform NextBlockContainer;
         
         private void Awake()
         {
@@ -25,7 +28,7 @@ namespace Octamino
         public void SetBoard(Board board)
         {
             _board = board;
-            _blockViewPool = new Pool<BlockView>(Data.Block, _blockPoolSize, NextBlockContainer);
+            _blockViewPool = new Pool<BlockView>(Data.Block, Data.Block, _blockPoolSize, NextBlockContainer);
             _renderTexture = new RenderTexture(140, 140, 0);
             _image.texture = _renderTexture;
             NextBlockCameraView.targetTexture = _renderTexture;
@@ -42,20 +45,21 @@ namespace Octamino
         
         private void DrawPiece(Piece piece)
         {
-            _blockViewPool.DeactivateAll();
+           _blockViewPool.PushRange(_currentPiece);
             
             foreach (var block in piece.Blocks)
             {
-                var blockView = _blockViewPool.GetAndActivate();
+                var blockView = _blockViewPool.Pop<BlockView>(Data.Block);
                 blockView.SetMaterial(BlockMaterial(block.Type));
                 blockView.SetPosition(BlockPosition(block.Position));
                 blockView.gameObject.layer = 10;
+                _currentPiece.Add(blockView);
             }
             
             var pieceBlocks = _blockViewPool.Items.First(piece.Blocks.Length);
             var xValues = pieceBlocks.Map(b => b.transform.localPosition.x);
             var yValues = pieceBlocks.Map(b => b.transform.localPosition.y);
-
+            
             var halfBlockSize = 0.5f;
             var minX = Mathf.Min(xValues) - halfBlockSize;
             var maxX = Mathf.Max(xValues) + halfBlockSize;
@@ -65,7 +69,7 @@ namespace Octamino
             var height = maxY - minY;
             var offsetX = -width * 0.5f - minX;
             var offsetY = -height * 0.5f - minY;
-
+            
             foreach (var block in pieceBlocks)
             {
                 block.transform.localPosition += new Vector3(offsetX, offsetY);
