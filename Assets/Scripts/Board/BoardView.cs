@@ -13,16 +13,16 @@ namespace Octamino
 
         private readonly List<BlockView> _currentPiece = new List<BlockView>();
         private readonly List<BlockView> _currentGhostPiece = new List<BlockView>();
-        private readonly List<PoolEffect> _clearedRowEffects = new List<PoolEffect>();
+        private readonly List<PoolItem> _clearedRowEffects = new List<PoolItem>();
         private readonly List<BlockView> _settledBlocksInRow = new List<BlockView>();
         
         private Pool<BlockView> BlockViewPool { get; set; }
-        private Pool<PoolEffect> EffectsPool { get; set; }
+        private Pool<PoolItem> RowEffectPool { get; set; }
         
-        public PieceData Data;
+        public PieceData PieceData;
+        public PoolItem RowEffect;
         public Transform BlocksContaiter;
         public Transform EffectsContaiter;
-        public PoolEffect ClearedEffect;
         public AudioPlayer AudioPlayer;
 
         public void SetBoard(Board board)
@@ -34,9 +34,9 @@ namespace Octamino
 
             var size = board.Width * board.Height + 10;
             
-            BlockViewPool = new Pool<BlockView>(Data.Block, Data.Block, size, BlocksContaiter);
-            EffectsPool = new Pool<PoolEffect>(ClearedEffect, ClearedEffect, board.Height, EffectsContaiter);
-            EffectsPool.PushRange(_clearedRowEffects);
+            BlockViewPool = new Pool<BlockView>(PieceData.BlockView, PieceData.BlockView, size, BlocksContaiter);
+            RowEffectPool = new Pool<PoolItem>(RowEffect, RowEffect, board.Height, EffectsContaiter);
+            RowEffectPool.PushRange(_clearedRowEffects);
         }
         
         private void OnRowsCleared(int row, float time)
@@ -51,7 +51,7 @@ namespace Octamino
 
         private void OnBlockSettled()
         {
-            EffectsPool.PushRange(_clearedRowEffects);
+            RowEffectPool.PushRange(_clearedRowEffects);
         }
         
         private IEnumerator GetBlocksInRow(int row, float time)
@@ -66,7 +66,7 @@ namespace Octamino
             yield return EnableGlowInRows(time);
             
             AudioPlayer.PlayCollectRowClip(); 
-            var effect = EffectsPool.Pop<PoolEffect>(ClearedEffect);
+            var effect = RowEffectPool.Pop<PoolItem>(RowEffect);
             effect.transform.parent.position = new Vector3(4.5f, row, 0);
             _clearedRowEffects.Add(effect);
             
@@ -158,7 +158,7 @@ namespace Octamino
         {
             foreach (var position in _board.GetGhostPiecePositions())
             {
-                var ghostPiece = RenderBlock(Data.GhostPieceMaterial, position);
+                var ghostPiece = RenderBlock(PieceData.GhostPieceMaterial, position);
                 if (CheckIntersectsPositions(position))
                 {
                     ghostPiece.gameObject.SetActive(false);
@@ -182,7 +182,7 @@ namespace Octamino
         
         private BlockView RenderBlock(Material material, Position position)
         {
-            var view = BlockViewPool.Pop<BlockView>(Data.Block);
+            var view = BlockViewPool.Pop<BlockView>(PieceData.BlockView);
             view.SetMaterial(material);
             view.SetPosition(BlockPosition(position.Row, position.Column));
             return view;
@@ -205,7 +205,7 @@ namespace Octamino
         
         private Material BlockMaterial(PieceType type)
         {
-            return Data.PieceMaterials[(int) type];
+            return PieceData.PieceMaterials[(int) type];
         }
         
         private void OnDestroy()

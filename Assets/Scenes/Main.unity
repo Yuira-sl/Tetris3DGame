@@ -5044,11 +5044,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4bb6a52c904d461aae3c734d4139ebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data: {fileID: 11400000, guid: 3b83a608fc55b09428364f00d6dfe8a0, type: 2}
+  PieceData: {fileID: 11400000, guid: 3b83a608fc55b09428364f00d6dfe8a0, type: 2}
+  RowEffect: {fileID: 3997483469459750223, guid: 69707d8abdaeb13469ac19a5963b61e4,
+    type: 3}
   BlocksContaiter: {fileID: 1236841839}
   EffectsContaiter: {fileID: 1330377386}
-  ClearedEffect: {fileID: 3997483469459750223, guid: 69707d8abdaeb13469ac19a5963b61e4,
-    type: 3}
   AudioPlayer: {fileID: 1797789527}
 --- !u!1 &1627648039
 GameObject:

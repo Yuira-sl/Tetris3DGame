@@ -59,7 +59,7 @@ namespace Octamino
         
         public void RollBack()
         {
-            _boardView.StartCoroutine(_board.RemoveLastRows(10, 0.5f));
+            //_boardView.StartCoroutine(_board.RemoveLastRows(10, 0.5f));
         }
         
         public void Pause()

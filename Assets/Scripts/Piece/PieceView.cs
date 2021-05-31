@@ -28,7 +28,7 @@ namespace Octamino
         public void SetBoard(Board board)
         {
             _board = board;
-            _blockViewPool = new Pool<BlockView>(Data.Block, Data.Block, _blockPoolSize, NextBlockContainer);
+            _blockViewPool = new Pool<BlockView>(Data.BlockView, Data.BlockView, _blockPoolSize, NextBlockContainer);
             _renderTexture = new RenderTexture(140, 140, 0);
             _image.texture = _renderTexture;
             NextBlockCameraView.targetTexture = _renderTexture;
@@ -49,7 +49,7 @@ namespace Octamino
             
             foreach (var block in piece.Blocks)
             {
-                var blockView = _blockViewPool.Pop<BlockView>(Data.Block);
+                var blockView = _blockViewPool.Pop<BlockView>(Data.BlockView);
                 blockView.SetMaterial(BlockMaterial(block.Type));
                 blockView.SetPosition(BlockPosition(block.Position));
                 blockView.gameObject.layer = 10;
