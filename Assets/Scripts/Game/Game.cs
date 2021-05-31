@@ -59,7 +59,7 @@ namespace Octamino
         
         public void RollBack()
         {
-            //_boardView.StartCoroutine(_board.RemoveLastRows(10, 0.5f));
+            _board.RemoveLastRows(10, 0.5f);
         }
         
         public void Pause()
@@ -151,7 +151,7 @@ namespace Octamino
         private void PieceSettled()
         {
             OnPieceSettled();
-            _boardView.StartCoroutine(_board.RemoveFullRows(0.3f));
+            _board.RemoveFullRows(0.5f);
             AddPiece();
         }
         

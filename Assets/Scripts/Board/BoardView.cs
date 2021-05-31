@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Octamino
@@ -28,7 +30,7 @@ namespace Octamino
         public void SetBoard(Board board)
         {
             _board = board;
-            _board.OnRowsCleared += OnRowsCleared;
+            _board.OnRowCleared += OnRowCleared;
             _board.OnLastRowsCleared += OnLastRowsCleared;
             Game.Instance.OnPieceSettled += OnBlockSettled;
 
@@ -38,15 +40,15 @@ namespace Octamino
             RowEffectPool = new Pool<PoolItem>(RowEffect, RowEffect, board.Height, EffectsContaiter);
             RowEffectPool.PushRange(_clearedRowEffects);
         }
-        
-        private void OnRowsCleared(int row, float time)
+
+        private void OnRowCleared(List<Block> blocks, int row, float time)
         {
-            StartCoroutine(GetBlocksInRow(row, time));
+            StartCoroutine(ClearBlocks(blocks,time, true, row));
         }
-        
+
         private void OnLastRowsCleared(List<Block> blocks, float time)
-        {
-            StartCoroutine(GetLastBlocks(blocks, time));
+        { 
+            StartCoroutine(ClearBlocks(blocks, time));
         }
 
         private void OnBlockSettled()
@@ -54,62 +56,63 @@ namespace Octamino
             RowEffectPool.PushRange(_clearedRowEffects);
         }
         
-        private IEnumerator GetBlocksInRow(int row, float time)
+        private IEnumerator ClearBlocks(List<Block> blocks, float time, bool isLastRows = false,  int row = 0)
         {
-           var views = GetNecessaryBlocks(new List<BlockView>(), row);
-           
-            foreach (var view in views)
-            {
-                _settledBlocksInRow.Add(view);
-            }
+            yield return null;
+
+            _settledBlocksInRow.AddRange(!isLastRows ? GetNecessaryBlocks(blocks) : GetNecessaryBlocks(row));
 
             yield return EnableGlowInRows(time);
             
-            AudioPlayer.PlayCollectRowClip(); 
-            var effect = RowEffectPool.Pop<PoolItem>(RowEffect);
-            effect.transform.parent.position = new Vector3(4.5f, row, 0);
-            _clearedRowEffects.Add(effect);
-            
-            _board.Remove(_board.GetBlocksFromRow(row));
-            _board.MoveDownBlocksBelowRow(row);
+            AudioPlayer.PlayCollectRowClip();
+
+            if (!isLastRows)
+            {
+                Game.Instance.Resume();
+                _board.AddPiece();
+            }
+            else
+            {
+                var effect = RowEffectPool.Pop<PoolItem>(RowEffect);
+                effect.transform.parent.position = new Vector3(4.5f, row, 0);
+                _clearedRowEffects.Add(effect);
+
+                _board.MoveDownBlocksBelowRow(row);
+            }
+            _board.Remove(blocks);
         }
         
-        private IEnumerator GetLastBlocks(List<Block> blocks, float time)
+        private List<BlockView> GetNecessaryBlocks(int row)
+        {
+            return FillViews(new List<BlockView>(), row);
+        }
+        
+        private List<BlockView> GetNecessaryBlocks(List<Block> blocks)
         {
             var views = new List<BlockView>();
 
             foreach (var block in blocks)
             {
-               var temp = GetNecessaryBlocks(new List<BlockView>(), block.Position.Row);
-               views.AddRange(temp);
+                FillViews(views, block.Position.Row);
             }
             
-            foreach (var view in views)
-            {
-                _settledBlocksInRow.Add(view);
-            }
-            
-            yield return EnableGlowInRows(time);
-            
-            AudioPlayer.PlayCollectRowClip();
-
-            Game.Instance.Resume();
-            _board.Remove(blocks);
-            _board.AddPiece();
+            return views;
         }
-        
-        private List<BlockView> GetNecessaryBlocks(List<BlockView> views, int row)
+
+        private List<BlockView> FillViews(List<BlockView> newList, int row)
         {
             foreach (var view in _currentPiece)
             {
                 if (view.transform.position.y.Equals(row))
                 {
-                    views.Add(view);
+                    newList.Add(view);
                 }
             }
-            return views;
-        }
 
+            return newList;
+        }
+        
+        
         private IEnumerator EnableGlowInRows(float time)
         {
             if (_settledBlocksInRow.Count > 0)
@@ -211,7 +214,7 @@ namespace Octamino
         private void OnDestroy()
         {
             Game.Instance.OnPieceSettled -= OnBlockSettled;
-            _board.OnRowsCleared -= OnRowsCleared;
+            _board.OnRowCleared -= OnRowCleared;
             _board.OnLastRowsCleared -= OnLastRowsCleared;
         }
     }

@@ -16,7 +16,7 @@ namespace Octamino
         public List<Block> Blocks { get; } = new List<Block>();
         public Piece Piece { get; set; }
 
-        public event Action<int, float> OnRowsCleared;
+        public event Action<List<Block>, int, float> OnRowCleared;
         public event Action<List<Block>, float> OnLastRowsCleared;
         
         public Board()
@@ -141,10 +141,8 @@ namespace Octamino
             }
         }
         
-        public IEnumerator RemoveFullRows(float time)
+        public void RemoveFullRows(float time)
         {
-            yield return new WaitForSeconds(time);
-
             var rowsRemoved = 0;
             for (int row = Height - 1; row >= 0; --row)
             {
@@ -152,7 +150,7 @@ namespace Octamino
 
                 if (rowBlocks.Count == Width)
                 {
-                    OnRowsCleared?.Invoke(row, time);
+                    OnRowCleared?.Invoke(rowBlocks, row, time);
                     rowsRemoved += 1;
                 }
             }
@@ -160,12 +158,11 @@ namespace Octamino
             Game.Instance.Level.RowsCleared(rowsRemoved);
         }
         
-        public IEnumerator RemoveLastRows(int rowsCount, float time)
+        public void RemoveLastRows(int rowsCount, float time)
         {
             var hMax = Height - 1;
             var hCurrent = hMax - rowsCount;
             var blocksToRemove = Blocks.FindAll(block => block.Position.Row > hCurrent && block.Position.Row <= hMax);
-            yield return new WaitForSeconds(time);
             OnLastRowsCleared?.Invoke(blocksToRemove, time);
         }
         
