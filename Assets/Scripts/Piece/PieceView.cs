@@ -56,8 +56,7 @@ namespace Octamino
                 _currentPiece.Add(blockView);
             }
             
-            // что-то не так с позиционированием 
-            var pieceBlocks = _blockViewPool.Items.First(piece.Blocks.Length);
+            var pieceBlocks =  _currentPiece.First(piece.Blocks.Length);
             var xValues = pieceBlocks.Map(b => b.transform.localPosition.x);
             var yValues = pieceBlocks.Map(b => b.transform.localPosition.y);
             

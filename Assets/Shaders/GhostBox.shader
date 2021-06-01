@@ -1,17 +1,26 @@
 ﻿Shader "Unlit/GhostBox"
 {
-	Properties {
+	Properties 
+	{
+		_MainTex ("MainTex", 2D) = "white" {}
+		_MaskTex ("MaskTex", 2D) = "white" {}
 		_MainColor ("Color", Color) = (1,1,1,1)
 		_HighlightColor("HighlightColor", Color) = (0,0,1,1)
 		_EdgePow("Threshold", Range(0 , 5)) = 0.5
-		_RimNum("Rim", Range(0 , 0.1)) = 0.06
+		_RimNum("Rim", Range(0 , 1)) = 0.06
 	}
 
-	SubShader {
-
-		Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderPipeline" = "UniversalRenderPipeline" "RenderType"="Transparent" "DisableBatching"="True"}
+	SubShader 
+	{
+		Tags 
+		{
+			"Queue"="Transparent" 
+			"RenderPipeline" = "UniversalRenderPipeline" 
+			"RenderType"="Transparent"
+		}
 		
-		Pass{
+		Pass
+		{
 			Tags { "LightMode"="UniversalForward" }	
 			
 			Blend One One
@@ -25,14 +34,9 @@
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#pragma multi_compile_fwdbase
-
-			float4 _MainColor;
-			float4 _HighlightColor;
-			sampler2D _CameraDepthTexture;
-			float _EdgePow;
-			sampler2D _MaskTex;
-			float _RimNum;
+			uniform float4 _MainColor,_HighlightColor;
+			uniform float _EdgePow, _RimNum;
+			uniform sampler2D _MainTex, _MaskTex, _CameraDepthTexture;
 
 			struct appdata
 			{
@@ -43,7 +47,7 @@
 
 			struct v2f
 			{
-				float4 pos: POSITION;
+				float4 pos: SV_POSITION;
 				float4 scrPos: TEXCOORD0;
 				half3 worldNormal: TEXCOORD1;
 				half3 worldViewDir: TEXCOORD2;
@@ -70,17 +74,18 @@
 			
 			half4 frag ( v2f i ) : SV_TARGET
 			{
-				half4 finalColor = _MainColor;
+				half4 col = tex2D(_MainTex, i.uv);
+				half mask = tex2D(_MaskTex, i.uv).r;
 				
+				col *= (1 - mask);
+
 				float sceneZ = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(i.scrPos)));
 				float partZ = i.scrPos.z;
 
-				float diff = 1-saturate((sceneZ-i.scrPos.z)*4 - _EdgePow);
 				half rim = pow(1 - abs(dot(normalize(i.worldNormal), normalize(i.worldViewDir))), _RimNum);
 
-				finalColor = lerp(finalColor, _HighlightColor, diff);
-				finalColor = lerp(finalColor, _HighlightColor, rim);
-				return finalColor;
+				col = lerp(col * rim, _HighlightColor, rim);
+				return col * _MainColor * _EdgePow;
 			}
 
 			ENDCG

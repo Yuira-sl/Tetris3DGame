@@ -9,8 +9,6 @@ namespace Octamino
         private readonly Dictionary<T, Stack<IPoolItem<T>>> _items = new Dictionary<T, Stack<IPoolItem<T>>>();
         private readonly Dictionary<T, IPoolItem<T>> _originals = new Dictionary<T, IPoolItem<T>>();
         private readonly Transform _root;
-
-        public List<T> Items = new List<T>();
         
         public Pool(T key, IPoolItem<T> original, int count, Transform parent)
         {
@@ -60,7 +58,6 @@ namespace Octamino
             }
             
             var item = (T1)_items[key].Pop();
-            Items.Add(item.Key);
             item.GameObject.SetActive(true);
             return item;
         }
@@ -73,7 +70,6 @@ namespace Octamino
             }
             else
             {
-                Items.Remove(item.Key);
                 item.GameObject.transform.parent = _root;
                 item.ReturnToPool();
                 _items[item.Key].Push(item);

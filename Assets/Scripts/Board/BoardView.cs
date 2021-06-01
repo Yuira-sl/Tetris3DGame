@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Octamino
@@ -43,7 +41,7 @@ namespace Octamino
 
         private void OnRowCleared(List<Block> blocks, int row, float time)
         {
-            StartCoroutine(ClearBlocks(blocks,time, true, row));
+            StartCoroutine(ClearBlocks(blocks, time, true, row));
         }
 
         private void OnLastRowsCleared(List<Block> blocks, float time)
@@ -137,7 +135,7 @@ namespace Octamino
         {
             var mat = view.Renderer.material;
             var color = mat.GetColor(ColorId);
-            mat.SetColor(ColorId, Color.Lerp(color, color * 1.25f, time * 0.5f));
+            mat.SetColor(ColorId, Color.Lerp(color, color * 1.25f, time * 1f));
         }
         
         private void RenderGameBoard()

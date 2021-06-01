@@ -151,7 +151,7 @@ namespace Octamino
         private void PieceSettled()
         {
             OnPieceSettled();
-            _board.RemoveFullRows(0.5f);
+            _board.RemoveFullRows(0.35f);
             AddPiece();
         }
         
