@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Octamino
 {
@@ -10,6 +9,17 @@ namespace Octamino
         private void Awake()
         {
             Renderer = GetComponent<Renderer>();
+        }
+
+        public void SetPropertyBlock(MaterialPropertyBlock propertyBlock)
+        {
+            Renderer.SetPropertyBlock(propertyBlock);
+        }
+
+        public MaterialPropertyBlock GetPropertyBlock(MaterialPropertyBlock propertyBlock)
+        {
+            Renderer.GetPropertyBlock(propertyBlock);
+            return propertyBlock;
         }
         
         public void SetMaterial(Material material)

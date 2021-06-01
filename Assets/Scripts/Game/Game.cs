@@ -7,15 +7,23 @@ namespace Octamino
         private readonly Board _board;
         private float _elapsedTime;
         private bool _isPlaying;
+        private bool _canMove;
         
         public delegate void GameEventHandler();
         
         public event GameEventHandler OnResumed = delegate { };
         public event GameEventHandler OnPaused = delegate { };
+        public event GameEventHandler OnNewPiece = delegate { };
         public event GameEventHandler OnGameFinished = delegate { };
         public event GameEventHandler OnPieceMoved = delegate { };
         public event GameEventHandler OnPieceRotated = delegate { };
         public event GameEventHandler OnPieceSettled = delegate { };
+
+        public bool CanMove
+        {
+            get => _canMove;
+            set => _canMove = value;
+        }
 
         public bool IsPlaying => _isPlaying;
         public Score Score { get; private set; }
@@ -29,7 +37,8 @@ namespace Octamino
             {
                 Instance = this;
             }
-            
+
+            _canMove = true;
             _board = board;
         }
         
@@ -62,9 +71,13 @@ namespace Octamino
             OnPaused();
         }
         
-       
         public void MoveHorizontal(float pos)
         {
+            if (!_canMove)
+            {
+                return;
+            }
+            
             var pieceMoved = pos > 0.5 ? _board.MovePieceRight() : _board.MovePieceLeft();
             if (pieceMoved)
             {
@@ -74,6 +87,11 @@ namespace Octamino
 
         public void MoveDown()
         {
+            if (!_canMove)
+            {
+                return;
+            }
+            
             bool pieceMoved = false;
             ResetElapsedTime();
             if (_board.MovePieceDown())
@@ -93,6 +111,11 @@ namespace Octamino
 
         public void FallDown()
         {
+            if (!_canMove)
+            {
+                return;
+            }
+            
             Score.PieceFinishedFalling(_board.FallPiece());
             ResetElapsedTime();
             PieceSettled();
@@ -100,6 +123,11 @@ namespace Octamino
         
         public void Rotate(bool counterclockwise)
         {
+            if (!_canMove)
+            {
+                return;
+            }
+            
             var isRotate = _board.RotatePiece(counterclockwise);
             if (isRotate)
             {
@@ -119,12 +147,15 @@ namespace Octamino
         
         private void AddPiece()
         {
+            OnNewPiece();
             _board.AddPiece();
-            if (!_board.HasCollisions()) return;
-            _isPlaying = false;
-            OnPaused();
-            LifeCount--;
-            OnGameFinished();
+            if (_board.HasCollisions())
+            {
+                _isPlaying = false;
+                OnPaused();
+                LifeCount--;
+                OnGameFinished();
+            }
         }
         
         private void PieceFalling(float deltaTime)

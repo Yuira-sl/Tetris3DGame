@@ -7,14 +7,14 @@ namespace Octamino
     public class BoardView : MonoBehaviour
     {
         private static readonly int ColorId = Shader.PropertyToID("_BaseColor");
-
-        private Board _board;
-        private int _renderedBoardHash = -1;
-
+        
         private readonly List<BlockView> _currentPiece = new List<BlockView>();
         private readonly List<BlockView> _currentGhostPiece = new List<BlockView>();
         private readonly List<PoolItem> _clearedRowEffects = new List<PoolItem>();
         private readonly List<BlockView> _settledBlocksInRow = new List<BlockView>();
+        
+        private int _renderedBoardHash = -1;
+        private Board _board;
         
         private Pool<BlockView> BlockViewPool { get; set; }
         private Pool<PoolItem> RowEffectPool { get; set; }
@@ -28,9 +28,11 @@ namespace Octamino
         public void Initialize(Board board)
         {
             _board = board;
+            
             _board.OnRowCleared += OnRowCleared;
             _board.OnLastRowsCleared += OnLastRowsCleared;
             Game.Instance.OnPieceSettled += OnBlockSettled;
+            Game.Instance.OnNewPiece += OnNewPiece;
 
             var size = board.Width * board.Height + 10;
             
@@ -49,6 +51,11 @@ namespace Octamino
             StartCoroutine(ClearBlocks(blocks, time * 1.5f));
         }
 
+        private void OnNewPiece()
+        {
+            
+        }
+        
         private void OnBlockSettled()
         {
             RowEffectPool.PushRange(_clearedRowEffects);
@@ -109,13 +116,13 @@ namespace Octamino
 
             return newList;
         }
-        
-        
+
         private IEnumerator EnableGlowInRows(float time)
         {
             if (_settledBlocksInRow.Count > 0)
             {
                 float elapsedTime = 0;
+                Game.Instance.CanMove = false;
                 while (elapsedTime < time)
                 {
                     elapsedTime += Time.deltaTime;
@@ -127,6 +134,7 @@ namespace Octamino
         
                     yield return null;
                 }
+                Game.Instance.CanMove = true;
                 _settledBlocksInRow.Clear();
             }
         }
@@ -212,6 +220,7 @@ namespace Octamino
         private void OnDestroy()
         {
             Game.Instance.OnPieceSettled -= OnBlockSettled;
+            Game.Instance.OnNewPiece -= OnNewPiece;
             _board.OnRowCleared -= OnRowCleared;
             _board.OnLastRowsCleared -= OnLastRowsCleared;
         }
