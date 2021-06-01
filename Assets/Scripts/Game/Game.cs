@@ -5,7 +5,6 @@ namespace Octamino
         public static Game Instance;
         
         private readonly Board _board;
-        private BoardView _boardView;
         private float _elapsedTime;
         private bool _isPlaying;
         
@@ -32,11 +31,6 @@ namespace Octamino
             }
             
             _board = board;
-        }
-
-        public void SetBoard(BoardView boardView)
-        {
-            _boardView = boardView;
         }
         
         public void Start()
@@ -126,13 +120,11 @@ namespace Octamino
         private void AddPiece()
         {
             _board.AddPiece();
-            if (_board.HasCollisions())
-            {
-                _isPlaying = false;
-                OnPaused();
-                LifeCount--;
-                OnGameFinished();
-            }
+            if (!_board.HasCollisions()) return;
+            _isPlaying = false;
+            OnPaused();
+            LifeCount--;
+            OnGameFinished();
         }
         
         private void PieceFalling(float deltaTime)

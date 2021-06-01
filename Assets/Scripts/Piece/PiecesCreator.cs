@@ -2,7 +2,8 @@ namespace Octamino
 {
     public static class PiecesCreator
     {
-        private static PieceType _pieceType;
+        private static readonly PieceType _pieceType;
+        
         public static Piece GetPiece()
         {
             var pieceType = _pieceType.RandomValue();  

@@ -25,7 +25,7 @@ namespace Octamino
             _image = GetComponent<RawImage>();
         }
 
-        public void SetBoard(Board board)
+        public void Initialize(Board board)
         {
             _board = board;
             _blockViewPool = new Pool<BlockView>(Data.BlockView, Data.BlockView, _blockPoolSize, NextBlockContainer);

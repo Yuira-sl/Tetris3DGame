@@ -26,7 +26,6 @@ namespace Octamino
         public Piece(Position[] blockPositions, PieceType type, bool canRotate = true)
         {
             Blocks = blockPositions.Map(position => new Block(position, type));
-            
             Type = type;
             CanRotate = canRotate;
         }

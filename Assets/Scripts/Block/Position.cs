@@ -40,5 +40,10 @@ namespace Octamino
         {
             return !left.Equals(right);
         }
+
+        public override string ToString()
+        {
+            return "Column (X) " + Column + "Row (Y) " + Row;
+        }
     }
 }

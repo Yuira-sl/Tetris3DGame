@@ -25,7 +25,7 @@ namespace Octamino
         public Transform EffectsContaiter;
         public AudioPlayer AudioPlayer;
 
-        public void SetBoard(Board board)
+        public void Initialize(Board board)
         {
             _board = board;
             _board.OnRowCleared += OnRowCleared;
@@ -150,8 +150,8 @@ namespace Octamino
         {
             foreach (var block in _board.Blocks)
             {
-                var piece = RenderBlock(BlockMaterial(block.Type), block.Position);
-                _currentPiece.Add(piece);
+                var blockView = RenderBlock(BlockMaterial(block.Type), block.Position);
+                _currentPiece.Add(blockView);
             }
         }
         
@@ -159,13 +159,13 @@ namespace Octamino
         {
             foreach (var position in _board.GetGhostPiecePositions())
             {
-                var ghostPiece = RenderBlock(PieceData.GhostPieceMaterial, position);
+                var blockView = RenderBlock(PieceData.GhostPieceMaterial, position);
                 if (CheckIntersectsPositions(position))
                 {
-                    ghostPiece.gameObject.SetActive(false);
+                    blockView.gameObject.SetActive(false);
                 }
                 
-                _currentGhostPiece.Add(ghostPiece);
+                _currentGhostPiece.Add(blockView);
             }
         }
         

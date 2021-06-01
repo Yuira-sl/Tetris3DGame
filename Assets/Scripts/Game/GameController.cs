@@ -56,7 +56,7 @@ namespace Octamino
         private void Start()
         {
             _board = new Board();
-            _nextPieceView.SetBoard(_board);
+            _nextPieceView.Initialize(_board);
             _input = new Input(new KeyboardInput(), new TouchInput());
             _game = new Game(_board);
 
@@ -66,8 +66,7 @@ namespace Octamino
             _game.OnPieceMoved += _audioPlayer.PlayPieceMoveClip;
             _game.Start();
 
-            _boardView.SetBoard(_board);
-            _game.SetBoard(_boardView);
+            _boardView.Initialize(_board);
         }
 
         private void OnDestroy()
