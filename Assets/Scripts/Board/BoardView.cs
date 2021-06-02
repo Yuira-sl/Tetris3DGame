@@ -32,7 +32,6 @@ namespace Octamino
             _board.OnRowCleared += OnRowCleared;
             _board.OnLastRowsCleared += OnLastRowsCleared;
             Game.Instance.OnPieceSettled += OnBlockSettled;
-            Game.Instance.OnNewPiece += OnNewPiece;
 
             var size = board.Width * board.Height + 10;
             
@@ -49,11 +48,6 @@ namespace Octamino
         private void OnLastRowsCleared(List<Block> blocks, float time)
         { 
             StartCoroutine(ClearBlocks(blocks, time * 1.5f));
-        }
-
-        private void OnNewPiece()
-        {
-            
         }
         
         private void OnBlockSettled()
@@ -220,7 +214,6 @@ namespace Octamino
         private void OnDestroy()
         {
             Game.Instance.OnPieceSettled -= OnBlockSettled;
-            Game.Instance.OnNewPiece -= OnNewPiece;
             _board.OnRowCleared -= OnRowCleared;
             _board.OnLastRowsCleared -= OnLastRowsCleared;
         }

@@ -13,7 +13,6 @@ namespace Octamino
         
         public event GameEventHandler OnResumed = delegate { };
         public event GameEventHandler OnPaused = delegate { };
-        public event GameEventHandler OnNewPiece = delegate { };
         public event GameEventHandler OnGameFinished = delegate { };
         public event GameEventHandler OnPieceMoved = delegate { };
         public event GameEventHandler OnPieceRotated = delegate { };
@@ -147,7 +146,6 @@ namespace Octamino
         
         private void AddPiece()
         {
-            OnNewPiece();
             _board.AddPiece();
             if (_board.HasCollisions())
             {
